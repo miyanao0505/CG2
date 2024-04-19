@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 class MyBase
 {
@@ -50,6 +50,15 @@ public:
 	/// </summary>
 	struct Matrix4x4 {
 		float m[4][4];
+	};
+
+	/// <summary>
+	/// Transform
+	/// </summary>
+	struct Transform {
+		Vec3 scale;
+		Vec3 rotate;
+		Vec3 translate;
 	};
 
 	/// <summary>
