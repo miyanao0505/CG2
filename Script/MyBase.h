@@ -102,5 +102,13 @@ public:
 		Vec2 start;
 		Vec2 end;
 	};
+
+	/// <summary>
+	/// 頂点データ
+	/// </summary>
+	struct VertexData {
+		Vec4 position;
+		Vec2 texcoord;
+	};
 };
 
