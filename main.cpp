@@ -686,6 +686,37 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	vertexData[5].position = { 0.5f, -0.5f, -0.5f, 1.0f };
 	vertexData[5].texcoord = { 1.0f, 1.0f };
 
+	// Sprite用の頂点リソースを作る
+	ID3D12Resource* vertexResourceSprite = CreateBufferResource(device, sizeof(MyBase::VertexData) * 6);
+
+	// 頂点バッファビューを作成する
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewSprite{};
+	// リソースの先頭のアドレスから使う
+	vertexBufferViewSprite.BufferLocation = vertexResourceSprite->GetGPUVirtualAddress();
+	// 使用するリソースのサイズは頂点6つ分のサイズ
+	vertexBufferViewSprite.SizeInBytes = sizeof(MyBase::VertexData) * 6;
+	// 1頂点あたりのサイズ
+	vertexBufferViewSprite.StrideInBytes = sizeof(MyBase::VertexData);
+
+	// Sprite用の頂点リソースにデータを書き込む
+	MyBase::VertexData* vertexDataSprite = nullptr;
+	// 書き込むためのアドレス
+	vertexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&vertexDataSprite));
+	// 1枚目の三角形
+	vertexDataSprite[0].position = { 0.0f, 360.0f, 0.0f, 1.0f };	// 左下
+	vertexDataSprite[0].texcoord = { 0.0f, 1.0f };
+	vertexDataSprite[1].position = { 0.0f, 0.0f, 0.0f, 1.0f };		// 左上
+	vertexDataSprite[1].texcoord = { 0.0f, 0.0f };
+	vertexDataSprite[2].position = { 640.f, 360.f, 0.0f, 1.0f };	// 右下
+	vertexDataSprite[2].texcoord = { 1.0f, 1.0f };
+	// 2枚目の三角形
+	vertexDataSprite[3].position = { 0.0f, 0.0f, 0.0f, 1.0f };		// 左上
+	vertexDataSprite[3].texcoord = { 0.0f, 0.0f };
+	vertexDataSprite[4].position = { 640.f, 0.0f, 0.0f, 1.0f };		// 右上
+	vertexDataSprite[4].texcoord = { 1.0f, 0.0f };
+	vertexDataSprite[5].position = { 640.f, 360.f, 0.0f, 1.0f };	// 右下
+	vertexDataSprite[5].texcoord = { 1.0f, 1.0f };
+
 	// マテリアル用のリソースを作る。今回はcolor1つ分のサイズを用意する
 	ID3D12Resource* materialResource = CreateBufferResource(device, sizeof(MyBase::VertexData));
 	// マテリアルにデータを書き込む
@@ -713,6 +744,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 単位行列を書き込んでおく
 	*transformationMatrixData = Matrix::MakeIdentity4x4();
 
+	// Sprite用のTransformationMatrix用のリソースを作る。Matrix4x4 1つ分のサイズを用意する
+	ID3D12Resource* transformationMatrixResourceSparite = CreateBufferResource(device, sizeof(MyBase::Matrix4x4));
+	// データを書き込む
+	MyBase::Matrix4x4* transformationMatrixDataSprite = nullptr;
+	// 書き込むためのアドレスを取得
+	transformationMatrixResourceSparite->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixDataSprite));
+	// 単位行列を書き込んでおく
+	*transformationMatrixDataSprite = Matrix::MakeIdentity4x4();
+
 	// ビューポート
 	D3D12_VIEWPORT viewport{};
 	// クライアント領域のサイズと一緒にして画面企画に表示
@@ -733,6 +773,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// Transform変数を作る
 	MyBase::Transform transform{ { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
+	MyBase::Transform transformSprite{ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
 	MyBase::Transform cameraTransform{ { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, -5.0f } };
 
 	// Textureを読んで転送する
@@ -798,26 +839,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			// Transformの更新(Y軸回転)
 			transform.rotate.y += 1.f / 360.f * float(M_PI);
-
 			// WorldMatrixの作成
 			MyBase::Matrix4x4 worldMatrix = Matrix::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
-
 			// カメラのWorldMatrixの作成
 			MyBase::Matrix4x4 cameraMatrix = Matrix::MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
-
 			// ビュー行列の作成
 			MyBase::Matrix4x4 viewMatrix = Matrix::Inverse(cameraMatrix);
-
 			// 透視投影行列の作成
 			MyBase::Matrix4x4 projectionMatrix = Matrix::MakePerspectiveFovMatrix(0.45f, float(kClientWidth) / float(kClientHeight), 0.1f, 100.0f);
-
 			// WVP行列の作成
 			MyBase::Matrix4x4 worldViewProjectionMatrix = Matrix::Multiply(worldMatrix, Matrix::Multiply(viewMatrix, projectionMatrix));
-
 			// CBufferの中身を更新
 			*wvpData = worldMatrix;
-
 			*transformationMatrixData = worldViewProjectionMatrix;
+
+			// Sprite用のWorldViewProgectionMatrixを作る
+			Matrix::Matrix4x4 worldMatrixSprite = Matrix::MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
+			Matrix::Matrix4x4 viewMatrixSprite = Matrix::MakeIdentity4x4();
+			Matrix::Matrix4x4 projectionMatrixSprite = Matrix::MakeOrthographicMatrix(0.0f, 0.0f, float(kClientWidth), float(kClientHeight), 0.0f, 100.0f);
+			Matrix::Matrix4x4 worldViewProjectionMatrixSprite = Matrix::Multiply(worldMatrixSprite, Matrix::Multiply(viewMatrixSprite, projectionMatrixSprite));
+			*transformationMatrixDataSprite = worldViewProjectionMatrixSprite;
 
 #ifdef _DEBUG
 			// 開発用UIの処理。実際に開発用のUIを出す場合はここをゲーム固有の処理に置き換える
@@ -831,6 +872,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::InputFloat3("Top position", &vertexData[1].position.x);
 			ImGui::InputFloat3("RightBottom position", &vertexData[2].position.x);
 			ImGui::SliderFloat3("color", &materialData->x, 0.0f, 1.0f);
+			ImGui::End();
+
+			ImGui::SetNextWindowPos(ImVec2(700, 20), ImGuiCond_Once);							// ウィンドウの座標(プログラム起動時のみ読み込み)
+			ImGui::SetNextWindowSize(ImVec2(500, 150), ImGuiCond_Once);							// ウィンドウのサイズ(プログラム起動時のみ読み込み)
+
+			ImGui::Begin("Sprite");
+			ImGui::ColorEdit4("matrial", &materialData[0].x);
+			ImGui::DragFloat3("translateSprite", &transformSprite.translate.x);
 			ImGui::End();
 
 #endif // _DEBUG
@@ -885,6 +934,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
 			commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
 			// 描画！(DrawCall/ドローコール)。3頂点で1つのインスタンス。インスタンスについては今後
+			commandList->DrawInstanced(6, 1, 0, 0);
+
+			// Spriteの描画。変更が必要なものだけ変更する
+			commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);			// VBVを設定
+			// TransformationMatrixCBufferの場所を設定
+			commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSparite->GetGPUVirtualAddress());
+			// 描画！(DrawCall/ドローコール)
 			commandList->DrawInstanced(6, 1, 0, 0);
 
 			// 実際のcommandListのImGuiの描画コマンドを積む
@@ -944,9 +1000,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	dsvDescriptorHeap->Release();
 	depthStencilResource->Release();
 	textureResource->Release();
+	transformationMatrixResourceSparite->Release();
 	transformationResource->Release();
 	wvpResource->Release();
 	materialResource->Release();
+	vertexResourceSprite->Release();
 	vertexResource->Release();
 	graphicsPipelineState->Release();
 	signatureBlob->Release();
