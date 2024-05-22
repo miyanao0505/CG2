@@ -1,8 +1,4 @@
 #pragma once
-#include "Vector2.h"
-#include "Vector3.h"
-#include "Vector4.h"
-#include "Matrix4x4.h"
 
 class MyBase
 {
@@ -12,29 +8,29 @@ public:
 	/// <summary>
 	/// 2次元ベクトル
 	/// </summary>
-	/*struct Vector2 {
+	struct Vector2 {
 		float x;
 		float y;
-	};*/
+	};
 
 	/// <summary>
 	/// 3次元ベクトル
 	/// </summary>
-	/*struct Vector3 {
+	struct Vector3 {
 		float x;
 		float y;
 		float z;
-	};*/
+	};
 	
 	/// <summary>
 	/// 4次元ベクトル
 	/// </summary>
-	/*struct Vector4 {
+	struct Vector4 {
 		float x;
 		float y;
 		float z;
 		float w;
-	};*/
+	};
 
 	/// <summary>
 	/// 2x2の行列
@@ -53,9 +49,9 @@ public:
 	/// <summary>
 	/// 4x4の行列
 	/// </summary>
-	/*struct Matrix4x4 {
+	struct Matrix4x4 {
 		float m[4][4];
-	};*/
+	};
 
 	/// <summary>
 	/// 円
