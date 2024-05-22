@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include "MyBase.h"
@@ -26,7 +26,7 @@ public:
 	/// <param name="viewMatrix">ビュー行列</param>
 	/// <param name="projectionMatrix">プロジェクション行列</param>
 	/// <returns></returns>
-	static Vector3 GetMousePosition(const float& kWindowWidth, const float& kWindowHeight, const Matrix4x4& viewMatrix, const Matrix4x4& projectionMatrix);
+	//static Vector3 GetMousePosition(const float& kWindowWidth, const float& kWindowHeight, const Matrix4x4& viewMatrix, const Matrix4x4& projectionMatrix);
 	
 	/// <summary>
 	/// 範囲内の値を返す関数
@@ -251,7 +251,7 @@ public:
 	/// <param name="y">表示するデバッグ用文字列の左上座標 Y</param>
 	/// <param name="vector">表示したいベクトルの変数</param>
 	/// <param name="label">表示したいベクトルの名前</param>
-	static void VectorScreenPrintf(int x, int y, const Vector2& vector, const char* label);
+	//static void VectorScreenPrintf(int x, int y, const Vector2& vector, const char* label);
 
 	/// <summary>
 	/// 3次元ベクトルの表示
@@ -260,7 +260,7 @@ public:
 	/// <param name="y">表示するデバッグ用文字列の左上座標 Y</param>
 	/// <param name="vector">表示したいベクトルの変数</param>
 	/// <param name="label">表示したいベクトルの名前</param>
-	static void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label);
+	//static void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label);
 
 	/// 
 	/// 描画 ここまで
