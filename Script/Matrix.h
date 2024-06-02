@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <assert.h>
@@ -27,7 +27,7 @@ public:
 	// スカラーと行列の積
 	static Matrix2x2 Multiply(const float& scalar, const Matrix2x2& matrix);
 	// ベクトルと行列の積
-	static Vec2 Multiply(const Vec2& vector, const Matrix2x2& matrix);
+	static Vector2 Multiply(const Vector2& vector, const Matrix2x2& matrix);
 	// 逆行列
 	static Matrix2x2 Inverse(const Matrix2x2& matrix);
 	// 転置行列
@@ -37,13 +37,13 @@ public:
 	/// 3x3の行列
 	/// </summary>
 	// 拡縮行列の作成
-	static Matrix3x3 MakeScaleMatrix(const Vec2& scale);
+	static Matrix3x3 MakeScaleMatrix(const Vector2& scale);
 	// 回転行列の作成
 	static Matrix3x3 MakeRotateMatrix3x3(const float& theta);
 	// 平行移動行列の作成関数
-	static Matrix3x3 MakeTranslateMatrix(const Vec2& translate);
+	static Matrix3x3 MakeTranslateMatrix(const Vector2& translate);
 	// 2次元アフィン変換行列の作成
-	static Matrix3x3 MakeAffineMatrix(const Vec2& scale, const float& rotate, const Vec2& translate);
+	static Matrix3x3 MakeAffineMatrix(const Vector2& scale, const float& rotate, const Vector2& translate);
 	// 正射影行列の作成
 	static Matrix3x3 MakeOrthographicMatrix(const float& left, const float& top, const float& right, const float& bottom);
 	// ビューポート行列の作成
@@ -57,7 +57,7 @@ public:
 	// スカラーと行列の積
 	static Matrix3x3 Multipty(const float& scalar, const Matrix3x3& matrix);
 	// 2次元ベクトルを同次座標として変換する
-	static Vec2 Transform(const Vec2& vector, const Matrix3x3& matrix);
+	static Vector2 Transform(const Vector2& vector, const Matrix3x3& matrix);
 	// 逆行列
 	static Matrix3x3 Inverse(const Matrix3x3& matrix);
 	// 転置行列
@@ -67,7 +67,7 @@ public:
 	/// 4x4の行列
 	/// </summary>
 	// 拡縮行列の作成
-	static Matrix4x4 MakeScaleMatrix(const Vec3& scale);
+	static Matrix4x4 MakeScaleMatrix(const Vector3& scale);
 	// X軸回転行列
 	static Matrix4x4 MakeRotateXMatrix4x4(const float& radian);
 	// Y軸回転行列
@@ -77,9 +77,9 @@ public:
 	// 回転行列の作成
 	static Matrix4x4 MakeRotateMatrix4x4(const float& thetaX, const float& thetaY, const float& thetaZ);
 	// 平行移動行列の作成
-	static Matrix4x4 MakeTranslateMatrix(const Vec3& translate);
+	static Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
 	// 3次元アフィン変換行列の作成
-	static Matrix4x4 MakeAffineMatrix(const Vec3& scale, const Vec3& rotate, const Vec3& translate);
+	static Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
 	// 透視投影行列の作成
 	static Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip);
 	// 正射影行列の作成
@@ -97,7 +97,7 @@ public:
 	// スカラーと行列の積
 	static Matrix4x4 Multiply(const float& scalar, const Matrix4x4& matrix);
 	// 3次元ベクトルを同時座標として変換する
-	static Vec3 Transform(const Vec3& vector, const Matrix4x4 matrix);
+	static Vector3 Transform(const Vector3& vector, const Matrix4x4 matrix);
 	// 逆行列
 	static Matrix4x4 Inverse(const Matrix4x4& matrix);
 	// 行列式

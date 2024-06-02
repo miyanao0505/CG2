@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <cmath>
 #include "MyBase.h"
 
@@ -22,40 +22,40 @@ public:
 	/// 2次元ベクトル
 	/// </summary>
 	/// 内積
-	static float Dot(const Vec2& v1, const Vec2& v2);
+	static float Dot(const Vector2& v1, const Vector2& v2);
 	/// クロス積(外積)
-	static float Cross(const Vec2& v1, const Vec2& v2);
+	static float Cross(const Vector2& v1, const Vector2& v2);
 	/// 長さ
 	static float Length(float x, float y);
 	/// 正規化
-	static Vec2 Normalize(float x, float y);
+	static Vector2 Normalize(float x, float y);
 	/// 方向を求める
-	static Vec2 Direction(float x, float y);
+	static Vector2 Direction(float x, float y);
 
 	/// <summary>
 	/// 3次元ベクトル
 	/// </summary>
 	/// 加算
-	static Vec3 Add(const Vec3& v1, const Vec3& v2);
+	static Vector3 Add(const Vector3& v1, const Vector3& v2);
 	/// 減算
-	static Vec3 Subtract(const Vec3& v1, const Vec3& v2);
+	static Vector3 Subtract(const Vector3& v1, const Vector3& v2);
 	/// スカラー倍
-	static Vec3 Multiply(float scalar, const Vec3& v);
+	static Vector3 Multiply(float scalar, const Vector3& v);
 	/// 内積
-	static float Dot(const Vec3& v1, const Vec3& v2);
+	static float Dot(const Vector3& v1, const Vector3& v2);
 	/// クロス積(外積)
-	static Vec3 Cross(const Vec3& v1, const Vec3& v2);
+	static Vector3 Cross(const Vector3& v1, const Vector3& v2);
 	/// 長さ(ノルム)
-	static float Length(const Vec3& v);
+	static float Length(const Vector3& v);
 	/// 正規化
-	static Vec3 Normalize(const Vec3& v);
+	static Vector3 Normalize(const Vector3& v);
 
 	/// <summary>
 	/// 描画
 	/// </summary>
 	/// 2次元ベクトルの表示
-	static void VectorScreenPrintf(int x, int y, const Vec2& vector, const char* label);
+	static void VectorScreenPrintf(int x, int y, const Vector2& vector, const char* label);
 	/// 3次元ベクトルの表示
-	static void VectorScreenPrintf(int x, int y, const Vec3& vector, const char* label);
+	static void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label);
 
 };

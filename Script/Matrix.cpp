@@ -92,9 +92,9 @@ Matrix::Matrix2x2 Matrix::Multiply(const float& scalar, const Matrix2x2& matrix)
 /// <summary>
 /// 2次元ベクトルと2x2行列の積
 /// </summary>
-Matrix::Vec2 Matrix::Multiply(const Vec2& vector, const Matrix2x2& matrix)
+Matrix::Vector2 Matrix::Multiply(const Vector2& vector, const Matrix2x2& matrix)
 {
-	Vec2 ans;
+	Vector2 ans;
 
 	ans.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0];
 	ans.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1];
@@ -157,7 +157,7 @@ Matrix::Matrix2x2 Matrix::Transpose(const Matrix2x2& matrix)
 /// <summary>
 /// 3x3拡縮行列の作成
 /// </summary>
-Matrix::Matrix3x3 Matrix::MakeScaleMatrix(const Vec2& scale)
+Matrix::Matrix3x3 Matrix::MakeScaleMatrix(const Vector2& scale)
 {
 	Matrix3x3 ans = { 0 };
 
@@ -187,7 +187,7 @@ Matrix::Matrix3x3 Matrix::MakeRotateMatrix3x3(const float& theta)
 /// <summary>
 /// 3x3平行移動行列の作成関数
 /// </summary>
-Matrix::Matrix3x3 Matrix::MakeTranslateMatrix(const Vec2& translate)
+Matrix::Matrix3x3 Matrix::MakeTranslateMatrix(const Vector2& translate)
 {
 	Matrix3x3 ans = { 0 };
 
@@ -204,7 +204,7 @@ Matrix::Matrix3x3 Matrix::MakeTranslateMatrix(const Vec2& translate)
 /// <summary>
 /// 2次元アフィン変換行列の作成
 /// </summary>
-Matrix::Matrix3x3 Matrix::MakeAffineMatrix(const Vec2& scale, const float& rotate, const Vec2& translate)
+Matrix::Matrix3x3 Matrix::MakeAffineMatrix(const Vector2& scale, const float& rotate, const Vector2& translate)
 {
 	Matrix3x3 scaleMatrix = { 0 };
 	Matrix3x3 rotateMatrix = { 0 };
@@ -337,9 +337,9 @@ Matrix::Matrix3x3 Matrix::Multipty(const float& scalar, const Matrix3x3& matrix)
 /// <summary>
 /// 2次元ベクトルを同次座標として変換する関数
 /// </summary>
-Matrix::Vec2 Matrix::Transform(const Vec2& vector, const Matrix3x3& matrix)
+Matrix::Vector2 Matrix::Transform(const Vector2& vector, const Matrix3x3& matrix)
 {
-	Vec2 result;
+	Vector2 result;
 
 	result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + 1.f * matrix.m[2][0];
 	result.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + 1.f * matrix.m[2][1];
@@ -416,7 +416,7 @@ Matrix::Matrix3x3 Matrix::Transpose(const Matrix3x3& matrix)
 /// <summary>
 /// 4x4拡縮行列の作成
 /// </summary>
-Matrix::Matrix4x4 Matrix::MakeScaleMatrix(const Vec3& scale)
+Matrix::Matrix4x4 Matrix::MakeScaleMatrix(const Vector3& scale)
 {
 	Matrix4x4 ans = { 0 };
 
@@ -500,7 +500,7 @@ Matrix::Matrix4x4 Matrix::MakeRotateMatrix4x4(const float& thetaX, const float& 
 /// <summary>
 /// 4x4平行移動行列の作成
 /// </summary>
-Matrix::Matrix4x4 Matrix::MakeTranslateMatrix(const Vec3& translate)
+Matrix::Matrix4x4 Matrix::MakeTranslateMatrix(const Vector3& translate)
 {
 	Matrix4x4 ans = { 0 };
 
@@ -519,7 +519,7 @@ Matrix::Matrix4x4 Matrix::MakeTranslateMatrix(const Vec3& translate)
 /// <summary>
 /// 3次元アフィン変換行列の作成
 /// </summary>
-Matrix::Matrix4x4 Matrix::MakeAffineMatrix(const Vec3& scale, const Vec3& rotate, const Vec3& translate)
+Matrix::Matrix4x4 Matrix::MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate)
 {
 	Matrix4x4 scaleMatrix = MakeScaleMatrix(scale);
 	Matrix4x4 rotateMatrix = MakeRotateMatrix4x4(rotate.x, rotate.y, rotate.z);
@@ -694,9 +694,9 @@ Matrix::Matrix4x4 Matrix::Multiply(const float& scalar, const Matrix4x4& matrix)
 /// <summary>
 /// 3次元ベクトルを同時座標として変換する
 /// </summary>
-Matrix::Vec3 Matrix::Transform(const Vec3& vector, const Matrix4x4 matrix)
+Matrix::Vector3 Matrix::Transform(const Vector3& vector, const Matrix4x4 matrix)
 {
-	Vec3 result;
+	Vector3 result;
 
 	result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0] + 1.f * matrix.m[3][0];
 	result.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1] + 1.f * matrix.m[3][1];
