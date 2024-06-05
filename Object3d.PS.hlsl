@@ -1,7 +1,9 @@
 #include "object3d.hlsli"
 
-struct Material {
-	float4 color;
+struct Material
+{
+    float4 color;
+    int enableLighting;
 };
 
 ConstantBuffer<Material> gMaterial : register(b0);
