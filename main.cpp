@@ -9,6 +9,7 @@
 #include <dxcapi.h>
 #include "Script/MyTools.h"
 #include "Script/Matrix.h"
+#include "Script/MyBase.h"
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
 #include "externals/imgui/imgui_impl_win32.h"
@@ -703,45 +704,45 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			vertexData[index + 1].position.z = std::cos(lat + kLatEvery) * std::sin(lon);
 			vertexData[index + 1].position.w = 1.0f;
 			vertexData[index + 1].texcoord = { float(lonIndex) / float(kSubdivision), 1.0f - float(latIndex + 1) / float(kSubdivision) };
-			vertexData[index + 1].normal.x = vertexData[index].position.x;
-			vertexData[index + 1].normal.y = vertexData[index].position.y;
-			vertexData[index + 1].normal.z = vertexData[index].position.z;
+			vertexData[index + 1].normal.x = vertexData[index + 1].position.x;
+			vertexData[index + 1].normal.y = vertexData[index + 1].position.y;
+			vertexData[index + 1].normal.z = vertexData[index + 1].position.z;
 			// c
 			vertexData[index + 2].position.x = std::cos(lat) * std::cos(lon + kLonEvery);
 			vertexData[index + 2].position.y = std::sin(lat);
 			vertexData[index + 2].position.z = std::cos(lat) * std::sin(lon + kLonEvery);
 			vertexData[index + 2].position.w = 1.0f;
 			vertexData[index + 2].texcoord = { float(lonIndex + 1) / float(kSubdivision), 1.0f - float(latIndex) / float(kSubdivision) };
-			vertexData[index + 2].normal.x = vertexData[index].position.x;
-			vertexData[index + 2].normal.y = vertexData[index].position.y;
-			vertexData[index + 2].normal.z = vertexData[index].position.z;
+			vertexData[index + 2].normal.x = vertexData[index + 2].position.x;
+			vertexData[index + 2].normal.y = vertexData[index + 2].position.y;
+			vertexData[index + 2].normal.z = vertexData[index + 2].position.z;
 			// b
 			vertexData[index + 3].position.x = std::cos(lat + kLatEvery) * std::cos(lon);
 			vertexData[index + 3].position.y = std::sin(lat + kLatEvery);
 			vertexData[index + 3].position.z = std::cos(lat + kLatEvery) * std::sin(lon);
 			vertexData[index + 3].position.w = 1.0f;
 			vertexData[index + 3].texcoord = { float(lonIndex) / float(kSubdivision), 1.0f - float(latIndex + 1) / float(kSubdivision) };
-			vertexData[index + 3].normal.x = vertexData[index].position.x;
-			vertexData[index + 3].normal.y = vertexData[index].position.y;
-			vertexData[index + 3].normal.z = vertexData[index].position.z;
+			vertexData[index + 3].normal.x = vertexData[index + 3].position.x;
+			vertexData[index + 3].normal.y = vertexData[index + 3].position.y;
+			vertexData[index + 3].normal.z = vertexData[index + 3].position.z;
 			// d
 			vertexData[index + 4].position.x = std::cos(lat + kLatEvery) * std::cos(lon + kLonEvery);
 			vertexData[index + 4].position.y = std::sin(lat + kLatEvery);
 			vertexData[index + 4].position.z = std::cos(lat + kLatEvery) * std::sin(lon + kLonEvery);
 			vertexData[index + 4].position.w = 1.0f;
 			vertexData[index + 4].texcoord = { float(lonIndex + 1) / float(kSubdivision), 1.0f - float(latIndex + 1) / float(kSubdivision) };
-			vertexData[index + 4].normal.x = vertexData[index].position.x;
-			vertexData[index + 4].normal.y = vertexData[index].position.y;
-			vertexData[index + 4].normal.z = vertexData[index].position.z;
+			vertexData[index + 4].normal.x = vertexData[index + 4].position.x;
+			vertexData[index + 4].normal.y = vertexData[index + 4].position.y;
+			vertexData[index + 4].normal.z = vertexData[index + 4].position.z;
 			// c
 			vertexData[index + 5].position.x = std::cos(lat) * std::cos(lon + kLonEvery);
 			vertexData[index + 5].position.y = std::sin(lat);
 			vertexData[index + 5].position.z = std::cos(lat) * std::sin(lon + kLonEvery);
 			vertexData[index + 5].position.w = 1.0f;
 			vertexData[index + 5].texcoord = { float(lonIndex + 1) / float(kSubdivision), 1.0f - float(latIndex) / float(kSubdivision) };
-			vertexData[index + 5].normal.x = vertexData[index].position.x;
-			vertexData[index + 5].normal.y = vertexData[index].position.y;
-			vertexData[index + 5].normal.z = vertexData[index].position.z;
+			vertexData[index + 5].normal.x = vertexData[index + 5].position.x;
+			vertexData[index + 5].normal.y = vertexData[index + 5].position.y;
+			vertexData[index + 5].normal.z = vertexData[index + 5].position.z;
 		}
 	}
 
@@ -783,22 +784,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	vertexDataSprite[5].normal = { 0.0f, 0.0f, -1.0f };
 
 	// マテリアル用のリソースを作る。今回はcolor1つ分のサイズを用意する
-	ID3D12Resource* materialResource = CreateBufferResource(device, sizeof(MyBase::Material));
+	ID3D12Resource* materialResource = CreateBufferResource(device, sizeof(MyBase::VertexData));
 	// マテリアルにデータを書き込む
-	MyBase::Material* materialData = nullptr;
+	MyBase::Vector4* materialData = nullptr;
 	// 書き込むためのアドレスを取得
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	// 白で読み込む
-	*materialData = MyBase::Material(MyBase::Vector4(1.0f, 1.0f, 1.0f, 1.0f), true);
-
-	// Sprite用のマテリアルリソースを作る。
-	ID3D12Resource* materialResourceSprite = CreateBufferResource(device, sizeof(MyBase::Material));
-	// マテリアルにデータを書き込む
-	MyBase::Material* materialDataSprite = nullptr;
-	// 書き込むためのアドレスを取得
-	materialResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&materialDataSprite));
-	// 白で読み込む SpriteはLightingしないのでfalseを設定する
-	*materialDataSprite = MyBase::Material(MyBase::Vector4(1.0f, 1.0f, 1.0f, 1.0f), false);
+	*materialData = MyBase::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// カメラ用のリソースを作る。Matrix4x4 1つ分のサイズを用意する
 	ID3D12Resource* transformationResource = CreateBufferResource(device, sizeof(MyBase::Matrix4x4));
@@ -810,11 +802,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	*transformationMatrixData = Matrix::MakeIdentity4x4();
 
 	// Sprite用のTransformationMatrix用のリソースを作る。Matrix4x4 1つ分のサイズを用意する
-	ID3D12Resource* transformationMatrixResourceSprite = CreateBufferResource(device, sizeof(MyBase::Matrix4x4));
+	ID3D12Resource* transformationMatrixResourceSparite = CreateBufferResource(device, sizeof(MyBase::Matrix4x4));
 	// データを書き込む
 	MyBase::Matrix4x4* transformationMatrixDataSprite = nullptr;
 	// 書き込むためのアドレスを取得
-	transformationMatrixResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixDataSprite));
+	transformationMatrixResourceSparite->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixDataSprite));
 	// 単位行列を書き込んでおく
 	*transformationMatrixDataSprite = Matrix::MakeIdentity4x4();
 
@@ -937,13 +929,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			ImGui::Begin("Object");
 			ImGui::Text("Sphere");
-			ImGui::ColorEdit4("material", &materialData[0].color.x);
 			ImGui::DragFloat3("translate", &transform.translate.x, 0.05f);
 			ImGui::DragFloat3("rotate", &transform.rotate.x, 0.05f);
 			ImGui::DragFloat3("scale", &transform.scale.x, 0.05f);
-			
+
 			ImGui::Text("Sprite");
-			ImGui::ColorEdit4("matrial", &materialDataSprite[0].color.x);
+			ImGui::ColorEdit4("matrial", &materialData[0].x);
 			ImGui::DragFloat3("translateSprite", &transformSprite.translate.x, 0.05f);
 
 			ImGui::Text("Texture");
@@ -1031,10 +1022,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			// Spriteの描画。変更が必要なものだけ変更する
 			commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);			// VBVを設定
-			// マテリアルCBufferの場所を設定
-			commandList->SetGraphicsRootConstantBufferView(0, materialResourceSprite->GetGPUVirtualAddress());
 			// TransformationMatrixCBufferの場所を設定
-			commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
+			commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSparite->GetGPUVirtualAddress());
 			// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
 			commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
 			// 描画！(DrawCall/ドローコール)
@@ -1098,9 +1087,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	depthStencilResource->Release();
 	textureResource2->Release();
 	textureResource->Release();
-	transformationMatrixResourceSprite->Release();
+	transformationMatrixResourceSparite->Release();
 	transformationResource->Release();
-	materialResourceSprite->Release();
 	materialResource->Release();
 	vertexResourceSprite->Release();
 	vertexResource->Release();

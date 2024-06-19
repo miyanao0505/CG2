@@ -1,9 +1,5 @@
 #include "object3d.hlsli"
 
-struct TransformationMatrix {
-    float4x4 WVP;
-};
-
 ConstantBuffer<TransformationMatrix> gTransfomationMatrix : register(b0);
 
 struct VertexShaderInput {
