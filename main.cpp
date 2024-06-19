@@ -794,7 +794,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// Lightingを有効にする
 	materialData->enableLighting = true;
 
-	// カメラ用のリソースを作る。Matrix4x4 1つ分のサイズを用意する
+	// カメラ用のリソースを作る。Transformation 1つ分のサイズを用意する
 	ID3D12Resource* transformationResource = CreateBufferResource(device, sizeof(MyBase::Matrix4x4));
 	// データを書き込む
 	MyBase::Matrix4x4* transformationMatrixData = nullptr;
