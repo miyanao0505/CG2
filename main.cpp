@@ -784,13 +784,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	vertexDataSprite[5].normal = { 0.0f, 0.0f, -1.0f };
 
 	// マテリアル用のリソースを作る。今回はcolor1つ分のサイズを用意する
-	ID3D12Resource* materialResource = CreateBufferResource(device, sizeof(MyBase::VertexData));
+	ID3D12Resource* materialResource = CreateBufferResource(device, sizeof(MyBase::Material));
 	// マテリアルにデータを書き込む
-	MyBase::Vector4* materialData = nullptr;
+	MyBase::Material* materialData = nullptr;
 	// 書き込むためのアドレスを取得
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	// 白で読み込む
-	*materialData = MyBase::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	materialData->color = MyBase::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	// Lightingを有効にする
+	materialData->enableLighting = true;
 
 	// カメラ用のリソースを作る。Matrix4x4 1つ分のサイズを用意する
 	ID3D12Resource* transformationResource = CreateBufferResource(device, sizeof(MyBase::Matrix4x4));
@@ -809,6 +811,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	transformationMatrixResourceSparite->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixDataSprite));
 	// 単位行列を書き込んでおく
 	*transformationMatrixDataSprite = Matrix::MakeIdentity4x4();
+	
+	// Sprite用のマテリアルリソースを作る
+	ID3D12Resource* materialResourceSprite = CreateBufferResource(device, sizeof(MyBase::Material));
+	// データを書き込む
+	MyBase::Material* materialDataSprite = nullptr;
+	// 書き込むためのアドレスを取得
+	materialResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&materialDataSprite));
+	// 白で読み込む
+	materialDataSprite->color = MyBase::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	// SpriteはLightingしないのでfalseを設定する
+	materialDataSprite->enableLighting = false;
 
 	// ビューポート
 	D3D12_VIEWPORT viewport{};
@@ -928,14 +941,35 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::SetNextWindowSize(ImVec2(500, 150), ImGuiCond_Once);							// ウィンドウのサイズ(プログラム起動時のみ読み込み)
 
 			ImGui::Begin("Object");
-			ImGui::Text("Sphere");
-			ImGui::DragFloat3("translate", &transform.translate.x, 0.05f);
-			ImGui::DragFloat3("rotate", &transform.rotate.x, 0.05f);
-			ImGui::DragFloat3("scale", &transform.scale.x, 0.05f);
+			if (ImGui::CollapsingHeader("Sphere"))
+			{
+				if (ImGui::CollapsingHeader("Transform"))
+				{
+					ImGui::DragFloat3("translate", &transform.translate.x, 0.05f);
+					ImGui::DragFloat3("rotate", &transform.rotate.x, 0.05f);
+					ImGui::DragFloat3("scale", &transform.scale.x, 0.05f);
+				}
+				if (ImGui::CollapsingHeader("Material", 0))
+				{
+					ImGui::ColorEdit4("color", &materialData[0].color.x);
+				}
+			}
 
-			ImGui::Text("Sprite");
-			ImGui::ColorEdit4("matrial", &materialData[0].x);
-			ImGui::DragFloat3("translateSprite", &transformSprite.translate.x, 0.05f);
+			ImGui::Separator();
+
+			if (ImGui::CollapsingHeader("Sprite"))
+			{
+				if (ImGui::CollapsingHeader("Transform"))
+				{
+					ImGui::DragFloat3("translateSprite", &transformSprite.translate.x, 0.05f);
+				}
+				if (ImGui::CollapsingHeader("Material", 1))
+				{
+					ImGui::ColorEdit4("color", &materialDataSprite[0].color.x);
+				}
+			}
+
+			ImGui::Separator();
 
 			ImGui::Text("Texture");
 			ImGui::Checkbox("useMonsterBall", &useMonsterBall);
@@ -1022,6 +1056,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			// Spriteの描画。変更が必要なものだけ変更する
 			commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);			// VBVを設定
+			// マテリアルCBufferの場所を設定
+			commandList->SetGraphicsRootConstantBufferView(0, materialResourceSprite->GetGPUVirtualAddress());
 			// TransformationMatrixCBufferの場所を設定
 			commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSparite->GetGPUVirtualAddress());
 			// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
@@ -1089,6 +1125,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	textureResource->Release();
 	transformationMatrixResourceSparite->Release();
 	transformationResource->Release();
+	materialResourceSprite->Release();
 	materialResource->Release();
 	vertexResourceSprite->Release();
 	vertexResource->Release();
