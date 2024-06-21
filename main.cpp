@@ -794,24 +794,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// Lightingを有効にする
 	materialData->enableLighting = true;
 
-	// カメラ用のリソースを作る。Transformation 1つ分のサイズを用意する
-	ID3D12Resource* transformationResource = CreateBufferResource(device, sizeof(MyBase::Matrix4x4));
+	// カメラ用のリソースを作る。TransformationMatrix 1つ分のサイズを用意する
+	ID3D12Resource* transformationResource = CreateBufferResource(device, sizeof(MyBase::TransformationMatrix));
 	// データを書き込む
-	MyBase::Matrix4x4* transformationMatrixData = nullptr;
+	MyBase::TransformationMatrix* transformationMatrixData = nullptr;
 	// 書き込むためのアドレスを取得
 	transformationResource->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixData));
 	// 単位行列を書き込んでおく
-	*transformationMatrixData = Matrix::MakeIdentity4x4();
+	transformationMatrixData->WVP = Matrix::MakeIdentity4x4();
+	transformationMatrixData->World = Matrix::MakeIdentity4x4();
 
-	// Sprite用のTransformationMatrix用のリソースを作る。Matrix4x4 1つ分のサイズを用意する
-	ID3D12Resource* transformationMatrixResourceSparite = CreateBufferResource(device, sizeof(MyBase::Matrix4x4));
+	// Sprite用のTransformationMatrix用のリソースを作る。TransformationMatrix 1つ分のサイズを用意する
+	ID3D12Resource* transformationMatrixResourceSparite = CreateBufferResource(device, sizeof(MyBase::TransformationMatrix));
 	// データを書き込む
-	MyBase::Matrix4x4* transformationMatrixDataSprite = nullptr;
+	MyBase::TransformationMatrix* transformationMatrixDataSprite = nullptr;
 	// 書き込むためのアドレスを取得
 	transformationMatrixResourceSparite->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixDataSprite));
 	// 単位行列を書き込んでおく
-	*transformationMatrixDataSprite = Matrix::MakeIdentity4x4();
-	
+	transformationMatrixDataSprite->WVP = Matrix::MakeIdentity4x4();
+	transformationMatrixDataSprite->World = Matrix::MakeIdentity4x4();
+
 	// Sprite用のマテリアルリソースを作る
 	ID3D12Resource* materialResourceSprite = CreateBufferResource(device, sizeof(MyBase::Material));
 	// データを書き込む
@@ -989,14 +991,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			// WVP行列の作成
 			MyBase::Matrix4x4 worldViewProjectionMatrix = Matrix::Multiply(worldMatrix, Matrix::Multiply(viewMatrix, projectionMatrix));
 			// CBufferの中身を更新
-			*transformationMatrixData = worldViewProjectionMatrix;
+			transformationMatrixData[0].WVP = worldViewProjectionMatrix;
+			transformationMatrixData[0].World = worldMatrix;
 
 			// Sprite用のWorldViewProgectionMatrixを作る
 			Matrix::Matrix4x4 worldMatrixSprite = Matrix::MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
 			Matrix::Matrix4x4 viewMatrixSprite = Matrix::MakeIdentity4x4();
 			Matrix::Matrix4x4 projectionMatrixSprite = Matrix::MakeOrthographicMatrix(0.0f, 0.0f, float(kClientWidth), float(kClientHeight), 0.0f, 100.0f);
 			Matrix::Matrix4x4 worldViewProjectionMatrixSprite = Matrix::Multiply(worldMatrixSprite, Matrix::Multiply(viewMatrixSprite, projectionMatrixSprite));
-			*transformationMatrixDataSprite = worldViewProjectionMatrixSprite;
+			transformationMatrixDataSprite[0].WVP = worldViewProjectionMatrixSprite;
+			transformationMatrixDataSprite[0].World = worldMatrixSprite;
 
 #ifdef _DEBUG
 
