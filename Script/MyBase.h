@@ -177,7 +177,7 @@ public:
 	};
 
 	/// <summary>
-	/// 
+	/// トランスフォーメーション行列
 	/// </summary>
 	struct TransformationMatrix {
 		Matrix4x4 WVP;
