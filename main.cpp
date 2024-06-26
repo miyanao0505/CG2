@@ -549,7 +549,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 	// RootParameter作成。複数設定できるので配列。
-	D3D12_ROOT_PARAMETER rootParameters[3] = {};
+	D3D12_ROOT_PARAMETER rootParameters[4] = {};
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;					// CBVを使う
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;					// PixelShaderで使う
 	rootParameters[0].Descriptor.ShaderRegister = 0;									// レジスタ番号0とバインド
@@ -560,6 +560,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;					// PixelShaderで使う
 	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange;				// Tableの中身の配列を指定
 	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);	// Tableで利用する数
+	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;					// CBVを使う
+	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;					// PixelShaderで使う
+	rootParameters[3].Descriptor.ShaderRegister = 1;									// レジスタ番号1を使う
 	descriptionRootSignature.pParameters = rootParameters;					// ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);		// 配列の長さ
 
@@ -825,6 +828,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// SpriteはLightingしないのでfalseを設定する
 	materialDataSprite->enableLighting = false;
 
+	// 平行光源用のリソースを作る
+	ID3D12Resource* directionalLightResource = CreateBufferResource(device, sizeof(MyBase::DirectionalLight));
+	// データを書き込む
+	MyBase::DirectionalLight* directionalLightData = nullptr;
+	// 書き込むためのアドレス取得
+	directionalLightResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData));
+	// デフォルト値はとりあえず以下のようにしておく
+	directionalLightData->color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	directionalLightData->direction = { 0.0f, -1.0f, 0.0f };
+	directionalLightData->intensity = 1.0f;
+
 	// ビューポート
 	D3D12_VIEWPORT viewport{};
 	// クライアント領域のサイズと一緒にして画面企画に表示
@@ -931,19 +945,43 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			// 開発用UIの処理。実際に開発用のUIを出す場合はここをゲーム固有の処理に置き換える
 			//ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.6f, 0.2f, 1.0f));	// ウィンドウを選択中の時のタイトルバーの色
 			//ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));			// ウィンドウを未選択の時のタイトルバーの色
-			ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);							// ウィンドウの座標(プログラム起動時のみ読み込み)
-			ImGui::SetNextWindowSize(ImVec2(500, 80), ImGuiCond_Once);							// ウィンドウのサイズ(プログラム起動時のみ読み込み)
+			//ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);							// ウィンドウの座標(プログラム起動時のみ読み込み)
+			//ImGui::SetNextWindowSize(ImVec2(500, 80), ImGuiCond_Once);							// ウィンドウのサイズ(プログラム起動時のみ読み込み)
 
-			ImGui::Begin("Camera");
-			ImGui::DragFloat3("translate", &cameraTransform.translate.x, 0.05f);
-			ImGui::DragFloat3("rotate", &cameraTransform.rotate.x, 0.05f);
-			ImGui::End();
+			//ImGui::Begin("Camera");
+			//ImGui::DragFloat3("translate", &cameraTransform.translate.x, 0.05f);
+			//ImGui::DragFloat3("rotate", &cameraTransform.rotate.x, 0.05f);
+			//ImGui::End();
 
-			ImGui::SetNextWindowPos(ImVec2(700, 20), ImGuiCond_Once);							// ウィンドウの座標(プログラム起動時のみ読み込み)
-			ImGui::SetNextWindowSize(ImVec2(500, 150), ImGuiCond_Once);							// ウィンドウのサイズ(プログラム起動時のみ読み込み)
+			ImGui::SetNextWindowPos(ImVec2(850, 20), ImGuiCond_Once);							// ウィンドウの座標(プログラム起動時のみ読み込み)
+			ImGui::SetNextWindowSize(ImVec2(400, 500), ImGuiCond_Once);							// ウィンドウのサイズ(プログラム起動時のみ読み込み)
 
-			ImGui::Begin("Object");
-			if (ImGui::CollapsingHeader("Sphere"))
+			ImGui::Begin("Settings");
+
+			// カメラ
+			ImGui::DragFloat3("CameraTranslate", &cameraTransform.translate.x, 0.05f);
+			ImGui::SliderFloat("CameraRotateX", &cameraTransform.rotate.x, -(float)M_PI, (float)M_PI);
+			ImGui::SliderFloat("CameraRotateY", &cameraTransform.rotate.y, -(float)M_PI, (float)M_PI);
+			ImGui::SliderFloat("CameraRotateZ", &cameraTransform.rotate.z, -(float)M_PI, (float)M_PI);
+			
+			// 球
+			ImGui::ColorEdit4("color", &materialData[0].color.x);
+			ImGui::Checkbox("enableLighting", (bool*)&materialData[0].enableLighting);
+
+			// スプライト
+			ImGui::ColorEdit4("colorSprite", &materialDataSprite[0].color.x);
+			ImGui::SliderFloat3("translateSprite", &transformSprite.translate.x, 0.0f, 1280.0f);
+
+			// テクスチャ
+			ImGui::Checkbox("useMonsterBall", &useMonsterBall);
+
+			// 平行光源
+			ImGui::ColorEdit3("LightColor", &directionalLightData[0].color.x);
+			ImGui::SliderFloat3("LightDirection", &directionalLightData[0].direction.x, -1.0f, 1.0f);
+			directionalLightData[0].direction = MyTools::Normalize(directionalLightData[0].direction);
+			ImGui::DragFloat("Intensity", &directionalLightData[0].intensity, 0.05f);
+
+			/*if (ImGui::CollapsingHeader("Sphere"))
 			{
 				if (ImGui::CollapsingHeader("Transform"))
 				{
@@ -974,7 +1012,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::Separator();
 
 			ImGui::Text("Texture");
-			ImGui::Checkbox("useMonsterBall", &useMonsterBall);
+			ImGui::Checkbox("useMonsterBall", &useMonsterBall);*/
 
 			ImGui::End();
 #endif // _DEBUG
@@ -1055,6 +1093,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			commandList->SetGraphicsRootConstantBufferView(1, transformationResource->GetGPUVirtualAddress());
 			// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
 			commandList->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU2 : textureSrvHandleGPU);
+			// 平行光源用のCBufferの場所を設定
+			commandList->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
 			// 描画！(DrawCall/ドローコール)。3頂点で1つのインスタンス。インスタンスについては今後
 			commandList->DrawInstanced(vertexNum, 1, 0, 0);
 
@@ -1066,6 +1106,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSparite->GetGPUVirtualAddress());
 			// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
 			commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
+			// 平行光源用のCBufferの場所を設定
+			commandList->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
 			// 描画！(DrawCall/ドローコール)
 			commandList->DrawInstanced(6, 1, 0, 0);
 
@@ -1127,6 +1169,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	depthStencilResource->Release();
 	textureResource2->Release();
 	textureResource->Release();
+	directionalLightResource->Release();
 	materialResourceSprite->Release();
 	transformationMatrixResourceSparite->Release();
 	transformationResource->Release();

@@ -183,5 +183,14 @@ public:
 		Matrix4x4 WVP;
 		Matrix4x4 World;
 	};
+
+	/// <summary>
+	/// 平行光源
+	/// </summary>
+	struct DirectionalLight {
+		Vector4 color;			//!< ライトの色
+		Vector3 direction;		//!< ライトの向き
+		float intensity;		//!< 輝度
+	};
 };
 
