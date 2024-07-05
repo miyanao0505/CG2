@@ -818,6 +818,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	materialData->color = MyBase::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	// Lightingを有効にする
 	materialData->enableLighting = true;
+	// 単位行列で初期化
+	materialData->uvTransform = Matrix::MakeIdentity4x4();
 
 	// カメラ用のリソースを作る。TransformationMatrix 1つ分のサイズを用意する
 	ID3D12Resource* transformationResource = CreateBufferResource(device, sizeof(MyBase::TransformationMatrix));
@@ -849,6 +851,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	materialDataSprite->color = MyBase::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	// SpriteはLightingしないのでfalseを設定する
 	materialDataSprite->enableLighting = false;
+	// 単位行列で初期化
+	materialDataSprite->uvTransform = Matrix::MakeIdentity4x4();
 
 	// 平行光源用のリソースを作る
 	ID3D12Resource* directionalLightResource = CreateBufferResource(device, sizeof(MyBase::DirectionalLight));
@@ -883,6 +887,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	MyBase::Transform transform{ { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
 	MyBase::Transform transformSprite{ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
 	MyBase::Transform cameraTransform{ { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, -10.0f } };
+	MyBase::Transform uvTransformSprite{
+		{1.0f, 1.0f, 1.0f},
+		{0.0f, 0.0f, 0.0f},
+		{0.0f, 0.0f, 0.0f},
+	};
 
 	// テクスチャ切り替え用
 	bool useMonsterBall = true;
@@ -1003,6 +1012,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			directionalLightData[0].direction = MyTools::Normalize(directionalLightData[0].direction);
 			ImGui::DragFloat("Intensity", &directionalLightData[0].intensity, 0.05f);
 
+			// UV
+			ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
+			ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
+			ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
+
 			ImGui::End();
 #endif // _DEBUG
 
@@ -1028,6 +1042,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Matrix::Matrix4x4 worldViewProjectionMatrixSprite = Matrix::Multiply(worldMatrixSprite, Matrix::Multiply(viewMatrixSprite, projectionMatrixSprite));
 			transformationMatrixDataSprite[0].WVP = worldViewProjectionMatrixSprite;
 			transformationMatrixDataSprite[0].World = worldMatrixSprite;
+
+			// UVTransform用
+			Matrix::Matrix4x4 uvTransformMatrix = Matrix::MakeScaleMatrix(uvTransformSprite.scale);
+			uvTransformMatrix = Matrix::Multiply(uvTransformMatrix, Matrix::MakeRotateZMatrix4x4(uvTransformSprite.rotate.z));
+			uvTransformMatrix = Matrix::Multiply(uvTransformMatrix, Matrix::MakeTranslateMatrix(uvTransformSprite.translate));
+			materialDataSprite->uvTransform = uvTransformMatrix;
 
 #ifdef _DEBUG
 

@@ -174,7 +174,8 @@ public:
 	struct Material {
 		Vector4 color;
 		int enableLighting;
-		Matrix3x3 uvTransform;
+		float padding[3];
+		Matrix4x4 uvTransform;
 	};
 
 	/// <summary>
