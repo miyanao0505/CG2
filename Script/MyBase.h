@@ -1,4 +1,6 @@
 #pragma once
+#include <vector>
+#include <string>
 
 class MyBase
 {
@@ -194,5 +196,22 @@ public:
 		Vector3 direction;		//!< ライトの向き
 		float intensity;		//!< 輝度
 	};
+
+	/// <summary>
+	/// MaterialData
+	/// </summary>
+	struct MaterialData {
+		std::string textureFilePath;
+	};
+
+	/// <summary>
+	/// objモデルデータ
+	/// </summary>
+	struct ModelData {
+		std::vector<VertexData> vertices;
+		MaterialData material;
+	};
+
+	
 };
 
