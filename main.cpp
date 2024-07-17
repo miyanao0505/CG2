@@ -384,6 +384,8 @@ MyBase::ModelData LoadObjFile(const std::string& directoryPath, const std::strin
 			MyBase::Vector3 normal;
 			s >> normal.x >> normal.y >> normal.z;
 			normal.x *= -1.0f;
+			//normal.z *= -1.f;
+			//normal.y *= -1.f;
 			normals.push_back(normal);
 		}
 		else if (identifier == "mtllib")
