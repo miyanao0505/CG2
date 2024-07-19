@@ -469,6 +469,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	const int32_t kClientWidth = 1280;
 	const int32_t kClientHeight = 720;
 
+	// ブレンドモード
+	enum BlendMode {
+		kBlendModeNone,			// ブレンドなし
+		kBlendModeNormal,		// 通常αブレンド。デフォルト。 Src * SrcA + Dest * (1 - SrcA)
+		kBlendModeAdd,			// 加算。 Src * SrcA + Dest * 1
+		kBlendModeSubtract,		// 減算。 Dest * 1 - Src * SrcA
+		kBlendModeMultiply,		// 乗算。 Src * 0 + Dest * Src
+		kBlendModeScreen,		// スクリーン。 Src * (1 - Dest) + Dest * 1
+		kCountOfBlendMode,		// 利用してはいけない
+	};
+
 	// ウィンドウサイズを表す構造体にクライアント領域を入れる
 	RECT wrc = { 0, 0, kClientWidth, kClientHeight };
 
@@ -1079,7 +1090,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	};
 
 	// テクスチャ切り替え用
-	bool useMonsterBall = true;
+	//bool useMonsterBall = true;
+
+	// ブレンドモード切替用
+	BlendMode blendMode = kBlendModeNone;
+	int blendIndex = 0;
 
 	// Textureを読んで転送する
 	DirectX::ScratchImage mipImages = LoadTexture("resources/uvChecker.png");
@@ -1176,10 +1191,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::Begin("Settings");
 
 			// カメラ
-			ImGui::DragFloat3("CameraTranslate", &cameraTransform.translate.x, 0.05f);
+			/*ImGui::DragFloat3("CameraTranslate", &cameraTransform.translate.x, 0.05f);
 			ImGui::SliderAngle("CameraRotateX", &cameraTransform.rotate.x);
 			ImGui::SliderAngle("CameraRotateY", &cameraTransform.rotate.y);
-			ImGui::SliderAngle("CameraRotateZ", &cameraTransform.rotate.z);
+			ImGui::SliderAngle("CameraRotateZ", &cameraTransform.rotate.z);*/
 			
 			// 球 / Model
 			ImGui::DragFloat3("PlaneTranslate", &transform.translate.x, 0.05f);
@@ -1190,11 +1205,55 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::Checkbox("enableLighting", (bool*)&materialData[0].enableLighting);
 
 			// スプライト
-			ImGui::ColorEdit4("colorSprite", &materialDataSprite[0].color.x);
-			ImGui::SliderFloat3("translateSprite", &transformSprite.translate.x, 0.0f, 1280.0f);
+			/*ImGui::ColorEdit4("colorSprite", &materialDataSprite[0].color.x);
+			ImGui::SliderFloat3("translateSprite", &transformSprite.translate.x, 0.0f, 1280.0f);*/
 
 			// テクスチャ
-			ImGui::Checkbox("useMonsterBall", &useMonsterBall);
+			//ImGui::Checkbox("useMonsterBall", &useMonsterBall);
+
+			const char* blendModeIndex[] = { "kBlendModeNone", "kBlendModeNormal", "kBlendModeAdd", "kBlendModeSubtract", "kBlendModeMultiply", "kBlendModeScreen" };
+			ImGui::Combo("Blend", &blendIndex, blendModeIndex, IM_ARRAYSIZE(blendModeIndex));
+			blendMode = (BlendMode)blendIndex;
+
+			// ブレンドモード
+			switch (blendMode)
+			{
+			case kBlendModeNone:
+				blendDesc.RenderTarget[0].BlendEnable = false;
+				break;
+			case kBlendModeNormal:
+				blendDesc.RenderTarget[0].BlendEnable = TRUE;
+				blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+				blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+				blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+				break;
+			case kBlendModeAdd:
+				blendDesc.RenderTarget[0].BlendEnable = TRUE;
+				blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+				blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+				blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+				break;
+			case kBlendModeSubtract:
+				blendDesc.RenderTarget[0].BlendEnable = TRUE;
+				blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+				blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_REV_SUBTRACT;
+				blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+				break;
+			case kBlendModeMultiply:
+				blendDesc.RenderTarget[0].BlendEnable = TRUE;
+				blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_ZERO;
+				blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+				blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_SRC_COLOR;
+				break;
+			case kBlendModeScreen:
+				blendDesc.RenderTarget[0].BlendEnable = TRUE;
+				blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_INV_DEST_COLOR;
+				blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+				blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+				break;
+			default:
+				break;
+			}
 
 			// 平行光源
 			ImGui::ColorEdit3("LightColor", &directionalLightData[0].color.x);
