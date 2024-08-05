@@ -1169,36 +1169,61 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::Begin("Settings");
 
 			// カメラ
-			ImGui::DragFloat3("CameraTranslate", &cameraTransform.translate.x, 0.05f);
+			/*ImGui::DragFloat3("CameraTranslate", &cameraTransform.translate.x, 0.05f);
 			ImGui::SliderAngle("CameraRotateX", &cameraTransform.rotate.x);
 			ImGui::SliderAngle("CameraRotateY", &cameraTransform.rotate.y);
-			ImGui::SliderAngle("CameraRotateZ", &cameraTransform.rotate.z);
-			
+			ImGui::SliderAngle("CameraRotateZ", &cameraTransform.rotate.z);*/
+
 			// 球 / Model
-			ImGui::DragFloat3("PlaneTranslate", &transform.translate.x, 0.05f);
+			if (ImGui::CollapsingHeader("Object##Plane"))
+			{
+				ImGui::DragFloat3("Translate##Plane", &transform.translate.x, 0.01f);
+				ImGui::DragFloat3("Rotate##Plane", &transform.rotate.x, 0.01f);
+				ImGui::DragFloat3("Scale##Plane", &transform.scale.x, 0.01f);
+				
+				if (ImGui::CollapsingHeader("Material##Plane"))
+				{
+					ImGui::ColorEdit4("color##Plane", &materialData[0].color.x);
+					ImGui::Checkbox("enableLighting##Plane", (bool*)&materialData[0].enableLighting);
+				}
+			}
+			/*ImGui::DragFloat3("PlaneTranslate", &transform.translate.x, 0.05f);
 			ImGui::SliderAngle("PlaneRotateX", &transform.rotate.x);
 			ImGui::SliderAngle("PlaneRotateY", &transform.rotate.y);
-			ImGui::SliderAngle("PlaneRotateZ", &transform.rotate.z);
-			ImGui::ColorEdit4("color", &materialData[0].color.x);
-			ImGui::Checkbox("enableLighting", (bool*)&materialData[0].enableLighting);
-
+			ImGui::SliderAngle("PlaneRotateZ", &transform.rotate.z);*/
+			
 			// スプライト
-			ImGui::ColorEdit4("colorSprite", &materialDataSprite[0].color.x);
-			ImGui::SliderFloat3("translateSprite", &transformSprite.translate.x, 0.0f, 1280.0f);
+			if (ImGui::CollapsingHeader("Object##Sprite"))
+			{
+				ImGui::DragFloat3("Translate##Sprite", &transformSprite.translate.x, 1.f);
+				ImGui::DragFloat3("Rotate##Sprite", &transformSprite.rotate.x, 0.01f);
+				ImGui::DragFloat3("Scale##Sprite", &transformSprite.scale.x, 0.01f);
+
+				if (ImGui::CollapsingHeader("Material##Sprite"))
+				{
+					// UV
+					ImGui::DragFloat2("UVTranslate##Sprite", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
+					ImGui::SliderAngle("UVRotate##Sprite", &uvTransformSprite.rotate.z);
+					ImGui::DragFloat2("UVScale##Sprite", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
+					
+					ImGui::ColorEdit4("color##Sprite", &materialDataSprite[0].color.x);
+
+				}
+			}
+
+			ImGui::Separator();
+
+			// 平行光源
+			if (ImGui::CollapsingHeader("Light"))
+			{
+				ImGui::ColorEdit3("LightColor", &directionalLightData[0].color.x);
+				ImGui::SliderFloat3("LightDirection", &directionalLightData[0].direction.x, -1.0f, 1.0f);
+				directionalLightData[0].direction = MyTools::Normalize(directionalLightData[0].direction);
+				ImGui::DragFloat("Intensity", &directionalLightData[0].intensity, 0.05f);
+			}
 
 			// テクスチャ
 			ImGui::Checkbox("useMonsterBall", &useMonsterBall);
-
-			// 平行光源
-			ImGui::ColorEdit3("LightColor", &directionalLightData[0].color.x);
-			ImGui::SliderFloat3("LightDirection", &directionalLightData[0].direction.x, -1.0f, 1.0f);
-			directionalLightData[0].direction = MyTools::Normalize(directionalLightData[0].direction);
-			ImGui::DragFloat("Intensity", &directionalLightData[0].intensity, 0.05f);
-
-			// UV
-			ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
-			ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
-			ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
 
 			ImGui::End();
 #endif // _DEBUG
@@ -1232,10 +1257,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			uvTransformMatrix = Matrix::Multiply(uvTransformMatrix, Matrix::MakeRotateZMatrix4x4(uvTransformSprite.rotate.z));
 			uvTransformMatrix = Matrix::Multiply(uvTransformMatrix, Matrix::MakeTranslateMatrix(uvTransformSprite.translate));
 			materialDataSprite->uvTransform = uvTransformMatrix;
-
-#ifdef _DEBUG
-
-#endif // _DEBUG
 
 			// これから書き込むバックバッファのインデックスを取得
 			UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
@@ -1306,7 +1327,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			// 平行光源用のCBufferの場所を設定
 			commandList->SetGraphicsRootConstantBufferView(3, directionalLightResource.Get()->GetGPUVirtualAddress());
 			// 描画！(DrawCall/ドローコール)
-			//commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+			commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
 			// 実際のcommandListのImGuiの描画コマンドを積む
 			ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList.Get());
