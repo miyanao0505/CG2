@@ -9,7 +9,6 @@ void Input::Initialize(HINSTANCE hInstance, HWND hwnd)
 	HRESULT hr;
 
 	// DirectInputの初期化
-	ComPtr<IDirectInput8> directInput = nullptr;
 	hr = DirectInput8Create(hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
 	assert(SUCCEEDED(hr));
 
@@ -29,10 +28,33 @@ void Input::Initialize(HINSTANCE hInstance, HWND hwnd)
 /// 更新
 void Input::Update()
 {
-	// キーボード情報の取得開始
-	keyboard->Acquire();
+	HRESULT hr;
 
+	// 前回のキー入力を保存
+	memcpy(keyPre, key, sizeof(key));
+
+	// キーボード情報の取得開始
+	hr = keyboard->Acquire();
 	// 全キーの入力状態を取得する
-	BYTE key[256] = {};
-	keyboard->GetDeviceState(sizeof(key), key);
+	hr = keyboard->GetDeviceState(sizeof(key), key);
+}
+
+/// キーのトリガーをチェック
+bool Input::TriggerKey(BYTE keyNumber){
+	// 指定キーを押した時にtrueを返す
+	if (!keyPre[keyNumber] && key[keyNumber]) {
+		return true;
+	}
+	// そうでなければfalseを返す
+	return false;
+}
+
+/// キーの押下をチェック
+bool Input::PushKey(BYTE keyNumber) {
+	// 指定キーを押していればtrueを返す
+	if (key[keyNumber]) {
+		return true;
+	}
+	// そうでなければfalseを返す
+	return false;
 }

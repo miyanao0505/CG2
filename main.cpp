@@ -1178,7 +1178,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		else {
 			// ゲームの処理
 
-			// input->Update(
+			// 入力の更新
+			input->Update();
 
 			// ImGuiにここからフレームが始まる旨を告げる
 #ifdef _DEBUG
