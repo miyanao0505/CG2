@@ -1,5 +1,6 @@
 #pragma once
 #include <Windows.h>
+#include <cstdint>
 
 // WindowsAPI
 class WindowsAPI
@@ -12,6 +13,8 @@ public:	// メンバ関数
 	void Initialize();
 	// 更新
 	void Update();
+	// 終了
+	void Finalize();
 
 public:	// getter
 	HWND GetHwnd() const { return hwnd; }

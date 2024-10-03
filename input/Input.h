@@ -3,6 +3,7 @@
 #include <dinput.h>
 #include <Windows.h>
 #include <wrl.h>
+#include "../base/WindowsAPI.h"
 
 // 入力
 class Input
@@ -12,7 +13,7 @@ public:
 	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 public:	// メンバ関数
 	// 初期化
-	void Initialize(HINSTANCE hInstance, HWND hwnd);
+	void Initialize(WindowsAPI* winApi);
 	// 更新
 	void Update();
 
@@ -35,6 +36,10 @@ private: // メンバ変数
 	ComPtr<IDirectInputDevice8> keyboard;
 	// DirectInputのインスタンス
 	ComPtr<IDirectInput8> directInput;
+
+	// WindowsAPI
+	WindowsAPI* winApi_ = nullptr;
+
 	// 前回の全キーの状態
 	BYTE keyPre[256] = {};
 	// 全キーの状態

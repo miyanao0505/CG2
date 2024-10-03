@@ -1,5 +1,4 @@
 #include "WindowsAPI.h"
-#include <cstdint>
 #include "../externals/imgui/imgui.h"
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -24,7 +23,9 @@ LRESULT CALLBACK WindowsAPI::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPAR
 
 // 初期化
 void WindowsAPI::Initialize(){
-	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+	HRESULT hr;
+
+	hr = CoInitializeEx(0, COINIT_MULTITHREADED);
 
 	// ウィンドウプロシージャ
 	wc.lpfnWndProc = WindowProc;
@@ -66,4 +67,10 @@ void WindowsAPI::Initialize(){
 // 更新
 void WindowsAPI::Update()
 {
+}
+
+// 終了
+void WindowsAPI::Finalize(){
+	CloseWindow(hwnd);
+	CoUninitialize();
 }

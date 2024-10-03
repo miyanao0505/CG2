@@ -432,7 +432,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ポインタ
 	Input* input = nullptr;
-	WindowsAPI* windowsApi = nullptr;
+	WindowsAPI* winApi = nullptr;
+
+#pragma region WindowsAPI
+	// WindowsAPIの初期化
+	winApi = new WindowsAPI();
+	winApi->Initialize();
+#pragma endregion WindowsAPI
+
+#pragma region Input
+	// 入力の初期化
+	input = new Input();
+	input->Initialize(winApi);
+#pragma endregion Input
 
 	// ブレンドモード
 	enum BlendMode {
@@ -558,7 +570,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	swapChainDesc.BufferCount = 2;									// ダブルバッファ
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;		// モニタにうつしたら、中身を破棄
 	// コマンドキュー、ウィンドウハンドル、設定を渡して生成する
-	hr = dxgiFactory->CreateSwapChainForHwnd(commandQueue.Get(), windowsApi->GetHwnd(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain.GetAddressOf()));
+	hr = dxgiFactory->CreateSwapChainForHwnd(commandQueue.Get(), winApi->GetHwnd(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 
 	// ディスクリプタヒープの生成
@@ -625,18 +637,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	IDxcIncludeHandler* includeHandler = nullptr;
 	hr = dxcUtils->CreateDefaultIncludeHandler(&includeHandler);
 	assert(SUCCEEDED(hr));
-
-#pragma region Input
-	// 入力の初期化
-	input = new Input();
-	input->Initialize(windowsApi->GetHInstance(), windowsApi->GetHwnd());
-#pragma endregion Input
-
-#pragma region WindowsAPI
-	// WindowsAPIの初期化
-	windowsApi = new WindowsAPI();
-	windowsApi->Initialize();
-#pragma endregion WindowsAPI
 
 	// DescriptorRange作成
 	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
@@ -1107,7 +1107,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
-	ImGui_ImplWin32_Init(windowsApi->GetHwnd());
+	ImGui_ImplWin32_Init(winApi->GetHwnd());
 	ImGui_ImplDX12_Init(device.Get(), swapChainDesc.BufferCount, rtvDesc.Format, srvDescriptorHeap.Get(), srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
 #endif // _DEBUG
 
@@ -1396,16 +1396,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 	pixelShaderBlob->Release();
 	vertexShaderBlob->Release();
-	CloseHandle(fenceEvent);
-#ifdef _DEBUG
-	
-#endif // _DEBUG
-	CloseWindow(windowsApi->GetHwnd());
 
 	// 入力解放
 	delete input;
+
+	CloseHandle(fenceEvent);
+	// WindowsAPIの終了処理
+	winApi->Finalize();
+
 	// WindowsAPIの解放
-	delete windowsApi;
+	delete winApi;
+	winApi = nullptr;
 
 	return 0;
 }
