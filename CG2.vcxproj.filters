@@ -25,6 +25,12 @@
     <Filter Include="ヘッダー ファイル\Input">
       <UniqueIdentifier>{5fef2883-4e23-4c76-a6f3-9967996d1092}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\base">
+      <UniqueIdentifier>{05987b37-8d38-4d11-8a91-112391d09c8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\base">
+      <UniqueIdentifier>{39e9fc35-1f2f-48b6-bce1-ffec3fcd3378}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -62,6 +68,9 @@
     </ClCompile>
     <ClCompile Include="input\Input.cpp">
       <Filter>ソース ファイル\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="base\WindowsAPI.cpp">
+      <Filter>ソース ファイル\base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -101,6 +110,9 @@
     <ClInclude Include="input\Input.h">
       <Filter>ヘッダー ファイル\Input</Filter>
     </ClInclude>
+    <ClInclude Include="base\WindowsAPI.h">
+      <Filter>ヘッダー ファイル\base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
@@ -119,5 +131,7 @@
     <None Include="resources\shaders\Object3d.hlsli">
       <Filter>シェダー ファイル</Filter>
     </None>
+    <None Include="externals\imgui\imgui.vcxproj" />
+    <None Include="externals\imgui\imgui.vcxproj.filters" />
   </ItemGroup>
 </Project>
