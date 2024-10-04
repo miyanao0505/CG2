@@ -13,6 +13,9 @@ public:	// メンバ関数
 	void Initialize();
 	// 更新
 	void Update();
+
+	// メッセージの処理
+	bool ProcessMessage();
 	// 終了
 	void Finalize();
 

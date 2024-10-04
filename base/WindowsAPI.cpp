@@ -69,6 +69,12 @@ void WindowsAPI::Update()
 {
 }
 
+// メッセージの処理
+bool WindowsAPI::ProcessMessage()
+{
+	return false;
+}
+
 // 終了
 void WindowsAPI::Finalize(){
 	CloseWindow(hwnd);
