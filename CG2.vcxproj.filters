@@ -72,6 +72,9 @@
     <ClCompile Include="base\WindowsAPI.cpp">
       <Filter>ソース ファイル\base</Filter>
     </ClCompile>
+    <ClCompile Include="base\DirectXBase.cpp">
+      <Filter>ソース ファイル\base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Script\Matrix.h">
@@ -111,6 +114,9 @@
       <Filter>ヘッダー ファイル\Input</Filter>
     </ClInclude>
     <ClInclude Include="base\WindowsAPI.h">
+      <Filter>ヘッダー ファイル\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\DirectXBase.h">
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
   </ItemGroup>

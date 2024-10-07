@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="base\DirectXBase.cpp" />
     <ClCompile Include="base\WindowsAPI.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
     <ClCompile Include="externals\imgui\imgui_demo.cpp" />
@@ -26,6 +27,7 @@
     <ClCompile Include="Script\MyTools.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="base\DirectXBase.h" />
     <ClInclude Include="base\WindowsAPI.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
