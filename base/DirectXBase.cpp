@@ -3,6 +3,7 @@
 #include <format>
 #include "Logger.h"
 #include "StringUtility.h"
+#include "../externals/DirectXTex/DirectXTex.h"
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
 
@@ -20,14 +21,17 @@ void DirectXBase::Initialize(WindowsAPI* winApi)
 	winApi_ = winApi;
 
 	// デバイスの生成
-	DeviceCreate();
+	CreateDevice();
 	// コマンド関連の生成
-	CommandCreate();
+	CreateCommand();
 	// スワップチェーンの生成
-	SwapChainCreate();
+	CreateSwapChain();
 	// 深度バッファの生成
+	CreateDepthStencil();
 	// 各種デスクリプタヒープの生成
+	CreateDescriptorHeapAllKinds();
 	// レンダーターゲットビューの初期化
+	InitializeRenderTargetView();
 	// 深度ステンシルビューの初期化
 	// フェンスの生成
 	// ビューポート矩形の生成
@@ -37,7 +41,7 @@ void DirectXBase::Initialize(WindowsAPI* winApi)
 }
 
 // デバイスの生成
-void DirectXBase::DeviceCreate()
+void DirectXBase::CreateDevice()
 {
 	HRESULT hr;
 
@@ -95,10 +99,6 @@ void DirectXBase::DeviceCreate()
 			break;
 		}
 	}
-	// DescriptorSizeを取得しておく
-	//const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	//const uint32_t descriptorSizeRTV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	//const uint32_t descriptorSizeDSV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 	// デバイスの生成がうまくいかなかったので起動できない
 	assert(device_ != nullptr);
 	Log("Complete create D3D12Device!!!\n");	// 初期化完了のログを出す
@@ -138,7 +138,7 @@ void DirectXBase::DeviceCreate()
 }
 
 // コマンド関連の生成
-void DirectXBase::CommandCreate()
+void DirectXBase::CreateCommand()
 {
 	HRESULT hr;
 
@@ -160,7 +160,7 @@ void DirectXBase::CommandCreate()
 }
 
 // スワップチェーンの生成
-void DirectXBase::SwapChainCreate()
+void DirectXBase::CreateSwapChain()
 {
 	HRESULT hr;
 
@@ -176,3 +176,108 @@ void DirectXBase::SwapChainCreate()
 	hr = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_.Get(), winApi_->GetHwnd(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain_.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 }
+
+// 深度バッファの生成
+void DirectXBase::CreateDepthStencil()
+{
+	HRESULT hr;
+
+	// 生成するResourceの設定
+	D3D12_RESOURCE_DESC resourceDesc{};
+	resourceDesc.Width = winApi_->kClientWidth;						// Textureの幅
+	resourceDesc.Height = winApi_->kClientHeight;					// Textureの高さ
+	resourceDesc.MipLevels = 1;										// mipmapの数
+	resourceDesc.DepthOrArraySize = 1;								// 奥行き or 配列Textureの配列数
+	resourceDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;			// DepthStencilとして利用可能なフォーマット
+	resourceDesc.SampleDesc.Count = 1;								// サンプリングカウント。1固定
+	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;	// 2次元
+	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;	// DepthStencilとして使う通知
+
+	// 利用するHeapの設定
+	D3D12_HEAP_PROPERTIES heapProperties{};
+	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;					// VRAM上に作る
+
+	// 深度のクリア設定
+	D3D12_CLEAR_VALUE depthClearValue{};
+	depthClearValue.DepthStencil.Depth = 1.0f;						// 1.0f(最大値)でクリア
+	depthClearValue.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;			// フォーマット。Resourceと合わせる
+
+	// Resourceの生成
+	Microsoft::WRL::ComPtr<ID3D12Resource> resource = nullptr;
+	hr = device_->CreateCommittedResource(
+		&heapProperties,					// Heapの設定
+		D3D12_HEAP_FLAG_NONE,				// Heapの特殊な設定。特になし
+		&resourceDesc,						// Resourceの設定
+		D3D12_RESOURCE_STATE_DEPTH_WRITE,	// 深度値を書き込む状態にしておく
+		&depthClearValue,					// Clear最適値
+		IID_PPV_ARGS(&resource)				// 作成するResourceポインタへのポインタ
+	);
+	assert(SUCCEEDED(hr));
+	depthStencilResource_ = resource;
+}
+
+// デスクリプタヒープの生成
+Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> DirectXBase::CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible)
+{
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap = nullptr;
+	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
+	descriptorHeapDesc.Type = heapType;
+	descriptorHeapDesc.NumDescriptors = numDescriptors;
+	descriptorHeapDesc.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+
+	HRESULT hr = device_->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap));
+
+	assert(SUCCEEDED(hr));
+
+	return descriptorHeap;
+}
+
+// 各種デスクリプタヒープの生成
+void DirectXBase::CreateDescriptorHeapAllKinds()
+{
+	// RTV用のDescriptorSizeを取得しておく
+	descriptorSizeSRV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	// SRV用のDescriptorSizeを取得しておく
+	descriptorSizeRTV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	// DSV用のDescriptorSizeを取得しておく
+	descriptorSizeDSV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+
+	// RTV用のでスクリプタヒープの生成
+	rtvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
+	// SRV用のでスクリプタヒープの生成
+	srvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+	// DSV用のでスクリプタヒープの生成
+	dsvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+}
+
+// レンダーターゲットビューの初期化
+void DirectXBase::InitializeRenderTargetView()
+{
+	HRESULT hr;
+
+	// SwapChainからResourceを引っ張ってくる
+	hr = swapChain_->GetBuffer(0, IID_PPV_ARGS(&swapChainResources[0]));
+	// うまく取得できなければ起動できない
+	assert(SUCCEEDED(hr));
+	hr = swapChain_->GetBuffer(1, IID_PPV_ARGS(&swapChainResources[1]));
+	assert(SUCCEEDED(hr));
+
+	// RTVの設定
+	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
+	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;		// 出力結果をSRGBに変換して書き込む
+	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;	// 2dテクスチャとして書き込む
+	
+	// ディスクリプタの先頭を取得する
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
+
+	// 要素の2つ分
+	for (uint32_t i = 0; i < 2; ++i)
+	{
+		// RTVハンドルを取得
+		rtvHandles[i].ptr = rtvStartHandle.ptr + device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+		// レンダーターゲットビューの生成
+		device_->CreateRenderTargetView(swapChainResources[i].Get(), &rtvDesc, rtvHandles[i]);
+	}
+}
+
+
