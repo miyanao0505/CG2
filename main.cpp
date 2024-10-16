@@ -345,15 +345,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma endregion Input
 
 	// ブレンドモード
-	enum BlendMode {
-		kBlendModeNone,			// ブレンドなし
-		kBlendModeNormal,		// 通常αブレンド。デフォルト。 Src * SrcA + Dest * (1 - SrcA)
-		kBlendModeAdd,			// 加算。 Src * SrcA + Dest * 1
-		kBlendModeSubtract,		// 減算。 Dest * 1 - Src * SrcA
-		kBlendModeMultiply,		// 乗算。 Src * 0 + Dest * Src
-		kBlendModeScreen,		// スクリーン。 Src * (1 - Dest) + Dest * 1
-		kCountOfBlendMode,		// 利用してはいけない
-	};
+	//enum BlendMode {
+	//	kBlendModeNone,			// ブレンドなし
+	//	kBlendModeNormal,		// 通常αブレンド。デフォルト。 Src * SrcA + Dest * (1 - SrcA)
+	//	kBlendModeAdd,			// 加算。 Src * SrcA + Dest * 1
+	//	kBlendModeSubtract,		// 減算。 Dest * 1 - Src * SrcA
+	//	kBlendModeMultiply,		// 乗算。 Src * 0 + Dest * Src
+	//	kBlendModeScreen,		// スクリーン。 Src * (1 - Dest) + Dest * 1
+	//	kCountOfBlendMode,		// 利用してはいけない
+	//};
 
 	
 	// FenceのSignalを待つためのイベントを作成する
@@ -723,40 +723,40 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// カメラ用のリソースを作る。TransformationMatrix 1つ分のサイズを用意する
 	//Microsoft::WRL::ComPtr<ID3D12Resource> transformationResourceCamera = CreateBufferResource(device, sizeof(MyBase::TransformationMatrix));
 	// データを書き込む
-	MyBase::TransformationMatrix* transformationMatrixDataCamera = nullptr;
+	//MyBase::TransformationMatrix* transformationMatrixDataCamera = nullptr;
 	// 書き込むためのアドレスを取得
 	//transformationResourceCamera.Get()->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixDataCamera));
 	// 単位行列を書き込んでおく
-	transformationMatrixDataCamera->WVP = Matrix::MakeIdentity4x4();
-	transformationMatrixDataCamera->World = Matrix::MakeIdentity4x4();
+	//transformationMatrixDataCamera->WVP = Matrix::MakeIdentity4x4();
+	//transformationMatrixDataCamera->World = Matrix::MakeIdentity4x4();
 
 	// 平行光源用のリソースを作る
 	//Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource = CreateBufferResource(device, sizeof(MyBase::DirectionalLight));
 	// データを書き込む
-	MyBase::DirectionalLight* directionalLightData = nullptr;
+	//MyBase::DirectionalLight* directionalLightData = nullptr;
 	// 書き込むためのアドレス取得
 	//directionalLightResource.Get()->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData));
 	// デフォルト値はとりあえず以下のようにしておく
-	directionalLightData->color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	directionalLightData->direction = { 0.0f, -1.0f, 0.0f };
-	directionalLightData->intensity = 1.0f;
+	//directionalLightData->color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	//directionalLightData->direction = { 0.0f, -1.0f, 0.0f };
+	//directionalLightData->intensity = 1.0f;
 
 	// Transform変数を作る
-	MyBase::Transform transform{ { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
-	MyBase::Transform transformSprite{ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
+	//MyBase::Transform transform{ { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
+	//MyBase::Transform transformSprite{ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
 	MyBase::Transform cameraTransform{ { 1.0f, 1.0f, 1.0f }, { 0.3f, 0.0f, 0.0f }, { 0.0f, 4.0f, -10.0f } };
-	MyBase::Transform uvTransformSprite{
+	/*MyBase::Transform uvTransformSprite{
 		{1.0f, 1.0f, 1.0f},
 		{0.0f, 0.0f, 0.0f},
 		{0.0f, 0.0f, 0.0f},
-	};
+	};*/
 
 	// テクスチャ切り替え用
 	//bool useMonsterBall = true;
 
 	// ブレンドモード切替用
-	BlendMode blendMode = kBlendModeNone;
-	int blendIndex = 0;
+	//BlendMode blendMode = kBlendModeNone;
+	//int blendIndex = 0;
 
 	// Textureを読んで転送する
 	//DirectX::ScratchImage mipImages = LoadTexture("resources/uvChecker.png");
@@ -856,12 +856,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// テクスチャ
 		//ImGui::Checkbox("useMonsterBall", &useMonsterBall);
 
-		const char* blendModeIndex[] = { "kBlendModeNone", "kBlendModeNormal", "kBlendModeAdd", "kBlendModeSubtract", "kBlendModeMultiply", "kBlendModeScreen" };
+		/*const char* blendModeIndex[] = { "kBlendModeNone", "kBlendModeNormal", "kBlendModeAdd", "kBlendModeSubtract", "kBlendModeMultiply", "kBlendModeScreen" };
 		ImGui::Combo("Blend", &blendIndex, blendModeIndex, IM_ARRAYSIZE(blendModeIndex));
-		blendMode = (BlendMode)blendIndex;
+		blendMode = (BlendMode)blendIndex;*/
 
 		// ブレンドモード
-		switch (blendMode)
+		/*switch (blendMode)
 		{
 		case kBlendModeNone:
 			blendDesc.RenderTarget[0].BlendEnable = false;
@@ -898,7 +898,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			break;
 		default:
 			break;
-		}
+		}*/
 
 		// 平行光源
 		/*ImGui::ColorEdit3("LightColor", &directionalLightData[0].color.x);
@@ -915,7 +915,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #endif // _DEBUG
 
 		// WorldMatrixの作成
-		MyBase::Matrix4x4 worldMatrix = Matrix::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
+		//MyBase::Matrix4x4 worldMatrix = Matrix::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 		// カメラのWorldMatrixの作成
 		MyBase::Matrix4x4 cameraMatrix = Matrix::MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
 		// ビュー行列の作成
@@ -923,23 +923,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// 透視投影行列の作成
 		MyBase::Matrix4x4 projectionMatrix = Matrix::MakePerspectiveFovMatrix(0.45f, float(WindowsAPI::kClientWidth) / float(WindowsAPI::kClientHeight), 0.1f, 500.0f);
 		// WVP行列の作成
-		MyBase::Matrix4x4 worldViewProjectionMatrix = Matrix::Multiply(worldMatrix, Matrix::Multiply(viewMatrix, projectionMatrix));
+		//MyBase::Matrix4x4 worldViewProjectionMatrix = Matrix::Multiply(worldMatrix, Matrix::Multiply(viewMatrix, projectionMatrix));
 		// CBufferの中身を更新
 		//transformationMatrixData[0].WVP = worldViewProjectionMatrix;
 		//transformationMatrixData[0].World = worldMatrix;
 
 		// Sprite用のWorldViewProgectionMatrixを作る
-		Matrix::Matrix4x4 worldMatrixSprite = Matrix::MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
+		/*Matrix::Matrix4x4 worldMatrixSprite = Matrix::MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
 		Matrix::Matrix4x4 viewMatrixSprite = Matrix::MakeIdentity4x4();
 		Matrix::Matrix4x4 projectionMatrixSprite = Matrix::MakeOrthographicMatrix(0.0f, 0.0f, float(WindowsAPI::kClientWidth), float(WindowsAPI::kClientHeight), 0.0f, 100.0f);
-		Matrix::Matrix4x4 worldViewProjectionMatrixSprite = Matrix::Multiply(worldMatrixSprite, Matrix::Multiply(viewMatrixSprite, projectionMatrixSprite));
+		Matrix::Matrix4x4 worldViewProjectionMatrixSprite = Matrix::Multiply(worldMatrixSprite, Matrix::Multiply(viewMatrixSprite, projectionMatrixSprite));*/
 		//transformationMatrixDataSprite[0].WVP = worldViewProjectionMatrixSprite;
 		//transformationMatrixDataSprite[0].World = worldMatrixSprite;
 
 		// UVTransform用
-		Matrix::Matrix4x4 uvTransformMatrix = Matrix::MakeScaleMatrix(uvTransformSprite.scale);
+		/*Matrix::Matrix4x4 uvTransformMatrix = Matrix::MakeScaleMatrix(uvTransformSprite.scale);
 		uvTransformMatrix = Matrix::Multiply(uvTransformMatrix, Matrix::MakeRotateZMatrix4x4(uvTransformSprite.rotate.z));
-		uvTransformMatrix = Matrix::Multiply(uvTransformMatrix, Matrix::MakeTranslateMatrix(uvTransformSprite.translate));
+		uvTransformMatrix = Matrix::Multiply(uvTransformMatrix, Matrix::MakeTranslateMatrix(uvTransformSprite.translate));*/
 		//materialDataSprite->uvTransform = uvTransformMatrix;
 
 		// これから書き込むバックバッファのインデックスを取得

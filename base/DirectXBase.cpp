@@ -174,9 +174,6 @@ void DirectXBase::CreateDevice()
 		filter.DenyList.pSeverityList = severities;
 		// 指定したメッセージの表示を抑制する
 		infoQueue->PushStorageFilter(&filter);
-
-		// 解放
-		infoQueue->Release();
 	}
 #endif // _DEBUG
 
