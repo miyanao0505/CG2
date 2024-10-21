@@ -12,6 +12,11 @@ class DirectXBase
 public:	// メンバ関数
 	// 初期化
 	void Initialize(WindowsAPI* winApi);
+	// 描画前処理
+	void PreDraw();
+	// 描画後処理
+	void PostDraw();
+
 	// SRVの指定番号のCPUデスクリプタハンドルを取得する
 	D3D12_CPU_DESCRIPTOR_HANDLE GetSRVCPUDescriptorHandle(uint32_t index);
 	// SRVの指定番号のGPUデスクリプタハンドルを取得する
@@ -82,6 +87,11 @@ private:	// メンバ変数
 	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> swapChainResources_;
 	// 取得したRTVハンドル
 	std::array<D3D12_CPU_DESCRIPTOR_HANDLE, 2> rtvHandles_;
+	// Fence
+	Microsoft::WRL::ComPtr<ID3D12Fence> fence_;
+	// FenceのSignal
+	uint64_t fenceValue_;
+	HANDLE fenceEvent_;
 	// ビューポート矩形
 	D3D12_VIEWPORT viewport_;
 	// シザー矩形

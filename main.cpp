@@ -318,8 +318,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	CoInitializeEx(0, COINIT_MULTITHREADED);
 
 	D3DResourceLeakChecker leakCheck;
-	
-	
 
 	// ポインタ
 	Input* input = nullptr;
@@ -354,11 +352,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//	kBlendModeScreen,		// スクリーン。 Src * (1 - Dest) + Dest * 1
 	//	kCountOfBlendMode,		// 利用してはいけない
 	//};
-
-	
-	// FenceのSignalを待つためのイベントを作成する
-	HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-	assert(fenceEvent != nullptr);
 
 	// DescriptorRange作成
 	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
@@ -770,9 +763,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//Microsoft::WRL::ComPtr<ID3D12Resource> textureResource2 = CreateTextureResource(device, metadata2);
 	//Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource2 = UploadTextureData(textureResource2, mipImages2, device, commandList);
 
-	// DepthStencilTextureをウィンドウのサイズで作成
-	//Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource = CreateDepthStencilTextureResource(device, WindowsAPI::kClientWidth, WindowsAPI::kClientHeight);
-
 	// metaDataを基にSRVの設定
 	//D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	//srvDesc.Format = metadata.format;
@@ -942,50 +932,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		uvTransformMatrix = Matrix::Multiply(uvTransformMatrix, Matrix::MakeTranslateMatrix(uvTransformSprite.translate));*/
 		//materialDataSprite->uvTransform = uvTransformMatrix;
 
-		// これから書き込むバックバッファのインデックスを取得
-		//UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
-
-		// TransitionBarrierの設定
-		D3D12_RESOURCE_BARRIER barrier{};
-		// 今回のバリアはTransition
-		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		// Novneにしておく
-		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-		// バリアを張る対象のリソース。現在のバックバッファに対して行う
-		//barrier.Transition.pResource = swapChainResources[backBufferIndex].Get();
-		// 遷移前(現在)のResourceState
-		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-		// 遷移後のResourceState
-		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-		// TransitionBarrierを張る
-		//commandList->ResourceBarrier(1, &barrier);
-
 		// ImGuiの内部コマンドを生成する
 #ifdef _DEBUG
 		ImGui::Render();
 #endif // _DEBUG
 
-		// 描画先のRTVとDSVを設定する
-		//D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-		//commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, &dsvHandle);
-		//// 指定した深度で画面全体をクリアする
-		//commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-		//// 指定した色で画面全体をクリアする
-		//float clearColor[] = { 0.1f, 0.25f, 0.5f, 1.0f };	// 青っぽい色。RGBAの順
-		//commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], clearColor, 0, nullptr);
+		// 描画前処理
+		dxBase->PreDraw();
 
-		//// 描画用のDescriptorHeapの設定
-		//Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeaps[] = { srvDescriptorHeap };
-		//commandList->SetDescriptorHeaps(1, descriptorHeaps->GetAddressOf());
 
 		//// コマンドを積む
-		//commandList->RSSetViewports(1, &viewport);			// Viewportを設定
-		//commandList->RSSetScissorRects(1, &scissorRect);	// Scirssorを設定
 		//// RootSignatureを設定。PSOに設定しているけど別途設定が必要
 		//commandList->SetGraphicsRootSignature(rootSignature.Get());
 		//commandList->SetPipelineState(graphicsPipelineState.Get());		// PSOを設定
 		//commandList->IASetVertexBuffers(0, 1, &vertexBufferView);	// VBVを設定
-		////commandList->IASetIndexBuffer(&indexBufferView);			// IBVを設定
+		//commandList->IASetIndexBuffer(&indexBufferView);			// IBVを設定
 		//// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えて置けば良い
 		//commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		//// マテリアルCBufferの場所を設定
@@ -993,12 +954,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//// WVP用のCBufferの場所を設定
 		//commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResource.Get()->GetGPUVirtualAddress());
 		//// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
-		////commandList->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU2 : textureSrvHandleGPU);
+		//commandList->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU2 : textureSrvHandleGPU);
 		//commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU2);
 		//// 平行光源用のCBufferの場所を設定
 		//commandList->SetGraphicsRootConstantBufferView(3, directionalLightResource.Get()->GetGPUVirtualAddress());
 		//// 描画！(DrawCall/ドローコール)。3頂点で1つのインスタンス。インスタンスについては今後
-		////commandList->DrawIndexedInstanced(indexNum, 1, 0, 0, 0);
+		//commandList->DrawIndexedInstanced(indexNum, 1, 0, 0, 0);
 		//commandList->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
 
 		//// Spriteの描画。変更が必要なものだけ変更する
@@ -1006,7 +967,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//commandList->IASetIndexBuffer(&indexBufferViewSprite);					// IBVを設定
 		//// マテリアルCBufferの場所を設定
 		//commandList->SetGraphicsRootConstantBufferView(0, materialResourceSprite.Get()->GetGPUVirtualAddress());
-		//// TransformationMatrixCBufferの場所を設定
+		// TransformationMatrixCBufferの場所を設定
 		//commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSparite.Get()->GetGPUVirtualAddress());
 		//// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
 		//commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
@@ -1020,43 +981,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList.Get());
 #endif // _DEBUG
 
-		// 画面に描く処理はすべて終わり、画面に映すので、状態を遷移
-		// 今回はRenderTargetからPresentにする
-		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-		// TransitionBarrierを張る
-		//commandList->ResourceBarrier(1, &barrier);
+		// 描画後処理
+		dxBase->PostDraw();
 
-		// コマンドリストの内容を確定させる。すべてコマンドを積んでからCloseすること
-		//hr = commandList->Close();
-		//assert(SUCCEEDED(hr));
-
-		// GPUにコマンドリストの実行を行わせる
-		//Microsoft::WRL::ComPtr<ID3D12CommandList> commandLists[] = { commandList.Get()};
-		//commandQueue->ExecuteCommandLists(1, commandLists->GetAddressOf());
-		// GPUとOSに画面の交換を行うよう通知する
-		//swapChain->Present(1, 0);
-
-		// Fenceの値を更新
-		//fenceValue++;
-		// GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
-		//commandQueue->Signal(fence.Get(), fenceValue);
-
-		// Fenceの値が指定したSignal値にたどり着いているか確認する
-		// GetCompletedValueの初期値はFence作成時に渡した初期値
-		//if (fence->GetCompletedValue() < fenceValue)
-		//{
-		//	// 指定したSignalにたどりついていないので、たどり着くまで待つようにイベントを設定する
-		//	fence->SetEventOnCompletion(fenceValue, fenceEvent);
-		//	// イベント待つ
-		//	WaitForSingleObject(fenceEvent, INFINITE);
-		//}
-
-		// 次のフレーム用のコマンドリストを準備
-		//hr = commandAllocator->Reset();
-		//assert(SUCCEEDED(hr));
-		//hr = commandList->Reset(commandAllocator.Get(), nullptr);
-		//assert(SUCCEEDED(hr));
 	}
 
 	// COMの終了処理
@@ -1082,7 +1009,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// DirectX解放
 	delete dxBase;
 
-	CloseHandle(fenceEvent);
 	// WindowsAPIの終了処理
 	winApi->Finalize();
 
