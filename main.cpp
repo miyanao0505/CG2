@@ -169,7 +169,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma region 基盤システム初期化
 	// スプライト共通部の初期化
 	spriteBase = new SpriteBase;
-	spriteBase->Initialize();
+	spriteBase->Initialize(dxBase);
 #pragma endregion 基盤システム初期化
 
 #pragma region シーン初期化
@@ -771,8 +771,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::Render();
 #endif // _DEBUG
 
-		// 描画前処理
+		// DirectXの描画前処理。全ての描画に共通のグラフィックスコマンドを積む
 		dxBase->PreDraw();
+
+		// Spriteの描画準備。Spriteの描画に共通のグラフィックスコマンドを積む
+		spriteBase->SetCommonScreen();
 
 
 		// コマンドを積む
