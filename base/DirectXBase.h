@@ -4,6 +4,7 @@
 #include <dxcapi.h>
 #include <wrl.h>
 #include <array>
+#include <chrono>
 #include "Logger.h"
 #include "StringUtility.h"
 #include "WindowsAPI.h"
@@ -97,6 +98,11 @@ private:
 	// ImGuiの初期化
 	void InitializeImGui();
 
+	// FPS固定初期化
+	void InitializeFixFPS();
+	// FPS固定更新
+	void UpdateFixFPS();
+
 private:	// メンバ変数
 	// DirectX12デバイス
 	Microsoft::WRL::ComPtr<ID3D12Device> device_;
@@ -152,5 +158,9 @@ private:	// メンバ変数
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource_;
+
+	// 記録時間(FPS固定用)
+	std::chrono::steady_clock::time_point reference_;
+
 };
 
