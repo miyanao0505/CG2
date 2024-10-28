@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="base\D3DResourceLeakChecker.cpp" />
     <ClCompile Include="base\DirectXBase.cpp" />
     <ClCompile Include="base\Logger.cpp" />
     <ClCompile Include="base\StringUtility.cpp" />
@@ -29,6 +30,7 @@
     <ClCompile Include="Script\MyTools.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="base\D3DResourceLeakChecker.h" />
     <ClInclude Include="base\DirectXBase.h" />
     <ClInclude Include="base\Logger.h" />
     <ClInclude Include="base\StringUtility.h" />
