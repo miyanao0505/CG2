@@ -9,6 +9,8 @@
 #include "base/WindowsAPI.h"
 #include "base/DirectXBase.h"
 #include "base/D3DResourceLeakChecker.h"
+#include "2d/SpriteBase.h"
+#include "2d/Sprite.h"
 #include "Script/MyTools.h"
 #include "Script/Matrix.h"
 #include "Script/MyBase.h"
@@ -138,28 +140,43 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	D3DResourceLeakChecker leakCheck;
 	HRESULT hr;
 
+#pragma region ポインタ置き場
 	// ポインタ
-	Input* input = nullptr;
 	WindowsAPI* winApi = nullptr;
 	DirectXBase* dxBase = nullptr;
+	Input* input = nullptr;
+	SpriteBase* spriteBase = nullptr;
+#pragma endregion ポインタ置き場
 
-#pragma region WindowsAPI
+#pragma region ゲームウィンドウ作成
 	// WindowsAPIの初期化
 	winApi = new WindowsAPI();
 	winApi->Initialize();
-#pragma endregion WindowsAPI
+#pragma endregion ゲームウィンドウ作成
 
-#pragma region DirectXBase
+#pragma region DirectX初期化
 	// DirectXBaseの初期化
 	dxBase = new DirectXBase();
 	dxBase->Initialize(winApi);
-#pragma endregion DirectXBase
+#pragma endregion DirectX初期化
 
-#pragma region Input
+#pragma region 汎用機能初期化
 	// 入力の初期化
 	input = new Input();
 	input->Initialize(winApi);
-#pragma endregion Input
+#pragma endregion 汎用機能初期化
+
+#pragma region 基盤システム初期化
+	// スプライト共通部の初期化
+	spriteBase = new SpriteBase;
+	spriteBase->Initialize();
+#pragma endregion 基盤システム初期化
+
+#pragma region シーン初期化
+	// スプライトの初期化
+	Sprite* sprite = new Sprite();
+	sprite->Initialize();
+#pragma endregion シーン初期化
 
 	// ブレンドモード
 	//enum BlendMode {
@@ -815,7 +832,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #endif // _DEBUG
 
 	// 解放処理
-
+	// スプライト
+	delete sprite;
+	// スプライト共通部
+	delete spriteBase;
 	// 入力解放
 	delete input;
 	// DirectX解放
