@@ -17,16 +17,6 @@ public:
 	/// 
 	/// ツール関数 ここから
 	/// 
-
-	/// <summary>
-	/// マウスカーソルの座標を取得する関数
-	/// </summary>
-	/// <param name="kWindowWidth">ウィンドウの横幅</param>
-	/// <param name="kWindowHeight">ウィンドウの縦幅</param>
-	/// <param name="viewMatrix">ビュー行列</param>
-	/// <param name="projectionMatrix">プロジェクション行列</param>
-	/// <returns></returns>
-	//static Vector3 GetMousePosition(const float& kWindowWidth, const float& kWindowHeight, const Matrix4x4& viewMatrix, const Matrix4x4& projectionMatrix);
 	
 	/// <summary>
 	/// 範囲内の値を返す関数
