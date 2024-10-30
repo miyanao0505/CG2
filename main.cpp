@@ -173,9 +173,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma endregion 基盤システム初期化
 
 #pragma region シーン初期化
-	// スプライトの初期化
-	Sprite* sprite = new Sprite();
-	sprite->Initialize(spriteBase);
+	std::vector<Sprite*> sprites;
+	for (uint32_t i = 0; i < 5; ++i)
+	{
+		// スプライトの初期化
+		Sprite* sprite = new Sprite();
+		sprite->Initialize(spriteBase);
+		sprites.push_back(sprite);
+	}
 #pragma endregion シーン初期化
 
 	// ブレンドモード
@@ -547,6 +552,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//materialDataSprite->enableLighting = false;
 	//// 単位行列で初期化
 	//materialDataSprite->uvTransform = Matrix::MakeIdentity4x4();
+
+	// spriteのテスト
+	uint32_t i = 0;
+	for (Sprite* sprite : sprites)
+	{
+		sprite->SetPosition({ 0.0f + float(i) * 200.f, 0.0f });
+		sprite->SetSize({ 100.f, 100.f });
+		++i;
+	}
+
 #pragma endregion
 
 	// カメラ用のリソースを作る。TransformationMatrix 1つ分のサイズを用意する
@@ -674,8 +689,36 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::Checkbox("enableLighting", (bool*)&materialData[0].enableLighting);*/
 
 		// スプライト
-		//ImGui::ColorEdit4("colorSprite", &materialDataSprite[0].color.x);
-		ImGui::SliderFloat3("translateSprite", &transformSprite.translate.x, 0.0f, 1280.0f);
+		uint32_t spriteIDIndex = 0;
+		for(Sprite* sprite : sprites)
+		{
+			ImGui::PushID(spriteIDIndex);
+			if (ImGui::CollapsingHeader("Object"))
+			{
+				// 移動
+				transformSprite.translate = { sprite->GetPosition().x, sprite->GetPosition().y, 0.0f };
+				ImGui::SliderFloat3("Translate", &transformSprite.translate.x, 0.0f, 640.0f);
+				sprite->SetPosition(MyBase::Vector2(transformSprite.translate.x, transformSprite.translate.y));
+				// 回転
+				float rotation = sprite->GetRotation();
+				ImGui::SliderAngle("Rotate", &rotation);
+				sprite->SetRotation(rotation);
+				// 拡縮
+				MyBase::Vector2 size = sprite->GetSize();
+				ImGui::SliderFloat2("Scale", &size.x, 0.0f, 640.f);
+				sprite->SetSize(size);
+
+				if (ImGui::CollapsingHeader("Material"))
+				{
+					// 色
+					MyBase::Vector4 color = sprite->GetColor();
+					ImGui::ColorEdit4("color", &color.x);
+					sprite->SetColor(color);
+				}
+			}
+			ImGui::PopID();
+			++spriteIDIndex;
+		}
 
 		// テクスチャ
 		//ImGui::Checkbox("useMonsterBall", &useMonsterBall);
@@ -759,7 +802,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix::Matrix4x4 worldViewProjectionMatrixSprite = Matrix::Multiply(worldMatrixSprite, Matrix::Multiply(viewMatrixSprite, projectionMatrixSprite));
 		transformationMatrixDataSprite[0].WVP = worldViewProjectionMatrixSprite;
 		transformationMatrixDataSprite[0].World = worldMatrixSprite;*/
-		sprite->Update();
+		for (Sprite* sprite : sprites)
+		{
+			sprite->Update();
+		}
 
 		// UVTransform用
 		/*Matrix::Matrix4x4 uvTransformMatrix = Matrix::MakeScaleMatrix(uvTransformSprite.scale);
@@ -815,7 +861,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//// 描画！(DrawCall/ドローコール)
 		//dxBase->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
-		sprite->Draw();
+		for (Sprite* sprite : sprites)
+		{
+			sprite->Draw();
+		}
 
 		// 実際のcommandListのImGuiの描画コマンドを積む
 #ifdef _DEBUG
@@ -839,7 +888,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// 解放処理
 	// スプライト
-	delete sprite;
+	for (Sprite* sprite : sprites)
+	{
+		delete sprite;
+	}
 	// スプライト共通部
 	delete spriteBase;
 	// 入力解放

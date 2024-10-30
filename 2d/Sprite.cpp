@@ -22,24 +22,31 @@ void Sprite::Initialize(SpriteBase* spriteBase)
 void Sprite::Update()
 {
 	// 頂点リソースにデータを書き込む(4点分)
-	vertexData_[0].position = { 0.0f, 360.0f, 0.0f, 1.0f };		// 左下
+	// 左下
+	vertexData_[0].position = { 0.0f, 1.0f, 0.0f, 1.0f };
 	vertexData_[0].texcoord = { 0.0f, 1.0f };
 	vertexData_[0].normal = { 0.0f, 0.0f, -1.0f };
-	vertexData_[1].position = { 0.0f, 0.0f, 0.0f, 1.0f };		// 左上
+	// 左上
+	vertexData_[1].position = { 0.0f, 0.0f, 0.0f, 1.0f };
 	vertexData_[1].texcoord = { 0.0f, 0.0f };
 	vertexData_[1].normal = { 0.0f, 0.0f, -1.0f };
-	vertexData_[2].position = { 640.f, 360.f, 0.0f, 1.0f };		// 右下
+	// 右下
+	vertexData_[2].position = { 1.f, 1.f, 0.0f, 1.0f };
 	vertexData_[2].texcoord = { 1.0f, 1.0f };
 	vertexData_[2].normal = { 0.0f, 0.0f, -1.0f };
-	vertexData_[3].position = { 640.f, 0.0f, 0.0f, 1.0f };		// 右上
+	// 右上
+	vertexData_[3].position = { 1.f, 0.0f, 0.0f, 1.0f };
 	vertexData_[3].texcoord = { 1.0f, 0.0f };
 	vertexData_[3].normal = { 0.0f, 0.0f, -1.0f };
 	// インデックスリソースにデータを書き込む(6個分)
 	indexData_[0] = 0;		indexData_[1] = 1;		indexData_[2] = 2;
 	indexData_[3] = 1;		indexData_[4] = 3;		indexData_[5] = 2;
 
-	// Transform情報を得る
+	// Transform情報を作る
 	MyBase::Transform transform = { {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
+	transform.translate = { position_.x, position_.y, 0.0f };
+	transform.rotate = { 0.0f, 0.0f, rotation_ };
+	transform.scale = { size_.x, size_.y, 1.0f };
 	// TransformからWorldMatrixを作る
 	Matrix::Matrix4x4 worldMatrix = Matrix::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 	// ViewMatrixを作って単位行列を代入
