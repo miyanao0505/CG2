@@ -3,10 +3,11 @@
 #include "../Script/Matrix.h"
 
 // 初期化
-void Sprite::Initialize(SpriteBase* spriteBase)
+void Sprite::Initialize(SpriteBase* spriteBase, std::string textureFilePath)
 {
 	// 引数を受け取ってメンバ変数に記録する
 	spriteBase_ = spriteBase;
+	textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByFilePath(textureFilePath);
 
 	// 頂点データの作成
 	CreateVertexData();
@@ -71,7 +72,7 @@ void Sprite::Draw()
 	spriteBase_->GetDxBase()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource_.Get()->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableの先頭を設定
-	spriteBase_->GetDxBase()->GetCommandList()->SetGraphicsRootDescriptorTable(2, spriteBase_->GetDxBase()->GetSRVGPUDescriptorHandle(1));
+	spriteBase_->GetDxBase()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureIndex_));
 	// 描画！(DrawCall/ドローコール)
 	spriteBase_->GetDxBase()->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }

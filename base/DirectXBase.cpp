@@ -15,6 +15,8 @@ using namespace DirectX;
 using namespace Logger;
 using namespace StringUtility;
 
+const uint32_t DirectXBase::kMaxSRVCount = 512;
+
 // 初期化
 void DirectXBase::Initialize(WindowsAPI* winApi)
 {
@@ -551,7 +553,7 @@ void DirectXBase::CreateDescriptorHeapAllKinds()
 	// RTV用のでスクリプタヒープの生成
 	rtvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
 	// SRV用のでスクリプタヒープの生成
-	srvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+	srvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, kMaxSRVCount, true);
 	// DSV用のでスクリプタヒープの生成
 	dsvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 }

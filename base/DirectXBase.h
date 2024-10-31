@@ -21,23 +21,6 @@ public:	// メンバ関数
 	// 描画後処理
 	void PostDraw();
 
-	// SRVの指定番号のCPUデスクリプタハンドルを取得する
-	D3D12_CPU_DESCRIPTOR_HANDLE GetSRVCPUDescriptorHandle(uint32_t index);
-	// SRVの指定番号のGPUデスクリプタハンドルを取得する
-	D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUDescriptorHandle(uint32_t index);
-	// RTVの指定番号のCPUデスクリプタハンドルを取得する
-	D3D12_CPU_DESCRIPTOR_HANDLE GetRTVCPUDescriptorHandle(uint32_t index);
-	// RTVの指定番号のGPUデスクリプタハンドルを取得
-	D3D12_GPU_DESCRIPTOR_HANDLE GetRTVGPUDescriptorHandle(uint32_t index);
-	// DSVの指定番号のCPUデスクリプタハンドルを取得
-	D3D12_CPU_DESCRIPTOR_HANDLE GetDSVCPUDescriptorHandle(uint32_t index);
-	// DSVの指定番号のGPUデスクリプタハンドルを取得
-	D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
-
-	// getter
-	ID3D12Device* GetDevice() const { return device_.Get(); }
-	ID3D12GraphicsCommandList* GetCommandList() const { return commandList_.Get(); }
-
 	/// <summary>
 	/// ShaderをCompileをする関数
 	/// </summary>
@@ -65,6 +48,25 @@ public:	// メンバ関数
 	/// <param name="filePath">テクスチャファイルのパス</param>
 	/// <returns>画像イメージデータ</returns>
 	static DirectX::ScratchImage LoadTexture(const std::string& filePath);
+
+
+public:	// getter
+
+	// SRVの指定番号のCPUデスクリプタハンドルを取得する
+	D3D12_CPU_DESCRIPTOR_HANDLE GetSRVCPUDescriptorHandle(uint32_t index);
+	// SRVの指定番号のGPUデスクリプタハンドルを取得する
+	D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUDescriptorHandle(uint32_t index);
+	// RTVの指定番号のCPUデスクリプタハンドルを取得する
+	D3D12_CPU_DESCRIPTOR_HANDLE GetRTVCPUDescriptorHandle(uint32_t index);
+	// RTVの指定番号のGPUデスクリプタハンドルを取得
+	D3D12_GPU_DESCRIPTOR_HANDLE GetRTVGPUDescriptorHandle(uint32_t index);
+	// DSVの指定番号のCPUデスクリプタハンドルを取得
+	D3D12_CPU_DESCRIPTOR_HANDLE GetDSVCPUDescriptorHandle(uint32_t index);
+	// DSVの指定番号のGPUデスクリプタハンドルを取得
+	D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
+
+	ID3D12Device* GetDevice() const { return device_.Get(); }
+	ID3D12GraphicsCommandList* GetCommandList() const { return commandList_.Get(); }
 
 private:
 	// デバイスの生成
@@ -161,6 +163,10 @@ private:	// メンバ変数
 
 	// 記録時間(FPS固定用)
 	std::chrono::steady_clock::time_point reference_;
+
+public: // メンバ定数
+	// 最大SRV数(最大テクスチャ枚数)
+	static const uint32_t kMaxSRVCount;
 
 };
 

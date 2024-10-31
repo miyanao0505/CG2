@@ -2,6 +2,7 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include "../Script/MyBase.h"
+#include "../2d/TextureManager.h"
 
 // 前方宣言
 class SpriteBase;
@@ -11,7 +12,7 @@ class Sprite
 {
 public:	// メンバ関数
 	// 初期化
-	void Initialize(SpriteBase* spriteBase);
+	void Initialize(SpriteBase* spriteBase, std::string textureFilePath);
 	// 更新処理
 	void Update();
 	// 描画処理
@@ -36,6 +37,8 @@ public:	// setter
 	void SetColor(const MyBase::Vector4& color) { materialData_->color = color; }
 	// サイズのセット
 	void SetSize(const MyBase::Vector2& size) { size_ = size; }
+	// テクスチャのセット
+	void SetTexture(std::string textureFilePath){ textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByFilePath(textureFilePath); }
 
 private:	// メンバ関数
 	// 頂点データ作成
@@ -60,6 +63,9 @@ private:	// メンバ変数
 	// バッファリソースの使い道を補足するバッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};									// vertex
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};										// index
+
+	// テクスチャ番号
+	uint32_t textureIndex_ = 0;
 
 	// 座標
 	MyBase::Vector2 position_ = { 0.0f, 0.0f };

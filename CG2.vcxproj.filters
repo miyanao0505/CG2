@@ -96,6 +96,9 @@
     <ClCompile Include="2d\Sprite.cpp">
       <Filter>ソース ファイル\2d</Filter>
     </ClCompile>
+    <ClCompile Include="2d\TextureManager.cpp">
+      <Filter>ソース ファイル\2d</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Script\Matrix.h">
@@ -153,6 +156,9 @@
       <Filter>ヘッダー ファイル\2d</Filter>
     </ClInclude>
     <ClInclude Include="2d\Sprite.h">
+      <Filter>ヘッダー ファイル\2d</Filter>
+    </ClInclude>
+    <ClInclude Include="2d\TextureManager.h">
       <Filter>ヘッダー ファイル\2d</Filter>
     </ClInclude>
   </ItemGroup>

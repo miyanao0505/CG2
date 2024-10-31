@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClCompile Include="2d\Sprite.cpp" />
     <ClCompile Include="2d\SpriteBase.cpp" />
+    <ClCompile Include="2d\TextureManager.cpp" />
     <ClCompile Include="base\D3DResourceLeakChecker.cpp" />
     <ClCompile Include="base\DirectXBase.cpp" />
     <ClCompile Include="base\Logger.cpp" />
@@ -34,6 +35,7 @@
   <ItemGroup>
     <ClInclude Include="2d\Sprite.h" />
     <ClInclude Include="2d\SpriteBase.h" />
+    <ClInclude Include="2d\TextureManager.h" />
     <ClInclude Include="base\D3DResourceLeakChecker.h" />
     <ClInclude Include="base\DirectXBase.h" />
     <ClInclude Include="base\Logger.h" />

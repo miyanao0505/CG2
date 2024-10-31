@@ -11,6 +11,7 @@
 #include "base/D3DResourceLeakChecker.h"
 #include "2d/SpriteBase.h"
 #include "2d/Sprite.h"
+#include "2d/TextureManager.h"
 #include "Script/MyTools.h"
 #include "Script/Matrix.h"
 #include "Script/MyBase.h"
@@ -173,14 +174,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma endregion 基盤システム初期化
 
 #pragma region シーン初期化
+	// テクスチャマネージャの初期化
+	TextureManager::GetInstance()->Initialize(dxBase);
+
+	// テクスチャの読み込み
+	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
+	//TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
+
 	std::vector<Sprite*> sprites;
 	for (uint32_t i = 0; i < 5; ++i)
 	{
 		// スプライトの初期化
 		Sprite* sprite = new Sprite();
-		sprite->Initialize(spriteBase);
+		sprite->Initialize(spriteBase, "resources/uvChecker.png");
 		sprites.push_back(sprite);
 	}
+
+	//sprites[1]->SetTexture("resources/monsterBall.png");
+	//sprites[3]->SetTexture("resources/monsterBall.png");
+
 #pragma endregion シーン初期化
 
 	// ブレンドモード
@@ -603,10 +615,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//int blendIndex = 0;
 
 	// Textureを読んで転送する
-	DirectX::ScratchImage mipImages = dxBase->LoadTexture("resources/uvChecker.png");
-	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
-	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = dxBase->CreateTextureResource(dxBase->GetDevice(), metadata);
-	dxBase->UploadTextureData(textureResource.Get(), mipImages);
+	//DirectX::ScratchImage mipImages = 
+	//const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
+	//Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = dxBase->CreateTextureResource(dxBase->GetDevice(), metadata);
+	//dxBase->UploadTextureData(textureResource.Get(), mipImages);
 	//// 2枚目のTextureを読んで転送する
 	////DirectX::ScratchImage mipImages2 = LoadTexture("resources/monsterBall.png");
 	//DirectX::ScratchImage mipImages2 = LoadTexture(modelData.material.textureFilePath);
@@ -615,11 +627,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource2 = UploadTextureData(textureResource2, mipImages2, device, commandList);
 
 	// metaDataを基にSRVの設定
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-	srvDesc.Format = metadata.format;
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;							// 2Dテクスチャ
-	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
+	//D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+	//srvDesc.Format = metadata.format;
+	//srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	//srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;							// 2Dテクスチャ
+	//srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
 
 	// metaData2を基にSRVの設定
 	//D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc2{};
@@ -629,12 +641,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//srvDesc2.Texture2D.MipLevels = UINT(metadata2.mipLevels);
 
 	// SRVを作成するDescriptorHeapの場所を決める
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU = dxBase->GetSRVCPUDescriptorHandle(1);
+	//D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU = dxBase->GetSRVCPUDescriptorHandle(1);
 	//D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU = dxBase->GetSRVGPUDescriptorHandle(1);
 	//D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU2 = GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 2);
 	//D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU2 = dxBase->GetSRVGPUDescriptorHandle(2);
 	//// SRVの生成
-	dxBase->GetDevice()->CreateShaderResourceView(textureResource.Get(), &srvDesc, textureSrvHandleCPU);
+	//dxBase->GetDevice()->CreateShaderResourceView(textureResource.Get(), &srvDesc, textureSrvHandleCPU);
 	//device->CreateShaderResourceView(textureResource2.Get(), &srvDesc2, textureSrvHandleCPU2);
 
 
@@ -896,6 +908,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	delete spriteBase;
 	// 入力解放
 	delete input;
+	// テクスチャマネージャの終了
+	TextureManager::GetInstance()->Finalize();
 	// DirectX解放
 	delete dxBase;
 
