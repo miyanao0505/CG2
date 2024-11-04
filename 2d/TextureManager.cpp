@@ -61,6 +61,7 @@ void TextureManager::LoadTexture(const std::string& filePath)
 	textureData.filePath = filePath;
 	textureData.metadata = mipImages.GetMetadata();
 	textureData.resource = dxBase_->CreateTextureResource(dxBase_->GetDevice(), textureData.metadata);
+	textureData.intermediateResource = dxBase_->UploadTextureData(textureData.resource.Get(), mipImages);
 	// テクスチャデータの要素数番号をSRVのインデックスとする
 	uint32_t srvIndex = static_cast<uint32_t>(textureDatas.size() - 1) + kSRVIndexTop;
 	

@@ -177,21 +177,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// テクスチャマネージャの初期化
 	TextureManager::GetInstance()->Initialize(dxBase);
 
+	// テクスチャファイルパス
+	std::string filePath1 = { "resources/uvCheker.png" };
+	std::string filePath2 = { "resources/monsterBall.png" };
+
 	// テクスチャの読み込み
 	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
-	//TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
+	TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
 
 	std::vector<Sprite*> sprites;
 	for (uint32_t i = 0; i < 5; ++i)
 	{
 		// スプライトの初期化
 		Sprite* sprite = new Sprite();
-		sprite->Initialize(spriteBase, "resources/uvChecker.png");
+		sprite->Initialize(spriteBase, /*"resources/uvChecker.png"*/filePath1);
+		sprite->SetPosition({ 200.0f * float(i), 0.0f });
+		sprite->SetSize({ 100.f, 100.f });
 		sprites.push_back(sprite);
 	}
 
-	//sprites[1]->SetTexture("resources/monsterBall.png");
-	//sprites[3]->SetTexture("resources/monsterBall.png");
+	sprites[1]->SetTexture(/*"resources/monsterBall.png"*/filePath2);
+	sprites[3]->SetTexture(/*"resources/monsterBall.png"*/filePath2);
 
 #pragma endregion シーン初期化
 
@@ -564,15 +570,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//materialDataSprite->enableLighting = false;
 	//// 単位行列で初期化
 	//materialDataSprite->uvTransform = Matrix::MakeIdentity4x4();
-
-	// spriteのテスト
-	uint32_t i = 0;
-	for (Sprite* sprite : sprites)
-	{
-		sprite->SetPosition({ 0.0f + float(i) * 200.f, 0.0f });
-		sprite->SetSize({ 100.f, 100.f });
-		++i;
-	}
 
 #pragma endregion
 

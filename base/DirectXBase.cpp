@@ -310,7 +310,7 @@ ID3D12Resource* DirectXBase::CreateTextureResource(ID3D12Device* device, const T
 }
 
 // データを転送する関数
-void DirectXBase::UploadTextureData(ID3D12Resource* texture, const ScratchImage& mipImages)
+Microsoft::WRL::ComPtr<ID3D12Resource> DirectXBase::UploadTextureData(ID3D12Resource* texture, const ScratchImage& mipImages)
 {
 	std::vector<D3D12_SUBRESOURCE_DATA> subresources;
 	PrepareUpload(device_.Get(), mipImages.GetImages(), mipImages.GetImageCount(), mipImages.GetMetadata(), subresources);
@@ -326,6 +326,8 @@ void DirectXBase::UploadTextureData(ID3D12Resource* texture, const ScratchImage&
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;
 	commandList_->ResourceBarrier(1, &barrier);
+
+	return intermediateResource_;
 }
 
 ScratchImage DirectXBase::LoadTexture(const std::string& filePath)
