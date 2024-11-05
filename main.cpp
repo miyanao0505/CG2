@@ -13,6 +13,8 @@
 #include "2d/TextureManager.h"
 #include "3d/Object3dBase.h"
 #include "3d/Object3d.h"
+#include "3d/ModelBase.h"
+#include "3d/Model.h"
 #include "Script/MyTools.h"
 #include "Script/Matrix.h"
 #include "Script/MyBase.h"
@@ -57,11 +59,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma region 基盤システム初期化
 	// 共通部の宣言
 	SpriteBase* spriteBase = nullptr;
+	ModelBase* modelBase = nullptr;
 	Object3dBase* object3dBase = nullptr;
 
 	// スプライト共通部の初期化
 	spriteBase = new SpriteBase;
 	spriteBase->Initialize(dxBase);
+
+	// モデル共通部の初期化
+	modelBase = new ModelBase;
+	modelBase->Initislize(dxBase);
 
 	// 3Dオブジェクト共通部の初期化
 	object3dBase = new Object3dBase;
@@ -103,10 +110,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	////sprites[3]->SetTexture("resources/monsterBall.png");
 	//sprites[3]->SetSize({ 100.0f, 100.0f });
 
+	// モデル
+	Model* model = new Model;
+	model->Initialize(modelBase);
+
 	// 3Dオブジェクト
 	Object3d* object3d = new Object3d;
 	object3d->Initislize(object3dBase);
-
+	object3d->SetModel(model);
 #pragma endregion シーン初期化
 
 	// ブレンドモード
@@ -389,7 +400,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	directionalLightData->intensity = 1.0f;
 
 	// Transform変数を作る
-	//MyBase::Transform transform{ { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
+	MyBase::Transform transform{ { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
 	MyBase::Transform transformSprite{ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
 	//MyBase::Transform cameraTransform{ { 1.0f, 1.0f, 1.0f }, { 0.3f, 0.0f, 0.0f }, { 0.0f, 4.0f, -10.0f } };
 	/*MyBase::Transform uvTransformSprite{
@@ -504,6 +515,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::PopID();
 			++spriteIDIndex;
 		}
+
+		// 3Dオブジェクト
+		// 移動
+		transform.translate = object3d->GetTranslate();
+		ImGui::SliderFloat3("Translate", &transform.translate.x, -5.0f, 5.f);
+		object3d->SetTranslate(transform.translate);
+		// 回転
+		transform.rotate = object3d->GetRotate();
+		ImGui::SliderFloat3("Rotate", &transform.rotate.x, -3.14f, 3.14f);
+		object3d->SetRotate(transform.rotate);
+		// 拡縮
+		transform.scale = object3d->GetScale();
+		ImGui::SliderFloat3("Scale", &transform.scale.x, 0.0f, 3.0f);
+		object3d->SetScale(transform.scale);
 
 		// テクスチャ
 		//ImGui::Checkbox("useMonsterBall", &useMonsterBall);
@@ -653,6 +678,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 解放処理
 	// 3Dオブジェクト
 	delete object3d;
+	// モデル
+	delete model;
 	// スプライト
 	for (Sprite* sprite : sprites)
 	{
@@ -660,6 +687,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 	// 3Dオブジェクト共通部
 	delete object3dBase;
+	// モデル共通部
+	delete modelBase;
 	// スプライト共通部
 	delete spriteBase;
 	// 入力解放
