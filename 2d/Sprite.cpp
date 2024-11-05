@@ -184,4 +184,5 @@ void Sprite::AdjustTextureSize()
 	textureSize_.y = static_cast<float>(metadata.height);
 	// 画像サイズをテクスチャサイズに合わせる
 	size_ = textureSize_;
+	spriteSize_ = size_;
 }

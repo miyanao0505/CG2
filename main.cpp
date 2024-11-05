@@ -737,10 +737,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				sprite->SetIsFlipY(isFlipY);
 				// テクスチャ範囲指定
 				MyBase::Vector2 textureLeftTop = sprite->GetTextureLeftTop();
-				//ImGui::SliderFloat2("textureLeftTop", &textureLeftTop.x, 0.0f, 512.0f);
+				ImGui::SliderFloat2("textureLeftTop", &textureLeftTop.x, 0.0f, max(sprite->GetSpriteSize().x, sprite->GetSpriteSize().y));
 				sprite->SetTextureLeftTop(textureLeftTop);
 				MyBase::Vector2 textureSize = sprite->GetTextureSize();
-				//ImGui::SliderFloat2("textureSize", &textureSize.x, 0.0f, 1024.0f);
+				ImGui::SliderFloat2("textureSize", &textureSize.x, 0.0f, max(sprite->GetSpriteSize().x, sprite->GetSpriteSize().y) * 2.f);
 				sprite->SetTextureSize(textureSize);
 
 				if (ImGui::CollapsingHeader("Material"))

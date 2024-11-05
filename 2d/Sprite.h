@@ -35,6 +35,8 @@ public:	// getter
 	// テクスチャ範囲指定の取得
 	const MyBase::Vector2& GetTextureLeftTop() const { return textureLeftTop_; }	// 左上座標
 	const MyBase::Vector2& GetTextureSize() const { return textureSize_; }			// 切り出しサイズ
+	// スプライトのサイズ
+	const MyBase::Vector2& GetSpriteSize() const { return spriteSize_; }
 
 public:	// setter
 	// 座標のセット
@@ -84,6 +86,8 @@ private:	// メンバ変数
 
 	// テクスチャ番号
 	uint32_t textureIndex_ = 0;
+	// スプライトのサイズ
+	MyBase::Vector2 spriteSize_ = { 0.0f, 0.0f };
 
 	// 座標
 	MyBase::Vector2 position_ = { 0.0f, 0.0f };
