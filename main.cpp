@@ -12,6 +12,8 @@
 #include "2d/SpriteBase.h"
 #include "2d/Sprite.h"
 #include "2d/TextureManager.h"
+#include "3d/Object3dBase.h"
+#include "3d/Object3d.h"
 #include "Script/MyTools.h"
 #include "Script/Matrix.h"
 #include "Script/MyBase.h"
@@ -146,7 +148,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	WindowsAPI* winApi = nullptr;
 	DirectXBase* dxBase = nullptr;
 	Input* input = nullptr;
-	SpriteBase* spriteBase = nullptr;
 #pragma endregion ポインタ置き場
 
 #pragma region ゲームウィンドウ作成
@@ -168,9 +169,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma endregion 汎用機能初期化
 
 #pragma region 基盤システム初期化
+	// 共通部の宣言
+	SpriteBase* spriteBase = nullptr;
+	Object3dBase* object3dBase = nullptr;
+
 	// スプライト共通部の初期化
 	spriteBase = new SpriteBase;
 	spriteBase->Initialize(dxBase);
+
+	// 3Dオブジェクト共通部の初期化
+	object3dBase = new Object3dBase;
+	object3dBase->Initislize();
 #pragma endregion 基盤システム初期化
 
 #pragma region シーン初期化
@@ -206,6 +215,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	sprites[3]->SetTexture(filePath2);
 	//sprites[3]->SetTexture("resources/monsterBall.png");
 	sprites[3]->SetSize({ 100.0f, 100.0f });
+
+	Object3d* object3d = new Object3d;
+	object3d->Initislize();
 
 #pragma endregion シーン初期化
 
@@ -507,80 +519,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 //	materialData->uvTransform = Matrix::MakeIdentity4x4();
 //#pragma endregion
 
-#pragma region Sprite
-	// Sprite用の頂点リソースを作る
-	//Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceSprite = dxBase->CreateBufferResource(sizeof(MyBase::VertexData) * 6);
-
-	//// 頂点バッファビューを作成する
-	//D3D12_VERTEX_BUFFER_VIEW vertexBufferViewSprite{};
-	//// リソースの先頭のアドレスから使う
-	//vertexBufferViewSprite.BufferLocation = vertexResourceSprite.Get()->GetGPUVirtualAddress();
-	//// 使用するリソースのサイズは頂点6つ分のサイズ
-	//vertexBufferViewSprite.SizeInBytes = sizeof(MyBase::VertexData) * 4;
-	//// 1頂点あたりのサイズ
-	//vertexBufferViewSprite.StrideInBytes = sizeof(MyBase::VertexData);
-
-	//// Sprite用の頂点リソースにデータを書き込む
-	//MyBase::VertexData* vertexDataSprite = nullptr;
-	//// 書き込むためのアドレス
-	//vertexResourceSprite.Get()->Map(0, nullptr, reinterpret_cast<void**>(&vertexDataSprite));
-	//// 三角形
-	//vertexDataSprite[0].position = { 0.0f, 360.0f, 0.0f, 1.0f };	// 左下
-	//vertexDataSprite[0].texcoord = { 0.0f, 1.0f };
-	//vertexDataSprite[0].normal = { 0.0f, 0.0f, -1.0f };
-	//vertexDataSprite[1].position = { 0.0f, 0.0f, 0.0f, 1.0f };		// 左上
-	//vertexDataSprite[1].texcoord = { 0.0f, 0.0f };
-	//vertexDataSprite[1].normal = { 0.0f, 0.0f, -1.0f };
-	//vertexDataSprite[2].position = { 640.f, 360.f, 0.0f, 1.0f };	// 右下
-	//vertexDataSprite[2].texcoord = { 1.0f, 1.0f };
-	//vertexDataSprite[2].normal = { 0.0f, 0.0f, -1.0f };
-	//vertexDataSprite[3].position = { 640.f, 0.0f, 0.0f, 1.0f };		// 右上
-	//vertexDataSprite[3].texcoord = { 1.0f, 0.0f };
-	//vertexDataSprite[3].normal = { 0.0f, 0.0f, -1.0f };
-
-	//// Index用の頂点リソースを作る
-	//Microsoft::WRL::ComPtr<ID3D12Resource> indexResourceSprite = dxBase->CreateBufferResource(sizeof(uint32_t) * 6);
-
-	//// Index頂点バッファビューを作成
-	//D3D12_INDEX_BUFFER_VIEW indexBufferViewSprite{};
-	//// リソースの先頭のアドレスから使う
-	//indexBufferViewSprite.BufferLocation = indexResourceSprite.Get()->GetGPUVirtualAddress();
-	//// 使用するリソースのサイズはインデックス6つ分のサイズ
-	//indexBufferViewSprite.SizeInBytes = sizeof(uint32_t) * 6;
-	//// インデックスはuint32_tとする
-	//indexBufferViewSprite.Format = DXGI_FORMAT_R32_UINT;
-
-	//// インデックスリソースにデータを書き込む
-	//uint32_t* indexDataSprite = nullptr;
-	//indexResourceSprite.Get()->Map(0, nullptr, reinterpret_cast<void**>(&indexDataSprite));
-	//indexDataSprite[0] = 0;		indexDataSprite[1] = 1;		indexDataSprite[2] = 2;
-	//indexDataSprite[3] = 1;		indexDataSprite[4] = 3;		indexDataSprite[5] = 2;
-
-	//// Sprite用のTransformationMatrix用のリソースを作る。TransformationMatrix 1つ分のサイズを用意する
-	//Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResourceSparite = dxBase->CreateBufferResource(sizeof(MyBase::TransformationMatrix));
-	//// データを書き込む
-	//MyBase::TransformationMatrix* transformationMatrixDataSprite = nullptr;
-	//// 書き込むためのアドレスを取得
-	//transformationMatrixResourceSparite.Get()->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixDataSprite));
-	//// 単位行列を書き込んでおく
-	//transformationMatrixDataSprite->WVP = Matrix::MakeIdentity4x4();
-	//transformationMatrixDataSprite->World = Matrix::MakeIdentity4x4();
-
-	//// Sprite用のマテリアルリソースを作る
-	//Microsoft::WRL::ComPtr<ID3D12Resource> materialResourceSprite = dxBase->CreateBufferResource(sizeof(MyBase::Material));
-	//// データを書き込む
-	//MyBase::Material* materialDataSprite = nullptr;
-	//// 書き込むためのアドレスを取得
-	//materialResourceSprite.Get()->Map(0, nullptr, reinterpret_cast<void**>(&materialDataSprite));
-	//// 白で読み込む
-	//materialDataSprite->color = MyBase::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	//// SpriteはLightingしないのでfalseを設定する
-	//materialDataSprite->enableLighting = false;
-	//// 単位行列で初期化
-	//materialDataSprite->uvTransform = Matrix::MakeIdentity4x4();
-
-#pragma endregion
-
 	// カメラ用のリソースを作る。TransformationMatrix 1つ分のサイズを用意する
 	//Microsoft::WRL::ComPtr<ID3D12Resource> transformationResourceCamera = CreateBufferResource(device, sizeof(MyBase::TransformationMatrix));
 	// データを書き込む
@@ -618,42 +556,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ブレンドモード切替用
 	//BlendMode blendMode = kBlendModeNone;
 	//int blendIndex = 0;
-
-	// Textureを読んで転送する
-	//DirectX::ScratchImage mipImages = 
-	//const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
-	//Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = dxBase->CreateTextureResource(dxBase->GetDevice(), metadata);
-	//dxBase->UploadTextureData(textureResource.Get(), mipImages);
-	//// 2枚目のTextureを読んで転送する
-	////DirectX::ScratchImage mipImages2 = LoadTexture("resources/monsterBall.png");
-	//DirectX::ScratchImage mipImages2 = LoadTexture(modelData.material.textureFilePath);
-	//const DirectX::TexMetadata& metadata2 = mipImages2.GetMetadata();
-	//Microsoft::WRL::ComPtr<ID3D12Resource> textureResource2 = CreateTextureResource(device, metadata2);
-	//Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource2 = UploadTextureData(textureResource2, mipImages2, device, commandList);
-
-	// metaDataを基にSRVの設定
-	//D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-	//srvDesc.Format = metadata.format;
-	//srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	//srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;							// 2Dテクスチャ
-	//srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
-
-	// metaData2を基にSRVの設定
-	//D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc2{};
-	//srvDesc2.Format = metadata2.format;
-	//srvDesc2.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	//srvDesc2.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;							// 2Dテクスチャ
-	//srvDesc2.Texture2D.MipLevels = UINT(metadata2.mipLevels);
-
-	// SRVを作成するDescriptorHeapの場所を決める
-	//D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU = dxBase->GetSRVCPUDescriptorHandle(1);
-	//D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU = dxBase->GetSRVGPUDescriptorHandle(1);
-	//D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU2 = GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 2);
-	//D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU2 = dxBase->GetSRVGPUDescriptorHandle(2);
-	//// SRVの生成
-	//dxBase->GetDevice()->CreateShaderResourceView(textureResource.Get(), &srvDesc, textureSrvHandleCPU);
-	//device->CreateShaderResourceView(textureResource2.Get(), &srvDesc2, textureSrvHandleCPU2);
-
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (true) {	// ゲームループ
@@ -922,11 +824,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #endif // _DEBUG
 
 	// 解放処理
+	// 3Dオブジェクト
+	delete object3d;
 	// スプライト
 	for (Sprite* sprite : sprites)
 	{
 		delete sprite;
 	}
+	// 3Dオブジェクト共通部
+	delete object3dBase;
 	// スプライト共通部
 	delete spriteBase;
 	// 入力解放
