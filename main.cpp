@@ -2,7 +2,6 @@
 #include <format>
 #include <wrl.h>
 #include <cassert>
-#include <fstream>
 #include <sstream>
 #include <vector>
 #include "input/Input.h"
@@ -20,119 +19,6 @@
 #include "externals/imgui/imgui_impl_dx12.h"
 #include "externals/imgui/imgui_impl_win32.h"
 #pragma comment(lib, "dxcompiler.lib")
-
-MyBase::MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename)
-{
-	/// 1. 中で必要となる変数の宣言
-	MyBase::MaterialData materialData;	// 構築するMateriallData
-	std::string line;					// ファイルが読んだ1行を格納するもの
-
-	/// 2. ファイルを開く
-	std::ifstream file(directoryPath + "/" + filename);		// ファイルを開く
-	assert(file.is_open());									// 取り敢えず開けなかったら止める
-
-	/// 3. 実際にファイルを読み、MaterialDataを構築していく
-	while (std::getline(file, line)) {
-		std::string identifier;
-		std::istringstream s(line);
-		s >> identifier;
-
-		// identifierに応じた処理
-		if (identifier == "map_Kd") {
-			std::string textureFilename;
-			s >> textureFilename;
-			// 連結してファイルパスにする
-			materialData.textureFilePath = directoryPath + "/../" + textureFilename;
-		}
-	}
-
-	/// 4. MaterialDataを返す
-	return materialData;
-}
-
-
-MyBase::ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename)
-{
-	// 1. 中で必要となる変数の宣言
-	MyBase::ModelData modelData;				// 構築するModelData
-	std::vector<MyBase::Vector4> positions;		// 位置
-	std::vector<MyBase::Vector3> normals;		// 法線
-	std::vector<MyBase::Vector2> texcoords;		// テクスチャ座標
-	std::string line;							// ファイルから呼んだ1行を格納するもの
-
-	// 2. ファイルを開く
-	std::ifstream file(directoryPath + "/" + filename);		// ファイルを開く
-	assert(file.is_open());									// とりあえず開けなかったら止める
-
-	// 3. 実際にファイルを読み、ModelDataを構築していく
-	while (std::getline(file, line)) {
-		std::string identifier;
-		std::istringstream s(line);
-		s >> identifier;			// 先頭の識別子を読む
-
-		// identifierに応じた処理
-		if (identifier == "v")
-		{
-			MyBase::Vector4 position;
-			s >> position.x >> position.y >> position.z;
-			position.x *= -1.0f;
-			position.w = 1.0f;
-			positions.push_back(position);
-		}
-		else if (identifier == "vt") {
-			MyBase::Vector2 texcoord;
-			s >> texcoord.x >> texcoord.y;
-			texcoord.y = 1.0f - texcoord.y;
-			texcoords.push_back(texcoord);
-		}
-		else if (identifier == "vn") {
-			MyBase::Vector3 normal;
-			s >> normal.x >> normal.y >> normal.z;
-			normal.x *= -1.0f;
-			//normal.z *= -1.f;
-			//normal.y *= -1.f;
-			normals.push_back(normal);
-		}
-		else if (identifier == "mtllib")
-		{
-			// materialTemplateLibraryファイルの名前を取得する
-			std::string materialFilename;
-			s >> materialFilename;
-			// 基本的にobjファイルと同一階層にmtlは存在させるので、ディレクトリ名とファイル名を渡す
-			modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilename);
-		}
-		else if (identifier == "f") {
-			MyBase::VertexData triangle[3];
-			// 面は三角形限定。その他は未対応
-			for (int32_t faceVertex = 0; faceVertex < 3; ++faceVertex) {
-				std::string vertexDefinition;
-				s >> vertexDefinition;
-				// 頂点の要素へのIndexは「位置/UV/法線」で格納されているので、分解してIndexを取得する
-				std::istringstream v(vertexDefinition);
-				uint32_t elementIndeces[3];
-				for (int32_t element = 0; element < 3; ++element) {
-					std::string index;
-					std::getline(v, index, '/');		// 区切りでインデックスを読んでいく
-					elementIndeces[element] = std::stoi(index);
-				}
-				// 要素へのIndexから、実際の要素の値を取得して、頂点を構築する
-				MyBase::Vector4 position = positions[elementIndeces[0] - 1];
-				MyBase::Vector2 texcoord = texcoords[elementIndeces[1] - 1];
-				MyBase::Vector3 normal = normals[elementIndeces[2] - 1];
-				/*MyBase::VertexData vertex = { position, texcoord, normal };
-				modelData.vertices.push_back(vertex);*/
-				triangle[faceVertex] = { position, texcoord, normal };
-			}
-			// 頂点を逆順で登録することで、周り順を逆にする
-			modelData.vertices.push_back(triangle[2]);
-			modelData.vertices.push_back(triangle[1]);
-			modelData.vertices.push_back(triangle[0]);
-		}
-	}
-
-	// 4. ModelDataを返す
-	return modelData;
-}
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -192,32 +78,34 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// テクスチャの読み込み
 	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
-	TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
+	//TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
 
+	// スプライト
 	std::vector<Sprite*> sprites;
-	for (uint32_t i = 0; i < 5; ++i)
-	{
-		// スプライトの初期化
-		Sprite* sprite = new Sprite();
-		//sprite->Initialize(spriteBase, "resources/uvChecker.png");
-		sprite->Initialize(spriteBase, filePath1);
-		sprite->SetPosition({ 200.0f * float(i), 0.0f });
-		sprite->SetSize({ 100.f, 100.f });
-		sprite->SetAnchorPoint({ 0.0f, 0.0f });
-		sprite->SetIsFlipX(false);
-		sprite->SetIsFlipY(false);
-		sprites.push_back(sprite);
-	}
+	//for (uint32_t i = 0; i < 5; ++i)
+	//{
+	//	// スプライトの初期化
+	//	Sprite* sprite = new Sprite();
+	//	//sprite->Initialize(spriteBase, "resources/uvChecker.png");
+	//	sprite->Initialize(spriteBase, filePath1);
+	//	sprite->SetPosition({ 200.0f * float(i), 0.0f });
+	//	sprite->SetSize({ 100.f, 100.f });
+	//	sprite->SetAnchorPoint({ 0.0f, 0.0f });
+	//	sprite->SetIsFlipX(false);
+	//	sprite->SetIsFlipY(false);
+	//	sprites.push_back(sprite);
+	//}
 
-	sprites[1]->SetTexture(filePath2);
-	//sprites[1]->SetTexture("resources/monsterBall.png");
-	sprites[1]->SetSize({ 100.0f, 100.0f });
-	sprites[3]->SetTexture(filePath2);
-	//sprites[3]->SetTexture("resources/monsterBall.png");
-	sprites[3]->SetSize({ 100.0f, 100.0f });
+	//sprites[1]->SetTexture(filePath2);
+	////sprites[1]->SetTexture("resources/monsterBall.png");
+	//sprites[1]->SetSize({ 100.0f, 100.0f });
+	//sprites[3]->SetTexture(filePath2);
+	////sprites[3]->SetTexture("resources/monsterBall.png");
+	//sprites[3]->SetSize({ 100.0f, 100.0f });
 
+	// 3Dオブジェクト
 	Object3d* object3d = new Object3d;
-	object3d->Initislize();
+	object3d->Initislize(object3dBase);
 
 #pragma endregion シーン初期化
 
@@ -479,46 +367,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//materialData->uvTransform = Matrix::MakeIdentity4x4();
 #pragma endregion
 
-//#pragma region Model
-//	// モデル読み込み
-//	MyBase::ModelData modelData = LoadObjFile("resources/fence", "fence.obj");
-//	// 頂点リソースを作る
-//	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource = CreateBufferResource(device, sizeof(MyBase::VertexData) * modelData.vertices.size());
-//	// 頂点バッファビューを作成する
-//	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
-//	vertexBufferView.BufferLocation = vertexResource.Get()->GetGPUVirtualAddress();						// リソースの先頭のアドレスから使う
-//	vertexBufferView.SizeInBytes = UINT(sizeof(MyBase::VertexData) * modelData.vertices.size());	// 使用するリソースのサイズは頂点のサイズ
-//	vertexBufferView.StrideInBytes = sizeof(MyBase::VertexData);									// 頂点あたりのサイズ
-//
-//	// 頂点リソースにデータを書き込む
-//	MyBase::VertexData* vertexData = nullptr;
-//	vertexResource.Get()->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));										// 書き込むためのアドレスを取得
-//	std::memcpy(vertexData, modelData.vertices.data(), sizeof(MyBase::VertexData)* modelData.vertices.size());	// 頂点データをリソースにコピー
-//
-//	// モデル用のTransformationMatrix用のリソースを作る。TransformationMatrix 1つ分のサイズを用意する
-//	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource = CreateBufferResource(device, sizeof(MyBase::TransformationMatrix));
-//	// データを書き込む
-//	MyBase::TransformationMatrix* transformationMatrixData = nullptr;
-//	// 書き込むためのアドレスを取得
-//	transformationMatrixResource.Get()->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixData));
-//	// 単位行列を書き込んでおく
-//	transformationMatrixData->WVP = Matrix::MakeIdentity4x4();
-//	transformationMatrixData->World = Matrix::MakeIdentity4x4();
-//
-//	// マテリアル用のリソースを作る。今回はcolor1つ分のサイズを用意する
-//	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = CreateBufferResource(device, sizeof(MyBase::Material));
-//	// マテリアルにデータを書き込む
-//	MyBase::Material* materialData = nullptr;
-//	// 書き込むためのアドレスを取得
-//	materialResource.Get()->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
-//	// 白で読み込む
-//	materialData->color = MyBase::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-//	// Lightingを有効にする
-//	materialData->enableLighting = true;
-//	// 単位行列で初期化
-//	materialData->uvTransform = Matrix::MakeIdentity4x4();
-//#pragma endregion
-
 	// カメラ用のリソースを作る。TransformationMatrix 1つ分のサイズを用意する
 	//Microsoft::WRL::ComPtr<ID3D12Resource> transformationResourceCamera = CreateBufferResource(device, sizeof(MyBase::TransformationMatrix));
 	// データを書き込む
@@ -731,6 +579,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// CBufferの中身を更新
 		//transformationMatrixData[0].WVP = worldViewProjectionMatrix;
 		//transformationMatrixData[0].World = worldMatrix;
+		object3d->Update();
 
 		// Sprite用のWorldViewProgectionMatrixを作る
 		/*Matrix::Matrix4x4 worldMatrixSprite = Matrix::MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
@@ -758,35 +607,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// DirectXの描画前処理。全ての描画に共通のグラフィックスコマンドを積む
 		dxBase->PreDraw();
 
-		// コマンドを積む
-		// RootSignatureを設定。PSOに設定しているけど別途設定が必要
-		dxBase->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
-		dxBase->GetCommandList()->SetPipelineState(graphicsPipelineState.Get());		// PSOを設定
-
-		//dxBase->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);	// VBVを設定
-		//dxBase->GetCommandList()->IASetIndexBuffer(&indexBufferView);			// IBVを設定
-		// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えて置けば良い
-		dxBase->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		//// マテリアルCBufferの場所を設定
-		//commandList->SetGraphicsRootConstantBufferView(0, materialResource.Get()->GetGPUVirtualAddress());
-		//// WVP用のCBufferの場所を設定
-		//commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResource.Get()->GetGPUVirtualAddress());
-		//// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
-		//commandList->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU2 : textureSrvHandleGPU);
-		//commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU2);
-		//// 平行光源用のCBufferの場所を設定
-		//commandList->SetGraphicsRootConstantBufferView(3, directionalLightResource.Get()->GetGPUVirtualAddress());
-		//// 描画！(DrawCall/ドローコール)。3頂点で1つのインスタンス。インスタンスについては今後
-		//commandList->DrawIndexedInstanced(indexNum, 1, 0, 0, 0);
-		//commandList->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
-
 #pragma region 3Dオブジェクト
 
 		// 3Dオブジェクトの描画準備。3Dオブジェクトの描画に共通のグラフィックスコマンドを積む
 		object3dBase->SetCommonScreen();
 
 		// 全ての3DObject個々の描画
-
+		object3d->Draw();
 
 #pragma endregion 3Dオブジェクト
 
