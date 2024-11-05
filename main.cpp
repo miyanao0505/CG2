@@ -179,7 +179,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// 3Dオブジェクト共通部の初期化
 	object3dBase = new Object3dBase;
-	object3dBase->Initislize();
+	object3dBase->Initislize(dxBase);
 #pragma endregion 基盤システム初期化
 
 #pragma region シーン初期化
@@ -758,15 +758,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// DirectXの描画前処理。全ての描画に共通のグラフィックスコマンドを積む
 		dxBase->PreDraw();
 
-		// Spriteの描画準備。Spriteの描画に共通のグラフィックスコマンドを積む
-		spriteBase->SetCommonScreen();
-
-
 		// コマンドを積む
 		// RootSignatureを設定。PSOに設定しているけど別途設定が必要
 		dxBase->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 		dxBase->GetCommandList()->SetPipelineState(graphicsPipelineState.Get());		// PSOを設定
-		
+
 		//dxBase->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);	// VBVを設定
 		//dxBase->GetCommandList()->IASetIndexBuffer(&indexBufferView);			// IBVを設定
 		// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えて置けば良い
@@ -784,24 +780,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//commandList->DrawIndexedInstanced(indexNum, 1, 0, 0, 0);
 		//commandList->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
 
-		// Spriteの描画。変更が必要なものだけ変更する
-		//dxBase->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);			// VBVを設定
-		//dxBase->GetCommandList()->IASetIndexBuffer(&indexBufferViewSprite);					// IBVを設定
-		//// マテリアルCBufferの場所を設定
-		//dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResourceSprite.Get()->GetGPUVirtualAddress());
-		//// TransformationMatrixCBufferの場所を設定
-		//dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSparite.Get()->GetGPUVirtualAddress());
-		//// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
-		//dxBase->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
-		//// 平行光源用のCBufferの場所を設定
-		//dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource.Get()->GetGPUVirtualAddress());
-		//// 描画！(DrawCall/ドローコール)
-		//dxBase->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
+#pragma region 3Dオブジェクト
 
+		// 3Dオブジェクトの描画準備。3Dオブジェクトの描画に共通のグラフィックスコマンドを積む
+		object3dBase->SetCommonScreen();
+
+		// 全ての3DObject個々の描画
+
+
+#pragma endregion 3Dオブジェクト
+
+#pragma region スプライト
+
+		// Spriteの描画準備。Spriteの描画に共通のグラフィックスコマンドを積む
+		spriteBase->SetCommonScreen();
+
+		// 全てのSprite個々の描画
 		for (Sprite* sprite : sprites)
 		{
 			sprite->Draw();
 		}
+
+#pragma endregion スプライト
 
 		// 実際のcommandListのImGuiの描画コマンドを積む
 #ifdef _DEBUG
