@@ -17,27 +17,55 @@ void Sprite::Initialize(SpriteBase* spriteBase, std::string textureFilePath)
 
 	// 座標変換行列データの作成
 	CreateTransformationMatrixData();
+
+	// テクスチャのサイズセット
+	AdjustTextureSize();
 }
 
 // 更新処理
 void Sprite::Update()
 {
+	// アンカーポイントの反映処理
+	float left = 0.0f - anchroPoint_.x;
+	float right = 1.0f - anchroPoint_.x;
+	float top = 0.0f - anchroPoint_.y;
+	float bottom = 1.0f - anchroPoint_.y;
+
+	// フリップの反映処理
+	// 左右反転
+	if (isFlipX_) {
+		left = -left;
+		right = -right;
+	}
+	// 上下反転
+	if (isFlipY_) {
+		top = -top;
+		bottom = -bottom;
+	}
+
+	// テクスチャ範囲指定の反映処理
+	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetaData(textureIndex_);
+	float tex_left = textureLeftTop_.x / metadata.width;
+	float tex_right = (textureLeftTop_.x + textureSize_.x) / metadata.width;
+	float tex_top = textureLeftTop_.y / metadata.height;
+	float tex_bottom = (textureLeftTop_.y + textureSize_.y) / metadata.height;
+
 	// 頂点リソースにデータを書き込む(4点分)
 	// 左下
-	vertexData_[0].position = { 0.0f, 1.0f, 0.0f, 1.0f };
-	vertexData_[0].texcoord = { 0.0f, 1.0f };
+	vertexData_[0].position = { left, bottom, 0.0f, 1.0f };
+	vertexData_[0].texcoord = { tex_left, tex_bottom };
 	vertexData_[0].normal = { 0.0f, 0.0f, -1.0f };
 	// 左上
-	vertexData_[1].position = { 0.0f, 0.0f, 0.0f, 1.0f };
-	vertexData_[1].texcoord = { 0.0f, 0.0f };
+	vertexData_[1].position = { left, top, 0.0f, 1.0f };
+	vertexData_[1].texcoord = { tex_left, tex_top };
 	vertexData_[1].normal = { 0.0f, 0.0f, -1.0f };
 	// 右下
-	vertexData_[2].position = { 1.f, 1.f, 0.0f, 1.0f };
-	vertexData_[2].texcoord = { 1.0f, 1.0f };
+	vertexData_[2].position = { right, bottom, 0.0f, 1.0f };
+	vertexData_[2].texcoord = { tex_right, tex_bottom };
 	vertexData_[2].normal = { 0.0f, 0.0f, -1.0f };
 	// 右上
-	vertexData_[3].position = { 1.f, 0.0f, 0.0f, 1.0f };
-	vertexData_[3].texcoord = { 1.0f, 0.0f };
+	vertexData_[3].position = { right, top, 0.0f, 1.0f };
+	vertexData_[3].texcoord = { tex_right, tex_top };
 	vertexData_[3].normal = { 0.0f, 0.0f, -1.0f };
 	// インデックスリソースにデータを書き込む(6個分)
 	indexData_[0] = 0;		indexData_[1] = 1;		indexData_[2] = 2;
@@ -75,6 +103,16 @@ void Sprite::Draw()
 	spriteBase_->GetDxBase()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureIndex_));
 	// 描画！(DrawCall/ドローコール)
 	spriteBase_->GetDxBase()->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
+}
+
+// テクスチャのセット
+void Sprite::SetTexture(std::string textureFilePath)
+{
+	// テクスチャのセット
+	textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByFilePath(textureFilePath);
+
+	// テクスチャ変更に合わせてサイズも再度セット
+	AdjustTextureSize();
 }
 
 // 頂点データ作成
@@ -134,4 +172,16 @@ void Sprite::CreateTransformationMatrixData()
 	// 単位行列を書き込んでおく
 	transformationMatrixData_->WVP = Matrix::MakeIdentity4x4();
 	transformationMatrixData_->World = Matrix::MakeIdentity4x4();
+}
+
+// テクスチャサイズをイメージに合わせる
+void Sprite::AdjustTextureSize()
+{
+	// テクスチャメタデータを取得
+	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetaData(textureIndex_);
+
+	textureSize_.x = static_cast<float>(metadata.width);
+	textureSize_.y = static_cast<float>(metadata.height);
+	// 画像サイズをテクスチャサイズに合わせる
+	size_ = textureSize_;
 }

@@ -178,7 +178,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	TextureManager::GetInstance()->Initialize(dxBase);
 
 	// テクスチャファイルパス
-	std::string filePath1 = { "resources/uvCheker.png" };
+	std::string filePath1 = { "resources/uvChecker.png" };
 	std::string filePath2 = { "resources/monsterBall.png" };
 
 	// テクスチャの読み込み
@@ -190,14 +190,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	{
 		// スプライトの初期化
 		Sprite* sprite = new Sprite();
-		sprite->Initialize(spriteBase, /*"resources/uvChecker.png"*/filePath1);
+		//sprite->Initialize(spriteBase, "resources/uvChecker.png");
+		sprite->Initialize(spriteBase, filePath1);
 		sprite->SetPosition({ 200.0f * float(i), 0.0f });
 		sprite->SetSize({ 100.f, 100.f });
+		sprite->SetAnchorPoint({ 0.0f, 0.0f });
+		sprite->SetIsFlipX(false);
+		sprite->SetIsFlipY(false);
 		sprites.push_back(sprite);
 	}
 
-	sprites[1]->SetTexture(/*"resources/monsterBall.png"*/filePath2);
-	sprites[3]->SetTexture(/*"resources/monsterBall.png"*/filePath2);
+	sprites[1]->SetTexture(filePath2);
+	//sprites[1]->SetTexture("resources/monsterBall.png");
+	sprites[1]->SetSize({ 100.0f, 100.0f });
+	sprites[3]->SetTexture(filePath2);
+	//sprites[3]->SetTexture("resources/monsterBall.png");
+	sprites[3]->SetSize({ 100.0f, 100.0f });
 
 #pragma endregion シーン初期化
 
@@ -300,9 +308,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// RasiterzerStateの設定
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
 	// 裏面(時計回り)を表示しない
-	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
+	//rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
 	// 裏面も表示する
-	//rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
+	rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
 	// 三角形の中を塗りつぶす
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
@@ -716,6 +724,24 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				MyBase::Vector2 size = sprite->GetSize();
 				ImGui::SliderFloat2("Scale", &size.x, 0.0f, 640.f);
 				sprite->SetSize(size);
+				// アンカーポイント
+				MyBase::Vector2 anchorPoint = sprite->GetAnchorPoint();
+				ImGui::DragFloat2("AnchorPoint", &anchorPoint.x, 0.05f, -1.0f, 2.0f);
+				sprite->SetAnchorPoint(anchorPoint);
+				// フリップ
+				bool isFlipX = sprite->GetIsFlipX();
+				ImGui::Checkbox("isFlipX", &isFlipX);
+				sprite->SetIsFlipX(isFlipX);
+				bool isFlipY = sprite->GetIsFlipY();
+				ImGui::Checkbox("isFlipY", &isFlipY);
+				sprite->SetIsFlipY(isFlipY);
+				// テクスチャ範囲指定
+				MyBase::Vector2 textureLeftTop = sprite->GetTextureLeftTop();
+				//ImGui::SliderFloat2("textureLeftTop", &textureLeftTop.x, 0.0f, 512.0f);
+				sprite->SetTextureLeftTop(textureLeftTop);
+				MyBase::Vector2 textureSize = sprite->GetTextureSize();
+				//ImGui::SliderFloat2("textureSize", &textureSize.x, 0.0f, 1024.0f);
+				sprite->SetTextureSize(textureSize);
 
 				if (ImGui::CollapsingHeader("Material"))
 				{

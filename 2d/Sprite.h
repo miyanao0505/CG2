@@ -25,8 +25,16 @@ public:	// getter
 	float GetRotation() const { return rotation_; }
 	// 色の取得
 	const MyBase::Vector4& GetColor() const { return materialData_->color; }
-	// サイズ
+	// サイズの取得
 	const MyBase::Vector2& GetSize() const { return size_; }
+	// アンカーポイントの取得
+	const MyBase::Vector2& GetAnchorPoint() const { return anchroPoint_; }
+	// フリップの取得
+	const bool& GetIsFlipX() const { return isFlipX_; }		// 左右
+	const bool& GetIsFlipY() const { return isFlipY_; }		// 上下
+	// テクスチャ範囲指定の取得
+	const MyBase::Vector2& GetTextureLeftTop() const { return textureLeftTop_; }	// 左上座標
+	const MyBase::Vector2& GetTextureSize() const { return textureSize_; }			// 切り出しサイズ
 
 public:	// setter
 	// 座標のセット
@@ -38,7 +46,15 @@ public:	// setter
 	// サイズのセット
 	void SetSize(const MyBase::Vector2& size) { size_ = size; }
 	// テクスチャのセット
-	void SetTexture(std::string textureFilePath){ textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByFilePath(textureFilePath); }
+	void SetTexture(std::string textureFilePath);
+	// アンカーポイントのセット
+	void SetAnchorPoint(const MyBase::Vector2& anchorPoint) { anchroPoint_ = anchorPoint; }
+	// フリップのセット
+	void SetIsFlipX(const bool& isFlipX) { isFlipX_ = isFlipX; }		// 左右
+	void SetIsFlipY(const bool& isFlipY) { isFlipY_ = isFlipY; }		// 上下
+	// テクスチャ範囲指定のセット
+	void SetTextureLeftTop(const MyBase::Vector2& textureLeftTop) { textureLeftTop_ = textureLeftTop; }	// 左上座標
+	void SetTextureSize(const MyBase::Vector2& textureSize) { textureSize_ = textureSize; }				// 切り出しサイズ
 
 private:	// メンバ関数
 	// 頂点データ作成
@@ -47,6 +63,8 @@ private:	// メンバ関数
 	void CreateMaterialData();
 	// 座標変換行列データ作成
 	void CreateTransformationMatrixData();
+	// テクスチャサイズをイメージに合わせる
+	void AdjustTextureSize();
 
 private:	// メンバ変数
 	SpriteBase* spriteBase_ = nullptr;
@@ -73,5 +91,14 @@ private:	// メンバ変数
 	float rotation_ = 0.0f;
 	// サイズ
 	MyBase::Vector2 size_ = { 640.f, 360.f };
+
+	// アンカーポイント
+	MyBase::Vector2 anchroPoint_ = { 0.0f, 0.0f };
+	// フリップ
+	bool isFlipX_ = false;		// 左右
+	bool isFlipY_ = false;		// 上下
+	// テクスチャ範囲指定
+	MyBase::Vector2 textureLeftTop_ = { 0.0f, 0.0f };	// 左上座標
+	MyBase::Vector2 textureSize_ = { 100.0f, 100.0f };	// 切り出しサイズ
 
 };
