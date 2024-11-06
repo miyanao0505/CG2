@@ -25,6 +25,7 @@ public:	// getter
 
 public:	// setter
 	void SetModel(Model* model) { model_ = model; }
+	void SetModel(const std::string& filePath);
 	void SetScale(const MyBase::Vector3& scale) { transform_.scale = scale; }
 	void SetRotate(const MyBase::Vector3& rotate) { transform_.rotate = rotate; }
 	void SetTranslate(const MyBase::Vector3& translate) { transform_.translate = translate; }

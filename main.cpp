@@ -15,6 +15,7 @@
 #include "3d/Object3d.h"
 #include "3d/ModelBase.h"
 #include "3d/Model.h"
+#include "3d/ModelManager.h"
 #include "Script/MyTools.h"
 #include "Script/Matrix.h"
 #include "Script/MyBase.h"
@@ -110,14 +111,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	////sprites[3]->SetTexture("resources/monsterBall.png");
 	//sprites[3]->SetSize({ 100.0f, 100.0f });
 
-	// モデル
-	Model* model = new Model;
-	model->Initialize(modelBase);
+	// 3Dモデルマネージャの初期化
+	ModelManager::GetInstance()->Initialize(dxBase);
+
+	// モデルファイルパス
+	MyBase::ModelFilePath modelFilePath1 = { {"resources/plane"}, {"plane.obj"} };
+	MyBase::ModelFilePath modelFilePath2 = { {"resources/axis"}, {"axis.obj"} };
+	MyBase::ModelFilePath modelFilePath3 = { {"resources/fence"}, {"fence"} };
+
+	// .objファイルからモデルを読み込む
+	ModelManager::GetInstance()->LoadModel(modelFilePath1.directoryPath, modelFilePath1.filename);
+	ModelManager::GetInstance()->LoadModel(modelFilePath2.directoryPath, modelFilePath2.filename);
 
 	// 3Dオブジェクト
-	Object3d* object3d = new Object3d;
-	object3d->Initislize(object3dBase);
-	object3d->SetModel(model);
+	std::vector<Object3d*> objects;
+	for (uint32_t i = 0; i < 2; ++i) {
+		// 3Dオブジェクトの初期化
+		Object3d* object = new Object3d;
+		object->Initislize(object3dBase);
+		object->SetTranslate({ -2.f + i * 4.f, 0.0f, 0.0f });
+		object->SetModel(modelFilePath1.filename);
+		objects.push_back(object);
+	}
+	objects[1]->SetModel(modelFilePath2.filename);
+
 #pragma endregion シーン初期化
 
 	// ブレンドモード
@@ -400,8 +417,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	directionalLightData->intensity = 1.0f;
 
 	// Transform変数を作る
-	MyBase::Transform transform{ { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
-	MyBase::Transform transformSprite{ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
 	//MyBase::Transform cameraTransform{ { 1.0f, 1.0f, 1.0f }, { 0.3f, 0.0f, 0.0f }, { 0.0f, 4.0f, -10.0f } };
 	/*MyBase::Transform uvTransformSprite{
 		{1.0f, 1.0f, 1.0f},
@@ -446,6 +461,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//ImGui::DragFloat3("translate", &cameraTransform.translate.x, 0.05f);
 		//ImGui::DragFloat3("rotate", &cameraTransform.rotate.x, 0.05f);
 		//ImGui::End();
+
+		MyBase::Transform transform{ { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
+		MyBase::Transform transformSprite{ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
 
 		//ImGui::SetNextWindowPos(ImVec2(850, 20), ImGuiCond_Once);							// ウィンドウの座標(プログラム起動時のみ読み込み)
 		//ImGui::SetNextWindowSize(ImVec2(400, 500), ImGuiCond_Once);							// ウィンドウのサイズ(プログラム起動時のみ読み込み)
@@ -517,18 +535,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		// 3Dオブジェクト
-		// 移動
-		transform.translate = object3d->GetTranslate();
-		ImGui::SliderFloat3("Translate", &transform.translate.x, -5.0f, 5.f);
-		object3d->SetTranslate(transform.translate);
-		// 回転
-		transform.rotate = object3d->GetRotate();
-		ImGui::SliderFloat3("Rotate", &transform.rotate.x, -3.14f, 3.14f);
-		object3d->SetRotate(transform.rotate);
-		// 拡縮
-		transform.scale = object3d->GetScale();
-		ImGui::SliderFloat3("Scale", &transform.scale.x, 0.0f, 3.0f);
-		object3d->SetScale(transform.scale);
+		uint32_t objectIDIndex = 0;
+		for (Object3d* object : objects)
+		{
+			ImGui::PushID(objectIDIndex);
+			if (ImGui::CollapsingHeader("Object"))
+			{
+				// 移動
+				transformSprite.translate = object->GetTranslate();
+				ImGui::SliderFloat3("Translate", &transformSprite.translate.x, 0.0f, 640.0f);
+				object->SetTranslate(transform.translate);
+				// 回転
+				transform.rotate = object->GetRotate();
+				ImGui::SliderFloat3("Rotate", &transform.rotate.x, -3.14f, 3.14f);
+				object->SetRotate(transform.rotate);
+				// 拡縮
+				transform.scale = object->GetScale();
+				ImGui::SliderFloat3("Scale", &transform.scale.x, 0.0f, 3.0f);
+				object->SetScale(transform.scale);
+			}
+			ImGui::PopID();
+			++objectIDIndex;
+		}
 
 		// テクスチャ
 		//ImGui::Checkbox("useMonsterBall", &useMonsterBall);
@@ -591,28 +619,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::End();
 #endif // _DEBUG
 
-		// WorldMatrixの作成
-		//MyBase::Matrix4x4 worldMatrix = Matrix::MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
-		// カメラのWorldMatrixの作成
-		//MyBase::Matrix4x4 cameraMatrix = Matrix::MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
-		// ビュー行列の作成
-		//MyBase::Matrix4x4 viewMatrix = Matrix::Inverse(cameraMatrix);
-		// 透視投影行列の作成
-		//MyBase::Matrix4x4 projectionMatrix = Matrix::MakePerspectiveFovMatrix(0.45f, float(WindowsAPI::kClientWidth) / float(WindowsAPI::kClientHeight), 0.1f, 500.0f);
-		// WVP行列の作成
-		//MyBase::Matrix4x4 worldViewProjectionMatrix = Matrix::Multiply(worldMatrix, Matrix::Multiply(viewMatrix, projectionMatrix));
-		// CBufferの中身を更新
-		//transformationMatrixData[0].WVP = worldViewProjectionMatrix;
-		//transformationMatrixData[0].World = worldMatrix;
-		object3d->Update();
+		// 3Dオブジェクトの更新処理
+		for (Object3d* object : objects)
+		{
+			object->Update();
+		}
 
-		// Sprite用のWorldViewProgectionMatrixを作る
-		/*Matrix::Matrix4x4 worldMatrixSprite = Matrix::MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
-		Matrix::Matrix4x4 viewMatrixSprite = Matrix::MakeIdentity4x4();
-		Matrix::Matrix4x4 projectionMatrixSprite = Matrix::MakeOrthographicMatrix(0.0f, 0.0f, float(WindowsAPI::kClientWidth), float(WindowsAPI::kClientHeight), 0.0f, 100.0f);
-		Matrix::Matrix4x4 worldViewProjectionMatrixSprite = Matrix::Multiply(worldMatrixSprite, Matrix::Multiply(viewMatrixSprite, projectionMatrixSprite));
-		transformationMatrixDataSprite[0].WVP = worldViewProjectionMatrixSprite;
-		transformationMatrixDataSprite[0].World = worldMatrixSprite;*/
+		// スプライトの更新処理
 		for (Sprite* sprite : sprites)
 		{
 			sprite->Update();
@@ -638,7 +651,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		object3dBase->SetCommonScreen();
 
 		// 全ての3DObject個々の描画
-		object3d->Draw();
+		for (Object3d* object : objects)
+		{
+			object->Draw();
+		}
 
 #pragma endregion 3Dオブジェクト
 
@@ -677,9 +693,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// 解放処理
 	// 3Dオブジェクト
-	delete object3d;
-	// モデル
-	delete model;
+	for (Object3d* object : objects) 
+	{
+		delete object;
+	}
 	// スプライト
 	for (Sprite* sprite : sprites)
 	{
@@ -693,6 +710,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	delete spriteBase;
 	// 入力解放
 	delete input;
+	// 3Dモデルマネージャの終了
+	ModelManager::GetInstance()->Finalize();
 	// テクスチャマネージャの終了
 	TextureManager::GetInstance()->Finalize();
 	// DirectX解放

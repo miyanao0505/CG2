@@ -213,6 +213,13 @@ public:
 		MaterialData material;
 	};
 
+	/// <summary>
+	/// モデルファイルパス
+	/// </summary>
+	struct ModelFilePath {
+		std::string directoryPath;
+		std::string filename;
+	};
 	
 };
 

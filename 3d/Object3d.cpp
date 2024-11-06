@@ -1,6 +1,7 @@
 #include "Object3d.h"
 #include <fstream>
 #include "Object3dBase.h"
+#include "ModelManager.h"
 #include "../Script/Matrix.h"
 #include "../2d/TextureManager.h"
 
@@ -52,6 +53,12 @@ void Object3d::Draw()
 	if (model_) {
 		model_->Draw();
 	}
+}
+
+void Object3d::SetModel(const std::string& filePath)
+{
+	// モデルを検索してセットする
+	model_ = ModelManager::GetInstance()->FindModel(filePath);
 }
 
 // 座標変換行列データ作成

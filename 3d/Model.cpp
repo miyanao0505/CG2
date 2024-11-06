@@ -5,13 +5,13 @@
 #include "../2d/TextureManager.h"
 
 // 初期化
-void Model::Initialize(ModelBase* modelBase)
+void Model::Initialize(ModelBase* modelBase, const std::string& directorypath, const std::string& filename)
 {
 	// 引数で受け取ってメンバ変数に記録する
 	modelBase_ = modelBase;
 
 	// モデル読み込み
-	LoadObjFile("resources/plane", "plane.obj");
+	LoadObjFile(directorypath, filename);
 
 	// 頂点データの作成
 	CreateVertexData();
