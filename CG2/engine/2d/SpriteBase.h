@@ -1,5 +1,5 @@
 #pragma once
-#include "../base/DirectXBase.h"
+#include "DirectXBase.h"
 
 // スプライト共通部
 class SpriteBase

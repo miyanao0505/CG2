@@ -2,8 +2,8 @@
 #include <string>
 #include <wrl.h>
 #include <d3d12.h>
-#include "../base/DirectXBase.h"
-#include "../externals/DirectXTex/DirectXTex.h"
+#include "DirectXBase.h"
+#include "externals/DirectXTex/DirectXTex.h"
 
 // テクスチャマネージャー
 class TextureManager

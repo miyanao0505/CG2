@@ -1,6 +1,6 @@
 #include "Sprite.h"
 #include "SpriteBase.h"
-#include "../Script/Matrix.h"
+#include "Matrix.h"
 
 // 初期化
 void Sprite::Initialize(SpriteBase* spriteBase, std::string textureFilePath)

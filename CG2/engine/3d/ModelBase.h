@@ -1,5 +1,5 @@
 #pragma once
-#include "../base/DirectXBase.h"
+#include "DirectXBase.h"
 
 // 3Dモデル共通部
 class ModelBase

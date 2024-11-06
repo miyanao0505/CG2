@@ -2,8 +2,8 @@
 #include <fstream>
 #include "Object3dBase.h"
 #include "ModelManager.h"
-#include "../Script/Matrix.h"
-#include "../2d/TextureManager.h"
+#include "Matrix.h"
+#include "TextureManager.h"
 
 // 初期化
 void Object3d::Initislize(Object3dBase* object3dBase)

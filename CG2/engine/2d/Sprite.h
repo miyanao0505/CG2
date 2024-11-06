@@ -1,8 +1,8 @@
 #pragma once
 #include <d3d12.h>
 #include <wrl.h>
-#include "../Script/MyBase.h"
-#include "../2d/TextureManager.h"
+#include "MyBase.h"
+#include "TextureManager.h"
 
 // 前方宣言
 class SpriteBase;

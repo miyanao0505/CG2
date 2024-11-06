@@ -1,8 +1,8 @@
 #include "Model.h"
 #include <fstream>
 #include "ModelBase.h"
-#include "../Script/Matrix.h"
-#include "../2d/TextureManager.h"
+#include "Matrix.h"
+#include "TextureManager.h"
 
 // 初期化
 void Model::Initialize(ModelBase* modelBase, const std::string& directorypath, const std::string& filename)

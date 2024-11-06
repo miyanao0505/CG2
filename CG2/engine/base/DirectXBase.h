@@ -8,7 +8,7 @@
 #include "Logger.h"
 #include "StringUtility.h"
 #include "WindowsAPI.h"
-#include "../externals/DirectXTex/DirectXTex.h"
+#include "externals/DirectXTex/DirectXTex.h"
 
 // DirectX基盤
 class DirectXBase

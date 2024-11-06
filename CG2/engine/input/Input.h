@@ -3,7 +3,7 @@
 #include <dinput.h>
 #include <Windows.h>
 #include <wrl.h>
-#include "../base/WindowsAPI.h"
+#include "WindowsAPI.h"
 
 // 入力
 class Input

@@ -2,7 +2,7 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include "Model.h"
-#include "../Script/MyBase.h"
+#include "MyBase.h"
 
 // 前方宣言
 class Object3dBase;

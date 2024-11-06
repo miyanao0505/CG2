@@ -46,9 +46,6 @@
     <Filter Include="ソース ファイル\engine\2d">
       <UniqueIdentifier>{c5e38311-5b6b-4acc-b03a-0680a4fff107}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\engine\3d">
-      <UniqueIdentifier>{01e13457-a734-45c4-b0db-206b5ba43141}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\engine\base">
       <UniqueIdentifier>{05987b37-8d38-4d11-8a91-112391d09c8f}</UniqueIdentifier>
     </Filter>
@@ -67,9 +64,12 @@
     <Filter Include="ソース ファイル\application">
       <UniqueIdentifier>{645261e6-3443-458a-8780-6016b9e321bb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\engine\3d">
+      <UniqueIdentifier>{01e13457-a734-45c4-b0db-206b5ba43141}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="CG2\main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="externals\imgui\imgui.cpp">
@@ -93,55 +93,55 @@
     <ClCompile Include="externals\imgui\imgui_widgets.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="input\Input.cpp">
+    <ClCompile Include="CG2\engine\input\Input.cpp">
       <Filter>ソース ファイル\engine\Input</Filter>
     </ClCompile>
-    <ClCompile Include="base\WindowsAPI.cpp">
+    <ClCompile Include="CG2\engine\base\WindowsAPI.cpp">
       <Filter>ソース ファイル\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="base\DirectXBase.cpp">
+    <ClCompile Include="CG2\engine\base\DirectXBase.cpp">
       <Filter>ソース ファイル\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="base\Logger.cpp">
+    <ClCompile Include="CG2\engine\base\Logger.cpp">
       <Filter>ソース ファイル\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="base\StringUtility.cpp">
+    <ClCompile Include="CG2\engine\base\StringUtility.cpp">
       <Filter>ソース ファイル\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="base\D3DResourceLeakChecker.cpp">
+    <ClCompile Include="CG2\engine\base\D3DResourceLeakChecker.cpp">
       <Filter>ソース ファイル\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="2d\SpriteBase.cpp">
+    <ClCompile Include="CG2\engine\2d\SpriteBase.cpp">
       <Filter>ソース ファイル\engine\2d</Filter>
     </ClCompile>
-    <ClCompile Include="2d\Sprite.cpp">
+    <ClCompile Include="CG2\engine\2d\Sprite.cpp">
       <Filter>ソース ファイル\engine\2d</Filter>
     </ClCompile>
-    <ClCompile Include="2d\TextureManager.cpp">
+    <ClCompile Include="CG2\engine\2d\TextureManager.cpp">
       <Filter>ソース ファイル\engine\2d</Filter>
     </ClCompile>
-    <ClCompile Include="3d\Object3dBase.cpp">
+    <ClCompile Include="CG2\engine\3d\Object3dBase.cpp">
       <Filter>ソース ファイル\engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="3d\Object3d.cpp">
+    <ClCompile Include="CG2\engine\3d\Object3d.cpp">
       <Filter>ソース ファイル\engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="3d\Model.cpp">
+    <ClCompile Include="CG2\engine\3d\Model.cpp">
       <Filter>ソース ファイル\engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="3d\ModelBase.cpp">
+    <ClCompile Include="CG2\engine\3d\ModelBase.cpp">
       <Filter>ソース ファイル\engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="3d\ModelManager.cpp">
+    <ClCompile Include="CG2\engine\3d\ModelManager.cpp">
       <Filter>ソース ファイル\engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="Script\Matrix.cpp">
+    <ClCompile Include="CG2\Script\Matrix.cpp">
       <Filter>ソース ファイル\engine\math</Filter>
     </ClCompile>
-    <ClCompile Include="Script\MyBase.cpp">
+    <ClCompile Include="CG2\Script\MyBase.cpp">
       <Filter>ソース ファイル\engine\math</Filter>
     </ClCompile>
-    <ClCompile Include="Script\MyTools.cpp">
+    <ClCompile Include="CG2\Script\MyTools.cpp">
       <Filter>ソース ファイル\engine\math</Filter>
     </ClCompile>
   </ItemGroup>
@@ -170,55 +170,55 @@
     <ClInclude Include="externals\imgui\imstb_truetype.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="input\Input.h">
+    <ClInclude Include="CG2\engine\input\Input.h">
       <Filter>ヘッダー ファイル\Input</Filter>
     </ClInclude>
-    <ClInclude Include="base\WindowsAPI.h">
+    <ClInclude Include="CG2\engine\base\WindowsAPI.h">
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
-    <ClInclude Include="base\DirectXBase.h">
+    <ClInclude Include="CG2\engine\base\DirectXBase.h">
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
-    <ClInclude Include="base\Logger.h">
+    <ClInclude Include="CG2\engine\base\Logger.h">
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
-    <ClInclude Include="base\StringUtility.h">
+    <ClInclude Include="CG2\engine\base\StringUtility.h">
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
-    <ClInclude Include="base\D3DResourceLeakChecker.h">
+    <ClInclude Include="CG2\engine\base\D3DResourceLeakChecker.h">
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
-    <ClInclude Include="2d\SpriteBase.h">
+    <ClInclude Include="CG2\engine\2d\SpriteBase.h">
       <Filter>ヘッダー ファイル\2d</Filter>
     </ClInclude>
-    <ClInclude Include="2d\Sprite.h">
+    <ClInclude Include="CG2\engine\2d\Sprite.h">
       <Filter>ヘッダー ファイル\2d</Filter>
     </ClInclude>
-    <ClInclude Include="2d\TextureManager.h">
+    <ClInclude Include="CG2\engine\2d\TextureManager.h">
       <Filter>ヘッダー ファイル\2d</Filter>
     </ClInclude>
-    <ClInclude Include="3d\Object3dBase.h">
+    <ClInclude Include="CG2\engine\3d\Object3dBase.h">
       <Filter>ヘッダー ファイル\3d</Filter>
     </ClInclude>
-    <ClInclude Include="3d\Object3d.h">
+    <ClInclude Include="CG2\engine\3d\Object3d.h">
       <Filter>ヘッダー ファイル\3d</Filter>
     </ClInclude>
-    <ClInclude Include="3d\Model.h">
+    <ClInclude Include="CG2\engine\3d\Model.h">
       <Filter>ヘッダー ファイル\3d</Filter>
     </ClInclude>
-    <ClInclude Include="3d\ModelBase.h">
+    <ClInclude Include="CG2\engine\3d\ModelBase.h">
       <Filter>ヘッダー ファイル\3d</Filter>
     </ClInclude>
-    <ClInclude Include="3d\ModelManager.h">
+    <ClInclude Include="CG2\engine\3d\ModelManager.h">
       <Filter>ヘッダー ファイル\3d</Filter>
     </ClInclude>
-    <ClInclude Include="Script\Matrix.h">
+    <ClInclude Include="CG2\Script\Matrix.h">
       <Filter>ヘッダー ファイル\math</Filter>
     </ClInclude>
-    <ClInclude Include="Script\MyBase.h">
+    <ClInclude Include="CG2\Script\MyBase.h">
       <Filter>ヘッダー ファイル\math</Filter>
     </ClInclude>
-    <ClInclude Include="Script\MyTools.h">
+    <ClInclude Include="CG2\Script\MyTools.h">
       <Filter>ヘッダー ファイル\math</Filter>
     </ClInclude>
   </ItemGroup>

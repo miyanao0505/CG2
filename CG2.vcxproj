@@ -11,19 +11,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="2d\Sprite.cpp" />
-    <ClCompile Include="2d\SpriteBase.cpp" />
-    <ClCompile Include="2d\TextureManager.cpp" />
-    <ClCompile Include="3d\Model.cpp" />
-    <ClCompile Include="3d\ModelBase.cpp" />
-    <ClCompile Include="3d\ModelManager.cpp" />
-    <ClCompile Include="3d\Object3d.cpp" />
-    <ClCompile Include="3d\Object3dBase.cpp" />
-    <ClCompile Include="base\D3DResourceLeakChecker.cpp" />
-    <ClCompile Include="base\DirectXBase.cpp" />
-    <ClCompile Include="base\Logger.cpp" />
-    <ClCompile Include="base\StringUtility.cpp" />
-    <ClCompile Include="base\WindowsAPI.cpp" />
+    <ClCompile Include="CG2\engine\2d\Sprite.cpp" />
+    <ClCompile Include="CG2\engine\2d\SpriteBase.cpp" />
+    <ClCompile Include="CG2\engine\2d\TextureManager.cpp" />
+    <ClCompile Include="CG2\engine\3d\Model.cpp" />
+    <ClCompile Include="CG2\engine\3d\ModelBase.cpp" />
+    <ClCompile Include="CG2\engine\3d\ModelManager.cpp" />
+    <ClCompile Include="CG2\engine\3d\Object3d.cpp" />
+    <ClCompile Include="CG2\engine\3d\Object3dBase.cpp" />
+    <ClCompile Include="CG2\engine\base\D3DResourceLeakChecker.cpp" />
+    <ClCompile Include="CG2\engine\base\DirectXBase.cpp" />
+    <ClCompile Include="CG2\engine\base\Logger.cpp" />
+    <ClCompile Include="CG2\engine\base\StringUtility.cpp" />
+    <ClCompile Include="CG2\engine\base\WindowsAPI.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
     <ClCompile Include="externals\imgui\imgui_demo.cpp" />
     <ClCompile Include="externals\imgui\imgui_draw.cpp" />
@@ -31,26 +31,26 @@
     <ClCompile Include="externals\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="externals\imgui\imgui_tables.cpp" />
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="input\Input.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Script\Matrix.cpp" />
-    <ClCompile Include="Script\MyBase.cpp" />
-    <ClCompile Include="Script\MyTools.cpp" />
+    <ClCompile Include="CG2\engine\input\Input.cpp" />
+    <ClCompile Include="CG2\main.cpp" />
+    <ClCompile Include="CG2\Script\Matrix.cpp" />
+    <ClCompile Include="CG2\Script\MyBase.cpp" />
+    <ClCompile Include="CG2\Script\MyTools.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="2d\Sprite.h" />
-    <ClInclude Include="2d\SpriteBase.h" />
-    <ClInclude Include="2d\TextureManager.h" />
-    <ClInclude Include="3d\Model.h" />
-    <ClInclude Include="3d\ModelBase.h" />
-    <ClInclude Include="3d\ModelManager.h" />
-    <ClInclude Include="3d\Object3d.h" />
-    <ClInclude Include="3d\Object3dBase.h" />
-    <ClInclude Include="base\D3DResourceLeakChecker.h" />
-    <ClInclude Include="base\DirectXBase.h" />
-    <ClInclude Include="base\Logger.h" />
-    <ClInclude Include="base\StringUtility.h" />
-    <ClInclude Include="base\WindowsAPI.h" />
+    <ClInclude Include="CG2\engine\2d\Sprite.h" />
+    <ClInclude Include="CG2\engine\2d\SpriteBase.h" />
+    <ClInclude Include="CG2\engine\2d\TextureManager.h" />
+    <ClInclude Include="CG2\engine\3d\Model.h" />
+    <ClInclude Include="CG2\engine\3d\ModelBase.h" />
+    <ClInclude Include="CG2\engine\3d\ModelManager.h" />
+    <ClInclude Include="CG2\engine\3d\Object3d.h" />
+    <ClInclude Include="CG2\engine\3d\Object3dBase.h" />
+    <ClInclude Include="CG2\engine\base\D3DResourceLeakChecker.h" />
+    <ClInclude Include="CG2\engine\base\DirectXBase.h" />
+    <ClInclude Include="CG2\engine\base\Logger.h" />
+    <ClInclude Include="CG2\engine\base\StringUtility.h" />
+    <ClInclude Include="CG2\engine\base\WindowsAPI.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />
@@ -59,10 +59,10 @@
     <ClInclude Include="externals\imgui\imstb_rectpack.h" />
     <ClInclude Include="externals\imgui\imstb_textedit.h" />
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
-    <ClInclude Include="input\Input.h" />
-    <ClInclude Include="Script\Matrix.h" />
-    <ClInclude Include="Script\MyBase.h" />
-    <ClInclude Include="Script\MyTools.h" />
+    <ClInclude Include="CG2\engine\input\Input.h" />
+    <ClInclude Include="CG2\Script\Matrix.h" />
+    <ClInclude Include="CG2\Script\MyBase.h" />
+    <ClInclude Include="CG2\Script\MyTools.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
@@ -133,6 +133,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)CG2\engine\2d;$(ProjectDir)CG2\engine\3d;$(ProjectDir)CG2\engine\audio;$(ProjectDir)CG2\engine\base;$(ProjectDir)CG2\engine\input;$(ProjectDir)CG2\engine\scene;$(ProjectDir)CG2\Script;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -156,6 +157,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)CG2\engine\2d;$(ProjectDir)CG2\engine\3d;$(ProjectDir)CG2\engine\audio;$(ProjectDir)CG2\engine\base;$(ProjectDir)CG2\engine\input;$(ProjectDir)CG2\engine\scene;$(ProjectDir)CG2\Script;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
