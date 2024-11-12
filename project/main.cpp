@@ -86,30 +86,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// テクスチャの読み込み
 	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
-	//TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
+	TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
 
 	// スプライト
 	std::vector<Sprite*> sprites;
-	//for (uint32_t i = 0; i < 5; ++i)
-	//{
-	//	// スプライトの初期化
-	//	Sprite* sprite = new Sprite();
-	//	//sprite->Initialize(spriteBase, "resources/uvChecker.png");
-	//	sprite->Initialize(spriteBase, filePath1);
-	//	sprite->SetPosition({ 200.0f * float(i), 0.0f });
-	//	sprite->SetSize({ 100.f, 100.f });
-	//	sprite->SetAnchorPoint({ 0.0f, 0.0f });
-	//	sprite->SetIsFlipX(false);
-	//	sprite->SetIsFlipY(false);
-	//	sprites.push_back(sprite);
-	//}
+	for (uint32_t i = 0; i < 5; ++i)
+	{
+		// スプライトの初期化
+		Sprite* sprite = new Sprite();
+		//sprite->Initialize(spriteBase, "resources/uvChecker.png");
+		sprite->Initialize(spriteBase, filePath1);
+		sprite->SetPosition({ 200.0f * float(i), 0.0f });
+		sprite->SetSize({ 100.f, 100.f });
+		sprite->SetAnchorPoint({ 0.0f, 0.0f });
+		sprite->SetIsFlipX(false);
+		sprite->SetIsFlipY(false);
+		sprites.push_back(sprite);
+	}
 
-	//sprites[1]->SetTexture(filePath2);
-	////sprites[1]->SetTexture("resources/monsterBall.png");
-	//sprites[1]->SetSize({ 100.0f, 100.0f });
-	//sprites[3]->SetTexture(filePath2);
-	////sprites[3]->SetTexture("resources/monsterBall.png");
-	//sprites[3]->SetSize({ 100.0f, 100.0f });
+	sprites[1]->SetTexture(filePath2);
+	//sprites[1]->SetTexture("resources/monsterBall.png");
+	sprites[1]->SetSize({ 100.0f, 100.0f });
+	sprites[3]->SetTexture(filePath2);
+	//sprites[3]->SetTexture("resources/monsterBall.png");
+	sprites[3]->SetSize({ 100.0f, 100.0f });
 
 	// 3Dモデルマネージャの初期化
 	ModelManager::GetInstance()->Initialize(dxBase);
@@ -117,7 +117,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// モデルファイルパス
 	MyBase::ModelFilePath modelFilePath1 = { {"resources/plane"}, {"plane.obj"} };
 	MyBase::ModelFilePath modelFilePath2 = { {"resources/axis"}, {"axis.obj"} };
-	MyBase::ModelFilePath modelFilePath3 = { {"resources/fence"}, {"fence"} };
+	//MyBase::ModelFilePath modelFilePath3 = { {"resources/fence"}, {"fence"} };
 
 	// .objファイルからモデルを読み込む
 	ModelManager::GetInstance()->LoadModel(modelFilePath1.directoryPath, modelFilePath1.filename);
@@ -134,7 +134,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		objects.push_back(object);
 	}
 	objects[1]->SetModel(modelFilePath2.filename);
-
+	
 #pragma endregion シーン初期化
 
 	// ブレンドモード
@@ -692,6 +692,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #endif // _DEBUG
 
 	// 解放処理
+	// 3Dモデルマネージャの終了
+	ModelManager::GetInstance()->Finalize();
+	// テクスチャマネージャの終了
+	TextureManager::GetInstance()->Finalize();
 	// 3Dオブジェクト
 	for (Object3d* object : objects) 
 	{
@@ -710,10 +714,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	delete spriteBase;
 	// 入力解放
 	delete input;
-	// 3Dモデルマネージャの終了
-	ModelManager::GetInstance()->Finalize();
-	// テクスチャマネージャの終了
-	TextureManager::GetInstance()->Finalize();
+	
 	// DirectX解放
 	delete dxBase;
 

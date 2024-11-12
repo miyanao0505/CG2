@@ -280,7 +280,7 @@ ComPtr<ID3D12Resource> DirectXBase::CreateBufferResource(size_t sizeInBytes)
 }
 
 // TextureResource作成の関数
-ID3D12Resource* DirectXBase::CreateTextureResource(ID3D12Device* device, const TexMetadata& metadata)
+Microsoft::WRL::ComPtr<ID3D12Resource> DirectXBase::CreateTextureResource(const TexMetadata& metadata)
 {
 	// 1. metadataを基にResourceの設定
 	D3D12_RESOURCE_DESC resourceDesc{};
@@ -296,8 +296,8 @@ ID3D12Resource* DirectXBase::CreateTextureResource(ID3D12Device* device, const T
 	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;							// 細かい設定を行う
 
 	// 3. Resourceを生成する
-	ID3D12Resource* resource = nullptr;
-	HRESULT hr = device->CreateCommittedResource(
+	Microsoft::WRL::ComPtr<ID3D12Resource> resource = nullptr;
+	HRESULT hr = device_->CreateCommittedResource(
 		&heapProperties,					// Heapの設定
 		D3D12_HEAP_FLAG_NONE,				// Heapの特殊な設定。特になし
 		&resourceDesc,						// Resourceの設定
@@ -315,8 +315,8 @@ Microsoft::WRL::ComPtr<ID3D12Resource> DirectXBase::UploadTextureData(ID3D12Reso
 	std::vector<D3D12_SUBRESOURCE_DATA> subresources;
 	PrepareUpload(device_.Get(), mipImages.GetImages(), mipImages.GetImageCount(), mipImages.GetMetadata(), subresources);
 	uint64_t intermediateSize = GetRequiredIntermediateSize(texture, 0, UINT(subresources.size()));
-	intermediateResource_ = CreateBufferResource(intermediateSize);
-	UpdateSubresources(commandList_.Get(), texture, intermediateResource_.Get(), 0, 0, UINT(subresources.size()), subresources.data());
+	ComPtr<ID3D12Resource> intermediateResource = CreateBufferResource(intermediateSize);
+	UpdateSubresources(commandList_.Get(), texture, intermediateResource.Get(), 0, 0, UINT(subresources.size()), subresources.data());
 	// Textureへの転送後は利用できるよう、D3D12RESOURCE_STATE_COPY_DESTからD3D12_RESOURCE_STATE_GENERIC_READへResourceStateを変更する
 	D3D12_RESOURCE_BARRIER barrier{};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -327,7 +327,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> DirectXBase::UploadTextureData(ID3D12Reso
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;
 	commandList_->ResourceBarrier(1, &barrier);
 
-	return intermediateResource_;
+	return intermediateResource;
 }
 
 ScratchImage DirectXBase::LoadTexture(const std::string& filePath)

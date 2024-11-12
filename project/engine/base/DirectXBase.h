@@ -37,7 +37,7 @@ public:	// メンバ関数
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
 
 	// TextureResource作成の関数
-	ID3D12Resource* CreateTextureResource(ID3D12Device* device, const DirectX::TexMetadata& metadata);
+	Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
 
 	// データを転送する関数
 	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages);
@@ -158,8 +158,6 @@ private:	// メンバ変数
 
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc_;
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
-
-	Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource_;
 
 	// 記録時間(FPS固定用)
 	std::chrono::steady_clock::time_point reference_;
