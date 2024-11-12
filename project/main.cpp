@@ -485,10 +485,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::Checkbox("enableLighting", (bool*)&materialData[0].enableLighting);*/
 
 		// スプライト
-		uint32_t spriteIDIndex = 0;
+		uint32_t objectIDIndex = 0;
 		for(Sprite* sprite : sprites)
 		{
-			ImGui::PushID(spriteIDIndex);
+			ImGui::PushID(objectIDIndex);
 			if (ImGui::CollapsingHeader("Object"))
 			{
 				// 移動
@@ -531,11 +531,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				}
 			}
 			ImGui::PopID();
-			++spriteIDIndex;
+			++objectIDIndex;
 		}
 
 		// 3Dオブジェクト
-		uint32_t objectIDIndex = 0;
 		for (Object3d* object : objects)
 		{
 			ImGui::PushID(objectIDIndex);
