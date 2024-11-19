@@ -22,6 +22,9 @@ public:	// getter
 	const MyBase::Vector3& GetScale() const { return transform_.scale; }
 	const MyBase::Vector3& GetRotate() const { return transform_.rotate; }
 	const MyBase::Vector3& GetTranslate() const { return transform_.translate; }
+	const MyBase::Vector4& GetDirectionalLightColor() const { return directionalLightData_->color; }
+	const MyBase::Vector3& GetDirectionalLightDirection() const { return directionalLightData_->direction; }
+	const float& GetDirectionalLightIntensity() const { return directionalLightData_->intensity; }
 
 public:	// setter
 	void SetModel(Model* model) { model_ = model; }
@@ -29,6 +32,9 @@ public:	// setter
 	void SetScale(const MyBase::Vector3& scale) { transform_.scale = scale; }
 	void SetRotate(const MyBase::Vector3& rotate) { transform_.rotate = rotate; }
 	void SetTranslate(const MyBase::Vector3& translate) { transform_.translate = translate; }
+	void SetDirectionalLightColor(const MyBase::Vector4& lightColor) { directionalLightData_->color = lightColor; }
+	void SetDirectionalLightDirection(const MyBase::Vector3& lightDirection) { directionalLightData_->direction = lightDirection; }
+	void SetDirectionalLightIntensity(const float& lightIntensity) { directionalLightData_->intensity = lightIntensity; }
 
 private:	// メンバ関数
 	// 座標変換行列データ作成

@@ -276,13 +276,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				ImGui::SliderFloat3("Scale", &transform.scale.x, 0.0f, 3.0f);
 				object->SetScale(transform.scale);
 
-				//if (ImGui::CollapsingHeader("Material"))
-				//{
-				//	// 色
-				//	MyBase::Vector4 color = object->GetColor();
-				//	ImGui::ColorEdit4("color", &color.x);
-				//	object->SetColor(color);
-				//}
+				if (ImGui::CollapsingHeader("Material"))
+				{
+					// 平行光源
+					MyBase::DirectionalLight directionalLight{};
+					// 色
+					directionalLight.color = object->GetDirectionalLightColor();
+					ImGui::ColorEdit4("LightColor", &directionalLight.color.x);
+					object->SetDirectionalLightColor(directionalLight.color);
+					// 方向
+					directionalLight.direction = object->GetDirectionalLightDirection();
+					ImGui::SliderFloat3("LightDirection", &directionalLight.direction.x, -1, 1);
+					object->SetDirectionalLightDirection(directionalLight.direction);
+					// 輝度
+					directionalLight.intensity = object->GetDirectionalLightIntensity();
+					ImGui::DragFloat("Intensity", &directionalLight.intensity, 0.01f);
+					object->SetDirectionalLightIntensity(directionalLight.intensity);
+				}
 			}
 			ImGui::PopID();
 			++objectIDIndex;
@@ -334,12 +344,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		default:
 			break;
 		}*/
-
-		// 平行光源
-		/*ImGui::ColorEdit3("LightColor", &directionalLightData[0].color.x);
-		ImGui::SliderFloat3("LightDirection", &directionalLightData[0].direction.x, -1.0f, 1.0f);
-		directionalLightData[0].direction = MyTools::Normalize(directionalLightData[0].direction);
-		ImGui::DragFloat("Intensity", &directionalLightData[0].intensity, 0.05f);*/
 
 		// UV
 		/*ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
