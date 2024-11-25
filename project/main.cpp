@@ -117,17 +117,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// モデルファイルパス
 	MyBase::ModelFilePath modelFilePath1 = { {"resources/plane"}, {"plane.obj"} };
-	//MyBase::ModelFilePath modelFilePath2 = { {"resources/axis"}, {"axis.obj"} };
+	MyBase::ModelFilePath modelFilePath2 = { {"resources/axis"}, {"axis.obj"} };
 	//MyBase::ModelFilePath modelFilePath3 = { {"resources/fence"}, {"fence.obj"} };
 
 	// .objファイルからモデルを読み込む
 	ModelManager::GetInstance()->LoadModel(modelFilePath1.directoryPath, modelFilePath1.filename);
-	//ModelManager::GetInstance()->LoadModel(modelFilePath2.directoryPath, modelFilePath2.filename);
+	ModelManager::GetInstance()->LoadModel(modelFilePath2.directoryPath, modelFilePath2.filename);
 	//ModelManager::GetInstance()->LoadModel(modelFilePath3.directoryPath, modelFilePath3.filename);
 
 	// 3Dオブジェクト
 	std::vector<Object3d*> objects;
-	for (uint32_t i = 0; i < 1; ++i) {
+	for (uint32_t i = 0; i < 2; ++i) {
 		// 3Dオブジェクトの初期化
 		Object3d* object = new Object3d;
 		object->Initislize(object3dBase);
@@ -135,7 +135,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		object->SetModel(modelFilePath1.filename);
 		objects.push_back(object);
 	}
-	//objects[1]->SetModel(modelFilePath3.filename);
+	objects[1]->SetModel(modelFilePath2.filename);
 	
 #pragma endregion シーン初期化
 
@@ -187,6 +187,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		MyBase::Transform transform{ { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
 		MyBase::Transform transformSprite{ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
+		bool isEnableLighting = true;
 
 		//ImGui::SetNextWindowPos(ImVec2(850, 20), ImGuiCond_Once);							// ウィンドウの座標(プログラム起動時のみ読み込み)
 		//ImGui::SetNextWindowSize(ImVec2(400, 500), ImGuiCond_Once);							// ウィンドウのサイズ(プログラム起動時のみ読み込み)
@@ -278,20 +279,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 				if (ImGui::CollapsingHeader("Material"))
 				{
-					// 平行光源
-					MyBase::DirectionalLight directionalLight{};
-					// 色
-					directionalLight.color = object->GetDirectionalLightColor();
-					ImGui::ColorEdit4("LightColor", &directionalLight.color.x);
-					object->SetDirectionalLightColor(directionalLight.color);
-					// 方向
-					directionalLight.direction = object->GetDirectionalLightDirection();
-					ImGui::SliderFloat3("LightDirection", &directionalLight.direction.x, -1, 1);
-					object->SetDirectionalLightDirection(directionalLight.direction);
-					// 輝度
-					directionalLight.intensity = object->GetDirectionalLightIntensity();
-					ImGui::DragFloat("Intensity", &directionalLight.intensity, 0.01f);
-					object->SetDirectionalLightIntensity(directionalLight.intensity);
+					//isEnableLighting = object->GetEnableLighting();
+
+					if (isEnableLighting)
+					{
+						// 平行光源
+						MyBase::DirectionalLight directionalLight{};
+						// 色
+						directionalLight.color = object->GetDirectionalLightColor();
+						ImGui::ColorEdit4("LightColor", &directionalLight.color.x);
+						object->SetDirectionalLightColor(directionalLight.color);
+						// 方向
+						directionalLight.direction = object->GetDirectionalLightDirection();
+						ImGui::SliderFloat3("LightDirection", &directionalLight.direction.x, -1, 1);
+						object->SetDirectionalLightDirection(directionalLight.direction);
+						// 輝度
+						directionalLight.intensity = object->GetDirectionalLightIntensity();
+						ImGui::DragFloat("Intensity", &directionalLight.intensity, 0.01f);
+						object->SetDirectionalLightIntensity(directionalLight.intensity);
+					}
 				}
 			}
 			ImGui::PopID();

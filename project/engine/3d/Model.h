@@ -19,7 +19,11 @@ public:	// メンバ関数
 	// .objファイルの読み取り
 	void LoadObjFile(const std::string& directoryPath, const std::string& filename);
 
+public:	// getter
+	const bool& GetEnableLighting() const { return materialData_->enableLighting; }
 
+public:	// setter
+	void SetEnableLighting(const bool& enableLighting) { materialData_->enableLighting = enableLighting; }
 
 private:	// メンバ関数
 	// 頂点データ作成
