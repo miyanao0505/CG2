@@ -76,6 +76,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma endregion 基盤システム初期化
 
 #pragma region シーン初期化
+	// カメラ
+	Camera* camera = new Camera();
+	camera->SetRotate({ 0.0f, 0.0f, 0.0f });
+	camera->SetTranslate({ 0.0f, 0.0f, -10.0f });
+	object3dBase->SetDefaultCamera(camera);
+	
 	// テクスチャマネージャの初期化
 	TextureManager::GetInstance()->Initialize(dxBase);
 
@@ -176,18 +182,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//transform.rotate.y += 1.f / 360.f * float(M_PI);
 
 #ifdef _DEBUG
-		// 開発用UIの処理。実際に開発用のUIを出す場合はここをゲーム固有の処理に置き換える
-		//ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);							// ウィンドウの座標(プログラム起動時のみ読み込み)
-		//ImGui::SetNextWindowSize(ImVec2(500, 80), ImGuiCond_Once);							// ウィンドウのサイズ(プログラム起動時のみ読み込み)
-
-		//ImGui::Begin("Camera");
-		//ImGui::DragFloat3("translate", &cameraTransform.translate.x, 0.05f);
-		//ImGui::DragFloat3("rotate", &cameraTransform.rotate.x, 0.05f);
-		//ImGui::End();
-
+		// ImGuiで使う変数
+		MyBase::Transform transformCamera{ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
 		MyBase::Transform transform{ { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
 		MyBase::Transform transformSprite{ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
 		bool isEnableLighting = true;
+
+
+		// 開発用UIの処理。実際に開発用のUIを出す場合はここをゲーム固有の処理に置き換える
+		ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);							// ウィンドウの座標(プログラム起動時のみ読み込み)
+		ImGui::SetNextWindowSize(ImVec2(500, 80), ImGuiCond_Once);							// ウィンドウのサイズ(プログラム起動時のみ読み込み)
+
+		ImGui::Begin("Camera");
+		transformCamera.translate = camera->GetTranslate();
+		ImGui::DragFloat3("translate", &transformCamera.translate.x, 0.05f);
+		camera->SetTranslate(transformCamera.translate);
+		transformCamera.rotate = camera->GetRotate();
+		ImGui::DragFloat3("rotate", &transformCamera.rotate.x, 0.05f);
+		camera->SetRotate(transformCamera.rotate);
+		ImGui::End();
 
 		//ImGui::SetNextWindowPos(ImVec2(850, 20), ImGuiCond_Once);							// ウィンドウの座標(プログラム起動時のみ読み込み)
 		//ImGui::SetNextWindowSize(ImVec2(400, 500), ImGuiCond_Once);							// ウィンドウのサイズ(プログラム起動時のみ読み込み)
@@ -358,6 +371,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		ImGui::End();
 #endif // _DEBUG
+
+		// カメラ
+		camera->Update();
 
 		// 3Dオブジェクトの更新処理
 		for (Object3d* object : objects)
