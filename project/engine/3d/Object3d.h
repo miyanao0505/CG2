@@ -3,6 +3,7 @@
 #include <wrl.h>
 #include "Model.h"
 #include "MyBase.h"
+#include "Camera.h"
 
 // 前方宣言
 class Object3dBase;
@@ -30,6 +31,7 @@ public:	// getter
 public:	// setter
 	void SetModel(Model* model) { model_ = model; }
 	void SetModel(const std::string& filePath);
+	void SetCamera(Camera* camera) { camera_ = camera; }
 	void SetScale(const MyBase::Vector3& scale) { transform_.scale = scale; }
 	void SetRotate(const MyBase::Vector3& rotate) { transform_.rotate = rotate; }
 	void SetTranslate(const MyBase::Vector3& translate) { transform_.translate = translate; }
@@ -49,6 +51,8 @@ private:	// メンバ変数
 
 	Model* model_ = nullptr;
 
+	Camera* camera_ = nullptr;
+
 	// バッファリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource_ = nullptr;	// 座標変換行列
 	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;		// 平行光源
@@ -58,6 +62,5 @@ private:	// メンバ変数
 
 	// Transform
 	MyBase::Transform transform_;			// 3Dオブジェクト
-	MyBase::Transform cameraTransform_;		// カメラ
 };
 

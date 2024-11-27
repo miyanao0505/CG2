@@ -1,5 +1,6 @@
 #pragma once
 #include "DirectXBase.h"
+#include "Camera.h"
 
 // 3Dオブジェクト共通部
 class Object3dBase
@@ -16,6 +17,10 @@ public:	// メンバ関数
 
 public:	// getter
 	DirectXBase* GetDxBase() const { return dxBase_; }
+	Camera* GetDefaultCamera() const { return defaultCamera_; }
+
+public:	// setter
+	void SetDefaultCamera(Camera* camera) { defaultCamera_ = camera; }
 
 private:	// メンバ変数
 	// ルートシグネチャ
@@ -25,6 +30,9 @@ private:	// メンバ変数
 
 	// DirectXBase
 	DirectXBase* dxBase_;
+
+	// カメラ
+	Camera* defaultCamera_ = nullptr;
 
 };
 
