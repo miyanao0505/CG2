@@ -4,6 +4,7 @@
 #include "ModelManager.h"
 #include "Matrix.h"
 #include "TextureManager.h"
+#include "CameraManager.h"
 
 // 初期化
 void Object3d::Initislize(Object3dBase* object3dBase)
@@ -19,9 +20,6 @@ void Object3d::Initislize(Object3dBase* object3dBase)
 
 	// Transform変数を作る
 	transform_ = { { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
-
-	// カメラのセット
-	camera_ = object3dBase_->GetDefaultCamera();
 }
 
 // 更新処理
@@ -30,8 +28,8 @@ void Object3d::Update()
 	// WorldMatrixの作成
 	MyBase::Matrix4x4 worldMatrix = Matrix::MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 	MyBase::Matrix4x4 worldViewProjectionMatrix;
-	if (camera_) {
-		const MyBase::Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
+	if (CameraManager::GetInstance()->GetCamera()) {
+		const MyBase::Matrix4x4& viewProjectionMatrix = CameraManager::GetInstance()->GetCamera()->GetViewProjectionMatrix();
 		worldViewProjectionMatrix = Matrix::Multiply(worldMatrix, viewProjectionMatrix);
 	} else {
 		worldViewProjectionMatrix = worldMatrix;
