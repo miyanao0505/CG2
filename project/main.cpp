@@ -8,6 +8,7 @@
 #include "WindowsAPI.h"
 #include "DirectXBase.h"
 #include "D3DResourceLeakChecker.h"
+#include "CameraManager.h"
 #include "SpriteBase.h"
 #include "Sprite.h"
 #include "TextureManager.h"
@@ -76,14 +77,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma endregion 基盤システム初期化
 
 #pragma region シーン初期化
-	// カメラ
-	Camera* camera = new Camera();
-	camera->SetRotate({ 0.0f, 0.0f, 0.0f });
-	camera->SetTranslate({ 0.0f, 0.0f, -10.0f });
-	object3dBase->SetDefaultCamera(camera);
-	
-	// テクスチャマネージャの初期化
-	TextureManager::GetInstance()->Initialize(dxBase);
+	// マネージャー(インスタンス)の初期化
+	CameraManager::GetInstance()->Initialize();				// カメラマネージャーの初期化
+	TextureManager::GetInstance()->Initialize(dxBase);		// テクスチャマネージャの初期化
+	ModelManager::GetInstance()->Initialize(dxBase);		// 3Dモデルマネージャの初期化
+
+	// カメラの設定
+	CameraManager::GetInstance()->SetCamera("default");
+	CameraManager::GetInstance()->FindCamera("default");
+	CameraManager::GetInstance()->GetCamera()->SetRotate({0.3f,0.0f,0.0f});
+	CameraManager::GetInstance()->GetCamera()->SetTranslate({ 0.0f,4.0f,-10.0f });
+	CameraManager::GetInstance()->SetCamera("sub");
+	CameraManager::GetInstance()->FindCamera("sub");
+	CameraManager::GetInstance()->GetCamera()->SetRotate({ 0.3f, 3.1f, 0.0f });
+	CameraManager::GetInstance()->GetCamera()->SetTranslate({ 0.0f, 4.0f, 10.0f });
+
+	CameraManager::GetInstance()->FindCamera("default");
 
 	// テクスチャファイルパス
 	std::string filePath1 = { "resources/uvChecker.png" };
@@ -117,9 +126,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	sprites[3]->SetTexture(filePath2);
 	//sprites[3]->SetTexture("resources/monsterBall.png");
 	sprites[3]->SetSize({ 100.0f, 100.0f });
-
-	// 3Dモデルマネージャの初期化
-	ModelManager::GetInstance()->Initialize(dxBase);
+	
 
 	// モデルファイルパス
 	MyBase::ModelFilePath modelFilePath1 = { {"resources/plane"}, {"plane.obj"} };
@@ -182,45 +189,51 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//transform.rotate.y += 1.f / 360.f * float(M_PI);
 
 #ifdef _DEBUG
-		// ImGuiで使う変数
-		MyBase::Transform transformCamera{ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
-		MyBase::Transform transform{ { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
-		MyBase::Transform transformSprite{ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
-		bool isEnableLighting = true;
-
-
 		// 開発用UIの処理。実際に開発用のUIを出す場合はここをゲーム固有の処理に置き換える
-		ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);							// ウィンドウの座標(プログラム起動時のみ読み込み)
-		ImGui::SetNextWindowSize(ImVec2(500, 80), ImGuiCond_Once);							// ウィンドウのサイズ(プログラム起動時のみ読み込み)
-
-		ImGui::Begin("Camera");
-		transformCamera.translate = camera->GetTranslate();
-		ImGui::DragFloat3("translate", &transformCamera.translate.x, 0.05f);
-		camera->SetTranslate(transformCamera.translate);
-		transformCamera.rotate = camera->GetRotate();
-		ImGui::DragFloat3("rotate", &transformCamera.rotate.x, 0.05f);
-		camera->SetRotate(transformCamera.rotate);
-		ImGui::End();
-
-		//ImGui::SetNextWindowPos(ImVec2(850, 20), ImGuiCond_Once);							// ウィンドウの座標(プログラム起動時のみ読み込み)
-		//ImGui::SetNextWindowSize(ImVec2(400, 500), ImGuiCond_Once);							// ウィンドウのサイズ(プログラム起動時のみ読み込み)
+		ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);		// ウィンドウの座標(プログラム起動時のみ読み込み)
+		ImGui::SetNextWindowSize(ImVec2(500, 300), ImGuiCond_Once);		// ウィンドウのサイズ(プログラム起動時のみ読み込み)
 
 		ImGui::Begin("Settings");
 
 		// カメラ
-		/*ImGui::DragFloat3("CameraTranslate", &cameraTransform.translate.x, 0.05f);
-		ImGui::SliderAngle("CameraRotateX", &cameraTransform.rotate.x);
-		ImGui::SliderAngle("CameraRotateY", &cameraTransform.rotate.y);
-		ImGui::SliderAngle("CameraRotateZ", &cameraTransform.rotate.z);*/
-		
-		// 球 / Model
-		/*ImGui::DragFloat3("PlaneTranslate", &transform.translate.x, 0.05f);
-		ImGui::SliderAngle("PlaneRotateX", &transform.rotate.x);
-		ImGui::SliderAngle("PlaneRotateY", &transform.rotate.y);
-		ImGui::SliderAngle("PlaneRotateZ", &transform.rotate.z);
-		ImGui::ColorEdit4("color", &materialData[0].color.x);
-		ImGui::Checkbox("enableLighting", (bool*)&materialData[0].enableLighting);*/
+		if (ImGui::CollapsingHeader("Camera"))
+		{
+			// 変更するための変数
+			MyBase::Transform transformCamera{ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
 
+			static ImGuiComboFlags flags = 0;
+			const char* cameraNames[] = { "default", "sub" };
+			static int cameraIndex = 0;
+
+			const char* cameraNowVlue = cameraNames[cameraIndex];
+
+			if (ImGui::BeginCombo("Now Camera", cameraNowVlue, flags))
+			{
+				for (int i = 0; i < IM_ARRAYSIZE(cameraNames); i++)
+				{
+					const bool isSelected = (cameraIndex == i);
+					if (ImGui::Selectable(cameraNames[i], isSelected)) {
+						cameraIndex = i;
+						CameraManager::GetInstance()->FindCamera(cameraNames[i]);
+					}
+
+					if (isSelected) {
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndCombo();
+			}
+
+			transformCamera.translate = CameraManager::GetInstance()->GetCamera()->GetTranslate();
+			ImGui::DragFloat3("translate", &transformCamera.translate.x, 0.05f);
+			CameraManager::GetInstance()->GetCamera()->SetTranslate(transformCamera.translate);
+			transformCamera.rotate = CameraManager::GetInstance()->GetCamera()->GetRotate();
+			ImGui::DragFloat3("rotate", &transformCamera.rotate.x, 0.05f);
+			CameraManager::GetInstance()->GetCamera()->SetRotate(transformCamera.rotate);
+
+			ImGui::Text("\n");
+		}
+		
 		// スプライト
 		uint32_t objectIDIndex = 0;
 		for(Sprite* sprite : sprites)
@@ -229,9 +242,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			if (ImGui::CollapsingHeader("Object"))
 			{
 				// 移動
-				transformSprite.translate = { sprite->GetPosition().x, sprite->GetPosition().y, 0.0f };
-				ImGui::SliderFloat3("Translate", &transformSprite.translate.x, 0.0f, 640.0f);
-				sprite->SetPosition(MyBase::Vector2(transformSprite.translate.x, transformSprite.translate.y));
+				MyBase::Vector2 translate = sprite->GetPosition();
+				ImGui::SliderFloat3("Translate", &translate.x, 0.0f, 640.0f);
+				sprite->SetPosition(translate);
 				// 回転
 				float rotation = sprite->GetRotation();
 				ImGui::SliderAngle("Rotate", &rotation);
@@ -277,21 +290,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::PushID(objectIDIndex);
 			if (ImGui::CollapsingHeader("Object"))
 			{
+				MyBase::Transform transform{ object->GetScale(), object->GetRotate(), object->GetTranslate() };
+
 				// 移動
-				transform.translate = object->GetTranslate();
-				ImGui::SliderFloat3("Translate", &transform.translate.x, -640.f, 640.0f);
+				ImGui::SliderFloat3("Translate", &transform.translate.x, -5.0f, 5.0f);
 				object->SetTranslate(transform.translate);
 				// 回転
-				transform.rotate = object->GetRotate();
 				ImGui::SliderFloat3("Rotate", &transform.rotate.x, -3.14f, 3.14f);
 				object->SetRotate(transform.rotate);
 				// 拡縮
-				transform.scale = object->GetScale();
 				ImGui::SliderFloat3("Scale", &transform.scale.x, 0.0f, 3.0f);
 				object->SetScale(transform.scale);
 
 				if (ImGui::CollapsingHeader("Material"))
 				{
+					// 平行光源フラグ
+					bool isEnableLighting = true;
 					//isEnableLighting = object->GetEnableLighting();
 
 					if (isEnableLighting)
@@ -373,7 +387,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #endif // _DEBUG
 
 		// カメラ
-		camera->Update();
+		CameraManager::GetInstance()->GetCamera()->Update();
 
 		// 3Dオブジェクトの更新処理
 		for (Object3d* object : objects)
