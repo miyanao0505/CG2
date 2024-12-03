@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include "DirectXBase.h"
 #include "SrvManager.h"
-#include "externals/DirectXTex/DirectXTex.h"
+#include "DirectXTex.h"
 
 // テクスチャマネージャー
 class TextureManager

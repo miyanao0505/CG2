@@ -21,8 +21,8 @@
 #include "MyTools.h"
 #include "Matrix.h"
 #include "MyBase.h"
-#include "externals/imgui/imgui_impl_dx12.h"
-#include "externals/imgui/imgui_impl_win32.h"
+#include "imgui_impl_dx12.h"
+#include "imgui_impl_win32.h"
 #pragma comment(lib, "dxcompiler.lib")
 
 // Windowsアプリでのエントリーポイント(main関数)
