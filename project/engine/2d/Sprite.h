@@ -84,8 +84,8 @@ private:	// メンバ変数
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};									// vertex
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};										// index
 
-	// テクスチャ番号
-	uint32_t textureIndex_ = 0;
+	// ファイルパス
+	std::string filePath_;
 	// スプライトのサイズ
 	MyBase::Vector2 spriteSize_ = { 0.0f, 0.0f };
 
