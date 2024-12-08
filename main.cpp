@@ -1257,6 +1257,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				break;
 			}
 
+			graphicsPipelineStateDesc.BlendState = blendDesc;
+			hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState));
+			assert(SUCCEEDED(hr));
+
 			// 平行光源
 			ImGui::ColorEdit3("LightColor", &directionalLightData[0].color.x);
 			ImGui::SliderFloat3("LightDirection", &directionalLightData[0].direction.x, -1.0f, 1.0f);
