@@ -489,7 +489,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ウィンドウの生成
 	HWND hwnd = CreateWindow(
 		wc.lpszClassName,			// 利用するクラス名
-		L"CG2",						// タイトルバーの文字(何でも良い)
+		L"LE2B_22_ミヤザワナオキ",	// タイトルバーの文字(何でも良い)
 		WS_OVERLAPPEDWINDOW,		// よく見るウィンドウスタイル
 		CW_USEDEFAULT,				// 表示X座標(Windowsに任せる)
 		CW_USEDEFAULT,				// 表示Y座標(WindowsOSに任せる)
@@ -689,6 +689,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;									// SRVを使う
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;	// Offsetを自動計算
 
+	// DescriptorRangeForInstancing作成
+	D3D12_DESCRIPTOR_RANGE descriptorRangeForinstancing[1] = {};
+	descriptorRangeForinstancing[0].BaseShaderRegister = 0;														// 0から始まる
+	descriptorRangeForinstancing[0].NumDescriptors = 1;															// 数は1つ
+	descriptorRangeForinstancing[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;								// SRVを使う
+	descriptorRangeForinstancing[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
 	// RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
@@ -698,9 +705,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;					// CBVを使う
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;					// PixelShaderで使う
 	rootParameters[0].Descriptor.ShaderRegister = 0;									// レジスタ番号0とバインド
-	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;					// CBVを使う
+	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;		// CBVを使う
 	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;				// VertexShaderで使う
-	rootParameters[1].Descriptor.ShaderRegister = 0;									// レジスタ番号0とバインド
+	rootParameters[1].DescriptorTable.pDescriptorRanges = descriptorRangeForinstancing;	// レジスタ番号0とバインド
+	rootParameters[1].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForinstancing);	// Tableで利用する数
 	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;		// DescriptorTableを使う
 	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;					// PixelShaderで使う
 	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange;				// Tableの中身の配列を指定
@@ -708,8 +716,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;					// CBVを使う
 	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;					// PixelShaderで使う
 	rootParameters[3].Descriptor.ShaderRegister = 1;									// レジスタ番号1を使う
-	descriptionRootSignature.pParameters = rootParameters;					// ルートパラメータ配列へのポインタ
-	descriptionRootSignature.NumParameters = _countof(rootParameters);		// 配列の長さ
+	descriptionRootSignature.pParameters = rootParameters;											// ルートパラメータ配列へのポインタ
+	descriptionRootSignature.NumParameters = _countof(rootParameters);								// 配列の長さ
 
 	// Samplerの設定
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
@@ -777,10 +785,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
 	// Shaderをコンパイルする
-	IDxcBlob* vertexShaderBlob = CompileShader(L"Object3D.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
+	//IDxcBlob* vertexShaderBlob = CompileShader(L"Object3D.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
+	IDxcBlob* vertexShaderBlob = CompileShader(L"Particle.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
 	assert(vertexShaderBlob != nullptr);
 
-	IDxcBlob* pixelShaderBlob = CompileShader(L"Object3D.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
+	//IDxcBlob* pixelShaderBlob = CompileShader(L"Object3D.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
+	IDxcBlob* pixelShaderBlob = CompileShader(L"Particle.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
 	assert(pixelShaderBlob != nullptr);
 
 	// PSOを生成する
@@ -931,7 +941,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #pragma region Model
 	// モデル読み込み
-	MyBase::ModelData modelData = LoadObjFile("resources/fence", "fence.obj");
+	MyBase::ModelData modelData = LoadObjFile("resources/plane", "plane.obj");
 	// 頂点リソースを作る
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource = CreateBufferResource(device, sizeof(MyBase::VertexData) * modelData.vertices.size());
 	// 頂点バッファビューを作成する
@@ -967,6 +977,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	materialData->enableLighting = true;
 	// 単位行列で初期化
 	materialData->uvTransform = Matrix::MakeIdentity4x4();
+#pragma endregion
+
+#pragma region Particle
+	// 描画数
+	const uint32_t kNumInstance = 10;	// インスタンス数
+	// Instancing用のTransformationMatrixリソースを作る
+	Microsoft::WRL::ComPtr<ID3D12Resource> instancingResource = CreateBufferResource(device, sizeof(MyBase::TransformationMatrix) * kNumInstance);
+	// 書き込むためのアドレスを取得
+	MyBase::TransformationMatrix* instancingData = nullptr;
+	instancingResource->Map(0, nullptr, reinterpret_cast<void**>(&instancingData));
+	// 単位行列を書き込んでおく
+	for (uint32_t index = 0; index < kNumInstance; ++index) {
+		instancingData[index].WVP = Matrix::MakeIdentity4x4();
+		instancingData[index].World = Matrix::MakeIdentity4x4();
+	}
 #pragma endregion
 
 #pragma region Sprite
@@ -1081,23 +1106,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	scissorRect.top = 0;
 	scissorRect.bottom = kClientHeight;
 
-	// Transform変数を作る
-	MyBase::Transform transform{ { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
-	MyBase::Transform transformSprite{ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
-	MyBase::Transform cameraTransform{ { 1.0f, 1.0f, 1.0f }, { 0.3f, 0.0f, 0.0f }, { 0.0f, 4.0f, -10.0f } };
-	MyBase::Transform uvTransformSprite{
-		{1.0f, 1.0f, 1.0f},
-		{0.0f, 0.0f, 0.0f},
-		{0.0f, 0.0f, 0.0f},
-	};
-
-	// テクスチャ切り替え用
-	//bool useMonsterBall = true;
-
-	// ブレンドモード切替用
-	BlendMode blendMode = kBlendModeNone;
-	int blendIndex = 0;
-
 	// Textureを読んで転送する
 	DirectX::ScratchImage mipImages = LoadTexture("resources/uvChecker.png");
 	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
@@ -1135,6 +1143,42 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// SRVの生成
 	device->CreateShaderResourceView(textureResource.Get(), &srvDesc, textureSrvHandleCPU);
 	device->CreateShaderResourceView(textureResource2.Get(), &srvDesc2, textureSrvHandleCPU2);
+
+	// StructuredBufferのSRV作成
+	D3D12_SHADER_RESOURCE_VIEW_DESC instancingSrvDesc{};
+	instancingSrvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	instancingSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	instancingSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	instancingSrvDesc.Buffer.FirstElement = 0;
+	instancingSrvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+	instancingSrvDesc.Buffer.NumElements = kNumInstance;
+	instancingSrvDesc.Buffer.StructureByteStride = sizeof(MyBase::TransformationMatrix);
+	D3D12_CPU_DESCRIPTOR_HANDLE instancingSrvHandleCPU = GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 3);
+	D3D12_GPU_DESCRIPTOR_HANDLE instancingSrvHandleGPU = GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 3);
+	device->CreateShaderResourceView(instancingResource.Get(), &instancingSrvDesc, instancingSrvHandleCPU);
+
+	// Transform変数を作る
+	MyBase::Transform transform{ { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
+	MyBase::Transform transformSprite{ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
+	MyBase::Transform cameraTransform{ { 1.0f, 1.0f, 1.0f }, { 0.3f, 0.0f, 0.0f }, { 0.0f, 4.0f, -10.0f } };
+	MyBase::Transform uvTransformSprite{
+		{1.0f, 1.0f, 1.0f},
+		{0.0f, 0.0f, 0.0f},
+		{0.0f, 0.0f, 0.0f},
+	};
+	MyBase::Transform transforms[kNumInstance];
+	for (uint32_t index = 0; index < kNumInstance; ++index) {
+		transforms[index].scale = { 1.0f, 1.0f, 1.0f };
+		transforms[index].rotate = { 0.0f, 0.0f, 0.0f };
+		transforms[index], transform = { index * 0.1f, index * 0.1f, index * 0.1f };
+	}
+
+	// テクスチャ切り替え用
+	//bool useMonsterBall = true;
+
+	// ブレンドモード切替用
+	BlendMode blendMode = kBlendModeNone;
+	int blendIndex = 0;
 
 	// DSV用のヒープでディスクリプタの数は1。DSVはShader内で触れるものではないので、ShaderVisibleはfalse
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
@@ -1303,6 +1347,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			uvTransformMatrix = Matrix::Multiply(uvTransformMatrix, Matrix::MakeTranslateMatrix(uvTransformSprite.translate));
 			materialDataSprite->uvTransform = uvTransformMatrix;
 
+			// パーティクル用
+			for (uint32_t index = 0; index < kNumInstance; ++index) {
+				MyBase::Matrix4x4 worldMatrixParticle = Matrix::MakeAffineMatrix(transforms[index].scale, transforms[index].rotate, transforms[index].translate);
+				MyBase::Matrix4x4 worldViewProjectionMatrixParticle = Matrix::Multiply(worldMatrixParticle, Matrix::Multiply(viewMatrix, projectionMatrix));
+				instancingData[index].WVP = worldViewProjectionMatrixParticle;
+				instancingData[index].World = worldMatrixParticle;
+			}
+
 #ifdef _DEBUG
 
 #endif // _DEBUG
@@ -1354,7 +1406,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			// マテリアルCBufferの場所を設定
 			commandList->SetGraphicsRootConstantBufferView(0, materialResource.Get()->GetGPUVirtualAddress());
 			// WVP用のCBufferの場所を設定
-			commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResource.Get()->GetGPUVirtualAddress());
+			//commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResource.Get()->GetGPUVirtualAddress());
 			// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
 			//commandList->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU2 : textureSrvHandleGPU);
 			commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU2);
@@ -1362,7 +1414,24 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			commandList->SetGraphicsRootConstantBufferView(3, directionalLightResource.Get()->GetGPUVirtualAddress());
 			// 描画！(DrawCall/ドローコール)。3頂点で1つのインスタンス。インスタンスについては今後
 			//commandList->DrawIndexedInstanced(indexNum, 1, 0, 0, 0);
-			commandList->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+			//commandList->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+
+			// パーティクル用
+			commandList->IASetVertexBuffers(0, 1, &vertexBufferView);	// VBVを設定
+			//commandList->IASetIndexBuffer(&indexBufferView);			// IBVを設定
+			// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えて置けば良い
+			commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			// マテリアルCBufferの場所を設定
+			commandList->SetGraphicsRootConstantBufferView(0, materialResource.Get()->GetGPUVirtualAddress());
+			// WVP用のCBufferの場所を設定
+			//commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResource.Get()->GetGPUVirtualAddress());
+			// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
+			//commandList->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU2 : textureSrvHandleGPU);
+			commandList->SetGraphicsRootDescriptorTable(1, instancingSrvHandleGPU);
+			// 平行光源用のCBufferの場所を設定
+			commandList->SetGraphicsRootConstantBufferView(3, directionalLightResource.Get()->GetGPUVirtualAddress());
+			// 描画！(DrawCall/ドローコール)。3頂点で1つのインスタンス。インスタンスについては今後
+			commandList->DrawInstanced(UINT(modelData.vertices.size()), kNumInstance, 0, 0);
 
 			// Spriteの描画。変更が必要なものだけ変更する
 			commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);			// VBVを設定
@@ -1370,7 +1439,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			// マテリアルCBufferの場所を設定
 			commandList->SetGraphicsRootConstantBufferView(0, materialResourceSprite.Get()->GetGPUVirtualAddress());
 			// TransformationMatrixCBufferの場所を設定
-			commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSparite.Get()->GetGPUVirtualAddress());
+			//commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSparite.Get()->GetGPUVirtualAddress());
 			// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
 			commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
 			// 平行光源用のCBufferの場所を設定
