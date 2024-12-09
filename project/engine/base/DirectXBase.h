@@ -66,6 +66,8 @@ public:	// getter
 
 	ID3D12Device* GetDevice() const { return device_.Get(); }
 	ID3D12GraphicsCommandList* GetCommandList() const { return commandList_.Get(); }
+	// バックバッファの数を取得
+	size_t GetBackBufferCount() const { return swapChainResources_.size(); }
 
 private:
 	// デバイスの生成
