@@ -480,11 +480,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// COMの終了処理
 	CoUninitialize();
 
-	// ImGuiの終了処理
-#ifdef _DEBUG
-	imGuiManager->Finalize();
-#endif // _DEBUG
-
 	// 解放処理
 	// 3Dモデルマネージャの終了
 	ModelManager::GetInstance()->Finalize();
@@ -492,8 +487,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	TextureManager::GetInstance()->Finalize();
 	// カメラマネージャの終了
 	CameraManager::GetInstance()->Finalize();
+	// ImGuiの終了処理
+#ifdef _DEBUG
+	imGuiManager->Finalize();
 	// ImGui解放
 	delete imGuiManager;
+#endif // _DEBUG
 	// 3Dオブジェクト
 	for (Object3d* object : objects) 
 	{
