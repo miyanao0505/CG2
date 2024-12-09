@@ -8,6 +8,7 @@
 #include "WindowsAPI.h"
 #include "DirectXBase.h"
 #include "D3DResourceLeakChecker.h"
+#include "ImGuiManager.h"
 #include "SrvManager.h"
 #include "CameraManager.h"
 #include "SpriteBase.h"
@@ -81,6 +82,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	object3dBase = new Object3dBase;
 	object3dBase->Initislize(dxBase);
 #pragma endregion 基盤システム初期化
+
+#ifdef _DEBUG
+#pragma region ImGui初期化
+	// ImGuiManagerの初期化
+	ImGuiManager* imGuiManager = nullptr;
+	imGuiManager = new ImGuiManager();
+	imGuiManager->Initialize(winApi, dxBase, srvManager);
+#pragma endregion
+#endif // _DEBUG
 
 #pragma region シーン初期化
 	// マネージャー(インスタンス)の初期化
@@ -186,9 +196,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// ImGuiにここからフレームが始まる旨を告げる
 #ifdef _DEBUG
-		/*ImGui_ImplDX12_NewFrame();
-		ImGui_ImplWin32_NewFrame();
-		ImGui::NewFrame();*/
+		imGuiManager->Begin();
 #endif // _DEBUG
 
 #ifdef _DEBUG
@@ -419,7 +427,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// ImGuiの内部コマンドを生成する
 #ifdef _DEBUG
-		//ImGui::Render();
+		imGuiManager->End();
 #endif // _DEBUG
 
 		// DirectXの描画前処理。全ての描画に共通のグラフィックスコマンドを積む
@@ -454,7 +462,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// 実際のcommandListのImGuiの描画コマンドを積む
 #ifdef _DEBUG
-		//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), dxBase->GetCommandList());
+		imGuiManager->Draw();
 #endif // _DEBUG
 
 		// 描画後処理
@@ -467,9 +475,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ImGuiの終了処理
 #ifdef _DEBUG
-	/*ImGui_ImplDX12_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();*/
+	imGuiManager->Finalize();
 #endif // _DEBUG
 
 	// 解放処理
@@ -479,6 +485,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	TextureManager::GetInstance()->Finalize();
 	// カメラマネージャの終了
 	CameraManager::GetInstance()->Finalize();
+	// ImGui解放
+	delete imGuiManager;
 	// 3Dオブジェクト
 	for (Object3d* object : objects) 
 	{
@@ -499,7 +507,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	delete spriteBase;
 	// 入力解放
 	delete input;
-	
 	// DirectX解放
 	delete dxBase;
 

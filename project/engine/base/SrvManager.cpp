@@ -23,9 +23,7 @@ void SrvManager::Initialize(DirectXBase* dxBase)
 uint32_t SrvManager::Allocate()
 {
 	// 上限に達していないかチェックしてassert
-	if (useIndex_ >= kMaxSRVCount) {
-		assert(false);
-	}
+	assert(useIndex_ < kMaxSRVCount);
 
 	// return する番号を一旦記録しておく
 	uint32_t index = useIndex_;

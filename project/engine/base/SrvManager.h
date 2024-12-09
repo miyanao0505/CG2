@@ -11,11 +11,6 @@ public:	// メンバ関数
 	// Allocationの確保
 	uint32_t Allocate();
 
-	// SRVの指定番号のCPUデスクリプタハンドルを取得する
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index);
-	// SRVの指定番号のGPUデスクリプタハンドルを取得する
-	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
-
 	// SRV生成(テクスチャ用)
 	void CreateSRVforTexture2D(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT Format, UINT MipLevels);
 	// SRV生成(Structured Buffer用)
@@ -29,6 +24,14 @@ public:	// メンバ関数
 
 	// テクスチャ枚数上限チェック
 	bool isSecure();
+
+public:	// getter
+	// SRVの指定番号のCPUデスクリプタハンドルを取得する
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index);
+	// SRVの指定番号のGPUデスクリプタハンドルを取得する
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
+	//ImGui用
+	ID3D12DescriptorHeap* GetDescriptorHeapForImGui() { return descriptorHeap_.Get(); }
 
 private:	// メンバ変数
 	DirectXBase* dxBase_ = nullptr;
