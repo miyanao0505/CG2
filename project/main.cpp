@@ -122,26 +122,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// スプライト
 	std::vector<Sprite*> sprites;
-	for (uint32_t i = 0; i < 5; ++i)
+	for (uint32_t i = 0; i < 1; ++i)
 	{
 		// スプライトの初期化
 		Sprite* sprite = new Sprite();
 		//sprite->Initialize(spriteBase, "resources/uvChecker.png");
 		sprite->Initialize(spriteBase, filePath1);
-		sprite->SetPosition({ 200.0f * float(i), 0.0f });
-		sprite->SetSize({ 100.f, 100.f });
+		sprite->SetPosition({ 100.0f /** float(i)*/, 100.0f });
+		sprite->SetSize({ 500.f, 500.f });
 		sprite->SetAnchorPoint({ 0.0f, 0.0f });
 		sprite->SetIsFlipX(false);
 		sprite->SetIsFlipY(false);
 		sprites.push_back(sprite);
 	}
 
-	sprites[1]->SetTexture(filePath2);
+	//sprites[1]->SetTexture(filePath2);
 	//sprites[1]->SetTexture("resources/monsterBall.png");
-	sprites[1]->SetSize({ 100.0f, 100.0f });
-	sprites[3]->SetTexture(filePath2);
+	//sprites[1]->SetSize({ 100.0f, 100.0f });
+	//sprites[3]->SetTexture(filePath2);
 	//sprites[3]->SetTexture("resources/monsterBall.png");
-	sprites[3]->SetSize({ 100.0f, 100.0f });
+	//sprites[3]->SetSize({ 100.0f, 100.0f });
 	
 
 	// モデルファイルパス
@@ -156,15 +156,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// 3Dオブジェクト
 	std::vector<Object3d*> objects;
-	for (uint32_t i = 0; i < 2; ++i) {
-		// 3Dオブジェクトの初期化
-		Object3d* object = new Object3d;
-		object->Initislize(object3dBase);
-		object->SetTranslate({ -2.f + i * 4.f, 0.0f, 0.0f });
-		object->SetModel(modelFilePath1.filename);
-		objects.push_back(object);
-	}
-	objects[1]->SetModel(modelFilePath2.filename);
+	//for (uint32_t i = 0; i < 0; ++i) {
+	//	// 3Dオブジェクトの初期化
+	//	Object3d* object = new Object3d;
+	//	object->Initislize(object3dBase);
+	//	object->SetTranslate({ -2.f + i * 4.f, 0.0f, 0.0f });
+	//	object->SetModel(modelFilePath1.filename);
+	//	objects.push_back(object);
+	//}
+	//objects[1]->SetModel(modelFilePath2.filename);
 	
 #pragma endregion シーン初期化
 
@@ -201,10 +201,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #ifdef _DEBUG
 		// 開発用UIの処理。実際に開発用のUIを出す場合はここをゲーム固有の処理に置き換える
-		//ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);		// ウィンドウの座標(プログラム起動時のみ読み込み)
-		//ImGui::SetNextWindowSize(ImVec2(500, 300), ImGuiCond_Once);		// ウィンドウのサイズ(プログラム起動時のみ読み込み)
+		ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);		// ウィンドウの座標(プログラム起動時のみ読み込み)
+		ImGui::SetNextWindowSize(ImVec2(500, 100), ImGuiCond_Once);		// ウィンドウのサイズ(プログラム起動時のみ読み込み)
 
-		//ImGui::Begin("Settings");
+		// デモウィンドウの表示オン
+		//ImGui::ShowDemoWindow();
+
+		ImGui::Begin("Settings");
 
 		//// カメラ
 		//if (ImGui::CollapsingHeader("Camera"))
@@ -246,6 +249,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//}
 		//
 		//// スプライト
+		// 移動
+		MyBase::Vector2 translate = sprites[0]->GetPosition();
+		ImGui::SliderFloat2("position", &translate.x, 0.0f, 1280.0f, "%6.1f");
+		sprites[0]->SetPosition(translate);
 		//uint32_t objectIDIndex = 0;
 		//for(Sprite* sprite : sprites)
 		//{
@@ -254,7 +261,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//	{
 		//		// 移動
 		//		MyBase::Vector2 translate = sprite->GetPosition();
-		//		ImGui::SliderFloat3("Translate", &translate.x, 0.0f, 640.0f);
+		//		ImGui::SliderFloat2("Translate", &translate.x, 0.0f, 640.0f);
 		//		sprite->SetPosition(translate);
 		//		// 回転
 		//		float rotation = sprite->GetRotation();
@@ -296,12 +303,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//}
 
 		//// 3Dオブジェクト
-		MyBase::Vector3 rotate = objects[0]->GetRotate();
+		/*MyBase::Vector3 rotate = objects[0]->GetRotate();
 		rotate.y += 0.02f;
 		objects[0]->SetRotate(rotate);
 		rotate = objects[1]->GetRotate();
 		rotate.z += 0.02f;
-		objects[1]->SetRotate(rotate);
+		objects[1]->SetRotate(rotate);*/
 
 		//for (Object3d* object : objects)
 		//{
@@ -401,7 +408,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
 		//ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);*/
 
-		//ImGui::End();
+		ImGui::End();
 #endif // _DEBUG
 
 		// カメラ
