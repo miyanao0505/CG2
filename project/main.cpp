@@ -122,66 +122,52 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// スプライト
 	std::vector<Sprite*> sprites;
-	for (uint32_t i = 0; i < 1; ++i)
+	for (uint32_t i = 0; i < 5; ++i)
 	{
 		// スプライトの初期化
 		Sprite* sprite = new Sprite();
 		//sprite->Initialize(spriteBase, "resources/uvChecker.png");
 		sprite->Initialize(spriteBase, filePath1);
-		sprite->SetPosition({ 100.0f /** float(i)*/, 100.0f });
-		sprite->SetSize({ 500.f, 500.f });
+		sprite->SetPosition({ 200.0f * float(i), 100.0f });
+		sprite->SetSize({ 100.f, 100.f });
 		sprite->SetAnchorPoint({ 0.0f, 0.0f });
 		sprite->SetIsFlipX(false);
 		sprite->SetIsFlipY(false);
 		sprites.push_back(sprite);
 	}
 
-	//sprites[1]->SetTexture(filePath2);
-	//sprites[1]->SetTexture("resources/monsterBall.png");
-	//sprites[1]->SetSize({ 100.0f, 100.0f });
-	//sprites[3]->SetTexture(filePath2);
-	//sprites[3]->SetTexture("resources/monsterBall.png");
-	//sprites[3]->SetSize({ 100.0f, 100.0f });
+	sprites[1]->SetTexture(filePath2);
+	sprites[1]->SetTexture("resources/monsterBall.png");
+	sprites[1]->SetSize({ 100.0f, 100.0f });
+	sprites[3]->SetTexture(filePath2);
+	sprites[3]->SetTexture("resources/monsterBall.png");
+	sprites[3]->SetSize({ 100.0f, 100.0f });
 	
 
 	// モデルファイルパス
 	MyBase::ModelFilePath modelFilePath1 = { {"resources/plane"}, {"plane.obj"} };
 	MyBase::ModelFilePath modelFilePath2 = { {"resources/axis"}, {"axis.obj"} };
-	//MyBase::ModelFilePath modelFilePath3 = { {"resources/fence"}, {"fence.obj"} };
+	MyBase::ModelFilePath modelFilePath3 = { {"resources/fence"}, {"fence.obj"} };
 
 	// .objファイルからモデルを読み込む
 	ModelManager::GetInstance()->LoadModel(modelFilePath1.directoryPath, modelFilePath1.filename);
 	ModelManager::GetInstance()->LoadModel(modelFilePath2.directoryPath, modelFilePath2.filename);
-	//ModelManager::GetInstance()->LoadModel(modelFilePath3.directoryPath, modelFilePath3.filename);
+	ModelManager::GetInstance()->LoadModel(modelFilePath3.directoryPath, modelFilePath3.filename);
 
 	// 3Dオブジェクト
 	std::vector<Object3d*> objects;
-	//for (uint32_t i = 0; i < 0; ++i) {
-	//	// 3Dオブジェクトの初期化
-	//	Object3d* object = new Object3d;
-	//	object->Initislize(object3dBase);
-	//	object->SetTranslate({ -2.f + i * 4.f, 0.0f, 0.0f });
-	//	object->SetModel(modelFilePath1.filename);
-	//	objects.push_back(object);
-	//}
-	//objects[1]->SetModel(modelFilePath2.filename);
+	for (uint32_t i = 0; i < 3; ++i) {
+		// 3Dオブジェクトの初期化
+		Object3d* object = new Object3d;
+		object->Initislize(object3dBase);
+		object->SetTranslate({ -2.5f + i * 2.5f, 0.0f, 0.0f });
+		object->SetModel(modelFilePath1.filename);
+		objects.push_back(object);
+	}
+	objects[1]->SetModel(modelFilePath2.filename);
+	objects[2]->SetModel(modelFilePath3.filename);
 	
 #pragma endregion シーン初期化
-
-	// ブレンドモード
-	//enum BlendMode {
-	//	kBlendModeNone,			// ブレンドなし
-	//	kBlendModeNormal,		// 通常αブレンド。デフォルト。 Src * SrcA + Dest * (1 - SrcA)
-	//	kBlendModeAdd,			// 加算。 Src * SrcA + Dest * 1
-	//	kBlendModeSubtract,		// 減算。 Dest * 1 - Src * SrcA
-	//	kBlendModeMultiply,		// 乗算。 Src * 0 + Dest * Src
-	//	kBlendModeScreen,		// スクリーン。 Src * (1 - Dest) + Dest * 1
-	//	kCountOfBlendMode,		// 利用してはいけない
-	//};
-
-	// ブレンドモード切替用
-	//BlendMode blendMode = kBlendModeNone;
-	//int blendIndex = 0;
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (true) {	// ゲームループ
@@ -202,7 +188,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #ifdef _DEBUG
 		// 開発用UIの処理。実際に開発用のUIを出す場合はここをゲーム固有の処理に置き換える
 		ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);		// ウィンドウの座標(プログラム起動時のみ読み込み)
-		ImGui::SetNextWindowSize(ImVec2(500, 100), ImGuiCond_Once);		// ウィンドウのサイズ(プログラム起動時のみ読み込み)
+		ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_Once);		// ウィンドウのサイズ(プログラム起動時のみ読み込み)
 
 		// デモウィンドウの表示オン
 		//ImGui::ShowDemoWindow();
@@ -248,160 +234,166 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//	ImGui::Text("\n");
 		//}
 		//
+	
 		//// スプライト
-		// 移動
-		MyBase::Vector2 translate = sprites[0]->GetPosition();
-		ImGui::SliderFloat2("position", &translate.x, 0.0f, 1280.0f, "%6.1f");
-		sprites[0]->SetPosition(translate);
-		//uint32_t objectIDIndex = 0;
-		//for(Sprite* sprite : sprites)
-		//{
-		//	ImGui::PushID(objectIDIndex);
-		//	if (ImGui::CollapsingHeader("Object"))
-		//	{
-		//		// 移動
-		//		MyBase::Vector2 translate = sprite->GetPosition();
-		//		ImGui::SliderFloat2("Translate", &translate.x, 0.0f, 640.0f);
-		//		sprite->SetPosition(translate);
-		//		// 回転
-		//		float rotation = sprite->GetRotation();
-		//		ImGui::SliderAngle("Rotate", &rotation);
-		//		sprite->SetRotation(rotation);
-		//		// 拡縮
-		//		MyBase::Vector2 size = sprite->GetSize();
-		//		ImGui::SliderFloat2("Scale", &size.x, 0.0f, 640.f);
-		//		sprite->SetSize(size);
-		//		// アンカーポイント
-		//		MyBase::Vector2 anchorPoint = sprite->GetAnchorPoint();
-		//		ImGui::DragFloat2("AnchorPoint", &anchorPoint.x, 0.05f, -1.0f, 2.0f);
-		//		sprite->SetAnchorPoint(anchorPoint);
-		//		// フリップ
-		//		bool isFlipX = sprite->GetIsFlipX();
-		//		ImGui::Checkbox("isFlipX", &isFlipX);
-		//		sprite->SetIsFlipX(isFlipX);
-		//		bool isFlipY = sprite->GetIsFlipY();
-		//		ImGui::Checkbox("isFlipY", &isFlipY);
-		//		sprite->SetIsFlipY(isFlipY);
-		//		// テクスチャ範囲指定
-		//		MyBase::Vector2 textureLeftTop = sprite->GetTextureLeftTop();
-		//		ImGui::SliderFloat2("textureLeftTop", &textureLeftTop.x, 0.0f, max(sprite->GetSpriteSize().x, sprite->GetSpriteSize().y));
-		//		sprite->SetTextureLeftTop(textureLeftTop);
-		//		MyBase::Vector2 textureSize = sprite->GetTextureSize();
-		//		ImGui::SliderFloat2("textureSize", &textureSize.x, 0.0f, max(sprite->GetSpriteSize().x, sprite->GetSpriteSize().y) * 2.f);
-		//		sprite->SetTextureSize(textureSize);
+		if (ImGui::CollapsingHeader("Sprite"))
+		{
+			// ブレンドモード
+			if (ImGui::CollapsingHeader("BlendModeSprite")) {
+				static ImGuiComboFlags spriteFlags = 0;
+				const char* blendModeIndex[] = { "kBlendModeNone", "kBlendModeNormal", "kBlendModeAdd", "kBlendModeSubtract", "kBlendModeMultiply", "kBlendModeScreen" };
+				static int selectID = 1;
 
-		//		if (ImGui::CollapsingHeader("Material"))
-		//		{
-		//			// 色
-		//			MyBase::Vector4 color = sprite->GetColor();
-		//			ImGui::ColorEdit4("color", &color.x);
-		//			sprite->SetColor(color);
-		//		}
-		//	}
-		//	ImGui::PopID();
-		//	++objectIDIndex;
-		//}
+				const char* previewValue = blendModeIndex[selectID];
 
-		//// 3Dオブジェクト
-		/*MyBase::Vector3 rotate = objects[0]->GetRotate();
+				if (ImGui::BeginCombo("now Blend", previewValue, spriteFlags))
+				{
+					for (int n = 0; n < IM_ARRAYSIZE(blendModeIndex); n++)
+					{
+						const bool isSelected = (selectID == n);
+						if (ImGui::Selectable(blendModeIndex[n], isSelected)) {
+							selectID = n;
+							spriteBase->SetBlendMode(static_cast<SpriteBase::BlendMode>(n));
+						}
+
+						if (isSelected) {
+							ImGui::SetItemDefaultFocus();
+						}
+					}
+					ImGui::EndCombo();
+				}
+			}
+			for (Sprite* sprite : sprites)
+			{
+				ImGui::PushID(sprite);
+				if (ImGui::CollapsingHeader("Object"))
+				{
+					// 移動
+					MyBase::Vector2 translate = sprite->GetPosition();
+					ImGui::SliderFloat2("Translate", &translate.x, 0.0f, 640.0f);
+					sprite->SetPosition(translate);
+					// 回転
+					float rotation = sprite->GetRotation();
+					ImGui::SliderAngle("Rotate", &rotation);
+					sprite->SetRotation(rotation);
+					// 拡縮
+					MyBase::Vector2 size = sprite->GetSize();
+					ImGui::SliderFloat2("Scale", &size.x, 0.0f, 640.f);
+					sprite->SetSize(size);
+					// アンカーポイント
+					MyBase::Vector2 anchorPoint = sprite->GetAnchorPoint();
+					ImGui::DragFloat2("AnchorPoint", &anchorPoint.x, 0.05f, -1.0f, 2.0f);
+					sprite->SetAnchorPoint(anchorPoint);
+					// フリップ
+					bool isFlipX = sprite->GetIsFlipX();
+					ImGui::Checkbox("isFlipX", &isFlipX);
+					sprite->SetIsFlipX(isFlipX);
+					bool isFlipY = sprite->GetIsFlipY();
+					ImGui::Checkbox("isFlipY", &isFlipY);
+					sprite->SetIsFlipY(isFlipY);
+					// テクスチャ範囲指定
+					MyBase::Vector2 textureLeftTop = sprite->GetTextureLeftTop();
+					ImGui::SliderFloat2("textureLeftTop", &textureLeftTop.x, 0.0f, max(sprite->GetSpriteSize().x, sprite->GetSpriteSize().y));
+					sprite->SetTextureLeftTop(textureLeftTop);
+					MyBase::Vector2 textureSize = sprite->GetTextureSize();
+					ImGui::SliderFloat2("textureSize", &textureSize.x, 0.0f, max(sprite->GetSpriteSize().x, sprite->GetSpriteSize().y) * 2.f);
+					sprite->SetTextureSize(textureSize);
+
+					if (ImGui::CollapsingHeader("Material"))
+					{
+						// 色
+						MyBase::Vector4 color = sprite->GetColor();
+						ImGui::ColorEdit4("color", &color.x);
+						sprite->SetColor(color);
+					}
+				}
+				ImGui::PopID();
+			}
+		}
+
+		// 3Dオブジェクト
+		MyBase::Vector3 rotate = objects[0]->GetRotate();
 		rotate.y += 0.02f;
 		objects[0]->SetRotate(rotate);
 		rotate = objects[1]->GetRotate();
 		rotate.z += 0.02f;
-		objects[1]->SetRotate(rotate);*/
+		objects[1]->SetRotate(rotate);
+		if (ImGui::CollapsingHeader("3dObject"))
+		{
+			// ブレンドモード
+			if (ImGui::CollapsingHeader("BlendMode3dObject")) {
+				static ImGuiComboFlags spriteFlags = 0;
+				const char* blendModeIndex[] = { "kBlendModeNone", "kBlendModeNormal", "kBlendModeAdd", "kBlendModeSubtract", "kBlendModeMultiply", "kBlendModeScreen" };
+				static int selectID = 1;
 
-		//for (Object3d* object : objects)
-		//{
-		//	ImGui::PushID(objectIDIndex);
-		//	if (ImGui::CollapsingHeader("Object"))
-		//	{
-		//		MyBase::Transform transform{ object->GetScale(), object->GetRotate(), object->GetTranslate() };
+				const char* previewValue = blendModeIndex[selectID];
 
-		//		// 移動
-		//		ImGui::SliderFloat3("Translate", &transform.translate.x, -5.0f, 5.0f);
-		//		object->SetTranslate(transform.translate);
-		//		// 回転
-		//		ImGui::SliderFloat3("Rotate", &transform.rotate.x, -3.14f, 3.14f);
-		//		object->SetRotate(transform.rotate);
-		//		// 拡縮
-		//		ImGui::SliderFloat3("Scale", &transform.scale.x, 0.0f, 3.0f);
-		//		object->SetScale(transform.scale);
+				if (ImGui::BeginCombo("now Blend", previewValue, spriteFlags))
+				{
+					for (int n = 0; n < IM_ARRAYSIZE(blendModeIndex); n++)
+					{
+						const bool isSelected = (selectID == n);
+						if (ImGui::Selectable(blendModeIndex[n], isSelected)) {
+							selectID = n;
+							object3dBase->SetBlendMode(static_cast<Object3dBase::BlendMode>(n));
+						}
 
-		//		if (ImGui::CollapsingHeader("Material"))
-		//		{
-		//			// 平行光源フラグ
-		//			bool isEnableLighting = true;
-		//			//isEnableLighting = object->GetEnableLighting();
+						if (isSelected) {
+							ImGui::SetItemDefaultFocus();
+						}
+					}
+					ImGui::EndCombo();
+				}
+			}
 
-		//			if (isEnableLighting)
-		//			{
-		//				// 平行光源
-		//				MyBase::DirectionalLight directionalLight{};
-		//				// 色
-		//				directionalLight.color = object->GetDirectionalLightColor();
-		//				ImGui::ColorEdit4("LightColor", &directionalLight.color.x);
-		//				object->SetDirectionalLightColor(directionalLight.color);
-		//				// 方向
-		//				directionalLight.direction = object->GetDirectionalLightDirection();
-		//				ImGui::SliderFloat3("LightDirection", &directionalLight.direction.x, -1, 1);
-		//				object->SetDirectionalLightDirection(directionalLight.direction);
-		//				// 輝度
-		//				directionalLight.intensity = object->GetDirectionalLightIntensity();
-		//				ImGui::DragFloat("Intensity", &directionalLight.intensity, 0.01f);
-		//				object->SetDirectionalLightIntensity(directionalLight.intensity);
-		//			}
-		//		}
-		//	}
-		//	ImGui::PopID();
-		//	++objectIDIndex;
-		//}
+			for (Object3d* object : objects)
+			{
+				ImGui::PushID(object);
+				if (ImGui::CollapsingHeader("Object"))
+				{
+					MyBase::Transform transform{ object->GetScale(), object->GetRotate(), object->GetTranslate() };
+
+					// 移動
+					ImGui::SliderFloat3("Translate", &transform.translate.x, -5.0f, 5.0f);
+					object->SetTranslate(transform.translate);
+					// 回転
+					ImGui::SliderFloat3("Rotate", &transform.rotate.x, -3.14f, 3.14f);
+					object->SetRotate(transform.rotate);
+					// 拡縮
+					ImGui::SliderFloat3("Scale", &transform.scale.x, 0.0f, 3.0f);
+					object->SetScale(transform.scale);
+
+					if (ImGui::CollapsingHeader("Material"))
+					{
+						// 平行光源フラグ
+						bool isEnableLighting = true;
+						//isEnableLighting = object->GetEnableLighting();
+
+						if (isEnableLighting)
+						{
+							// 平行光源
+							MyBase::DirectionalLight directionalLight{};
+							// 色
+							directionalLight.color = object->GetDirectionalLightColor();
+							ImGui::ColorEdit4("LightColor", &directionalLight.color.x);
+							object->SetDirectionalLightColor(directionalLight.color);
+							// 方向
+							directionalLight.direction = object->GetDirectionalLightDirection();
+							ImGui::SliderFloat3("LightDirection", &directionalLight.direction.x, -1, 1);
+							object->SetDirectionalLightDirection(directionalLight.direction);
+							// 輝度
+							directionalLight.intensity = object->GetDirectionalLightIntensity();
+							ImGui::DragFloat("Intensity", &directionalLight.intensity, 0.01f);
+							object->SetDirectionalLightIntensity(directionalLight.intensity);
+						}
+					}
+				}
+				ImGui::PopID();
+			}
+		}
 
 		//// テクスチャ
 		////ImGui::Checkbox("useMonsterBall", &useMonsterBall);
-
-		///*const char* blendModeIndex[] = { "kBlendModeNone", "kBlendModeNormal", "kBlendModeAdd", "kBlendModeSubtract", "kBlendModeMultiply", "kBlendModeScreen" };
-		//ImGui::Combo("Blend", &blendIndex, blendModeIndex, IM_ARRAYSIZE(blendModeIndex));
-		//blendMode = (BlendMode)blendIndex;*/
-
-		//// ブレンドモード
-		///*switch (blendMode)
-		//{
-		//case kBlendModeNone:
-		//	blendDesc.RenderTarget[0].BlendEnable = false;
-		//	break;
-		//case kBlendModeNormal:
-		//	blendDesc.RenderTarget[0].BlendEnable = TRUE;
-		//	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-		//	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-		//	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-		//	break;
-		//case kBlendModeAdd:
-		//	blendDesc.RenderTarget[0].BlendEnable = TRUE;
-		//	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-		//	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-		//	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
-		//	break;
-		//case kBlendModeSubtract:
-		//	blendDesc.RenderTarget[0].BlendEnable = TRUE;
-		//	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-		//	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_REV_SUBTRACT;
-		//	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
-		//	break;
-		//case kBlendModeMultiply:
-		//	blendDesc.RenderTarget[0].BlendEnable = TRUE;
-		//	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_ZERO;
-		//	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-		//	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_SRC_COLOR;
-		//	break;
-		//case kBlendModeScreen:
-		//	blendDesc.RenderTarget[0].BlendEnable = TRUE;
-		//	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_INV_DEST_COLOR;
-		//	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-		//	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
-		//	break;
-		//default:
-		//	break;
-		//}*/
 
 		//// UV
 		///*ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
@@ -474,7 +466,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// 描画後処理
 		dxBase->PostDraw();
-
 	}
 
 	// COMの終了処理
