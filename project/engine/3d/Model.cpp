@@ -108,8 +108,6 @@ void Model::LoadObjFile(const std::string& directoryPath, const std::string& fil
 			MyBase::Vector3 normal;
 			s >> normal.x >> normal.y >> normal.z;
 			normal.x *= -1.0f;
-			//normal.z *= -1.f;
-			//normal.y *= -1.f;
 			normals.push_back(normal);
 		}
 		else if (identifier == "mtllib")
@@ -138,8 +136,6 @@ void Model::LoadObjFile(const std::string& directoryPath, const std::string& fil
 				MyBase::Vector4 position = positions[elementIndeces[0] - 1];
 				MyBase::Vector2 texcoord = texcoords[elementIndeces[1] - 1];
 				MyBase::Vector3 normal = normals[elementIndeces[2] - 1];
-				/*MyBase::VertexData vertex = { position, texcoord, normal };
-				modelData.vertices.push_back(vertex);*/
 				triangle[faceVertex] = { position, texcoord, normal };
 			}
 			// 頂点を逆順で登録することで、周り順を逆にする

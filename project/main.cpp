@@ -1,8 +1,4 @@
 #include <string>
-#include <format>
-#include <wrl.h>
-#include <cassert>
-#include <sstream>
 #include <vector>
 #include "Input.h"
 #include "WindowsAPI.h"
@@ -19,6 +15,8 @@
 #include "ModelBase.h"
 #include "Model.h"
 #include "ModelManager.h"
+#include "ParticleBase.h"
+#include "Particle.h"
 #include "MyTools.h"
 #include "Matrix.h"
 #include "MyBase.h"
@@ -64,6 +62,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	SpriteBase* spriteBase = nullptr;
 	ModelBase* modelBase = nullptr;
 	Object3dBase* object3dBase = nullptr;
+	ParticleBase* particleBase = nullptr;
 	SrvManager* srvManager = nullptr;
 	
 	// SRVマネージャーの初期化
@@ -81,6 +80,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 3Dオブジェクト共通部の初期化
 	object3dBase = new Object3dBase;
 	object3dBase->Initislize(dxBase);
+
+	// パーティクル
+	particleBase = new ParticleBase;
+	particleBase->Initislize(dxBase);
 #pragma endregion 基盤システム初期化
 
 #ifdef _DEBUG
@@ -167,6 +170,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	objects[1]->SetModel(modelFilePath2.filename);
 	objects[2]->SetModel(modelFilePath3.filename);
 	
+	// パーティクル
+	Particle* particle;
+	particle = new Particle;
+	particle->Initislize(dxBase, srvManager, particleBase);
 #pragma endregion シーン初期化
 
 	// ウィンドウの×ボタンが押されるまでループ
@@ -412,6 +419,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			object->Update();
 		}
 
+		// パーティクルの更新処理
+		particle->Update();
+
 		// スプライトの更新処理
 		for (Sprite* sprite : sprites)
 		{
@@ -439,12 +449,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		object3dBase->SetCommonScreen();
 
 		// 全ての3DObject個々の描画
-		for (Object3d* object : objects)
+		/*for (Object3d* object : objects)
 		{
 			object->Draw();
-		}
+		}*/
 
 #pragma endregion 3Dオブジェクト
+
+#pragma region パーティクル
+
+		// パーティクルの描画準備。パーティクルの描画に共通グラフィックスコマンドを積む
+		particleBase->SetCommonScreen();
+
+		// 全てのパーティクル個々の描画
+		particle->Draw();
+
+#pragma endregion パーティクル
 
 #pragma region スプライト
 
@@ -452,10 +472,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		spriteBase->SetCommonScreen();
 
 		// 全てのSprite個々の描画
-		for (Sprite* sprite : sprites)
+		/*for (Sprite* sprite : sprites)
 		{
 			sprite->Draw();
-		}
+		}*/
 
 #pragma endregion スプライト
 
@@ -484,6 +504,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ImGui解放
 	delete imGuiManager;
 #endif // _DEBUG
+	// パーティクル
+	delete particle;
 	// 3Dオブジェクト
 	for (Object3d* object : objects) 
 	{
@@ -496,6 +518,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 	// srvマネージャー
 	delete srvManager;
+	// パーティクル
+	delete particleBase;
 	// 3Dオブジェクト共通部
 	delete object3dBase;
 	// モデル共通部
