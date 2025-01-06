@@ -1,8 +1,4 @@
 #include <string>
-#include <format>
-#include <wrl.h>
-#include <cassert>
-#include <sstream>
 #include <vector>
 #include "Input.h"
 #include "WindowsAPI.h"
@@ -19,6 +15,8 @@
 #include "ModelBase.h"
 #include "Model.h"
 #include "ModelManager.h"
+#include "ParticleEmitter.h"
+#include "ParticleManager.h"
 #include "MyTools.h"
 #include "Matrix.h"
 #include "MyBase.h"
@@ -65,7 +63,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ModelBase* modelBase = nullptr;
 	Object3dBase* object3dBase = nullptr;
 	SrvManager* srvManager = nullptr;
-	
+
 	// SRVマネージャーの初期化
 	srvManager = new SrvManager();
 	srvManager->Initialize(dxBase);
@@ -97,6 +95,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	CameraManager::GetInstance()->Initialize();						// カメラマネージャーの初期化
 	TextureManager::GetInstance()->Initialize(dxBase, srvManager);	// テクスチャマネージャの初期化
 	ModelManager::GetInstance()->Initialize(dxBase);				// 3Dモデルマネージャの初期化
+	ParticleManager::GetInstance()->Initialize(dxBase, srvManager);	// パーティクルマネージャの初期化
 
 	// カメラの設定
 	CameraManager::GetInstance()->SetCamera("default");
@@ -112,13 +111,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// テクスチャファイルパス
 	std::string filePath1 = { "resources/uvChecker.png" };
-	std::string filePath2 = { "resources/monsterBall.png" };
+	//std::string filePath2 = { "resources/monsterBall.png" };
 	//std::string filePath3 = { "resources/fence.png" };
+	std::string filePath4 = { "resources/circle.png" };
 
 	// テクスチャの読み込み
 	TextureManager::GetInstance()->LoadTexture(filePath1);
-	TextureManager::GetInstance()->LoadTexture(filePath2);
+	//TextureManager::GetInstance()->LoadTexture(filePath2);
 	//TextureManager::GetInstance()->LoadTexture(filePath3);
+	TextureManager::GetInstance()->LoadTexture(filePath4);
 
 	// スプライト
 	std::vector<Sprite*> sprites;
@@ -136,14 +137,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		sprites.push_back(sprite);
 	}
 
-	sprites[1]->SetTexture(filePath2);
-	sprites[1]->SetTexture("resources/monsterBall.png");
+	sprites[1]->SetTexture(filePath4);
+	//sprites[1]->SetTexture("resources/monsterBall.png");
 	sprites[1]->SetSize({ 100.0f, 100.0f });
-	sprites[3]->SetTexture(filePath2);
-	sprites[3]->SetTexture("resources/monsterBall.png");
+	sprites[3]->SetTexture(filePath4);
+	//sprites[3]->SetTexture("resources/monsterBall.png");
 	sprites[3]->SetSize({ 100.0f, 100.0f });
 	
-
 	// モデルファイルパス
 	MyBase::ModelFilePath modelFilePath1 = { {"resources/plane"}, {"plane.obj"} };
 	MyBase::ModelFilePath modelFilePath2 = { {"resources/axis"}, {"axis.obj"} };
@@ -167,7 +167,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	objects[1]->SetModel(modelFilePath2.filename);
 	objects[2]->SetModel(modelFilePath3.filename);
 	
+	// パーティクル
+	ParticleEmitter* particleEmitter = nullptr;
+	particleEmitter = new ParticleEmitter;
+	particleEmitter->Initialize("circle", "resources/circle.png");
 #pragma endregion シーン初期化
+
+#pragma region 変数
+	bool isAccelerationField = false;
+	MyBase::Vector3 acceleration = { 15.0f, 0.0f, 0.0f };
+	MyBase::AABB area{ .min{-1.0f, -1.0f, -1.0f}, .max{1.0f, 1.0f, 1.0f} };
+
+	// デルタイム
+	const float kDeltaTime = 1.0f / 60.0f;
+#pragma endregion 変数
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (true) {	// ゲームループ
@@ -391,6 +404,71 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				ImGui::PopID();
 			}
 		}
+		if (ImGui::CollapsingHeader("particle")) {
+			static ImGuiComboFlags particleFlags = 0;
+			const char* blendModeIndex[] = { "kBlendModeNone", "kBlendModeNormal", "kBlendModeAdd", "kBlendModeSubtract", "kBlendModeMultiply", "kBlendModeScreen" };
+			static int selectID = 2;
+
+			const char* previewValue = blendModeIndex[selectID];
+
+			if (ImGui::BeginCombo("Now Blend", previewValue, particleFlags))
+			{
+				for (int n = 0; n < IM_ARRAYSIZE(blendModeIndex); n++)
+				{
+					const bool isSelected = (selectID == n);
+					if (ImGui::Selectable(blendModeIndex[n], isSelected)) {
+						selectID = n;
+						ParticleManager::GetInstance()->ChangeBlendMode(static_cast<ParticleBase::BlendMode>(n));
+					}
+					if (isSelected) {
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndCombo();
+			}
+
+			/*size_t spriteCount = 0;
+			for (ParticleEmitter* particle : sprites) {*/
+			MyBase::Vector3 position = particleEmitter->GetPosition();
+			ImGui::DragFloat2("particleEmitter_.Translate", &position.x, 0.1f);
+			/*if (position.y > 640.0f) {
+				position.y = 640.0f;
+			}*/
+			particleEmitter->SetPosition(position);
+
+			/*Vector3 rotation = particleEmitter_->GetRotation();
+			ImGui::SliderAngle("particleEmitter_.Rotate", &rotation.x);
+			particleEmitter_->SetRotation(rotation);
+
+			Vector3 size = particleEmitter_->GetSize();
+			ImGui::DragFloat2("particleEmitter_.Scale", &size.x, 0.1f);
+			if (size.y > 360.0f) {
+				size.y = 360.0f;
+			}
+			particleEmitter_->SetSize(size);*/
+
+			int count = particleEmitter->GetCount();
+			ImGui::DragInt("particleEmitter_.count", &count, 1, 0, 1000);
+			particleEmitter->SetCount(count);
+
+			float frequency = particleEmitter->GetFrequency();
+			ImGui::DragFloat("particleEmitter_.frequency", &frequency, 0.1f);
+			particleEmitter->SetFrequency(frequency);
+
+			if (ImGui::Button("ParticleEmit", { 100,50 })) {
+				particleEmitter->Emit();
+			}
+
+			bool isEmitUpdate = particleEmitter->GetIsEmitUpdate();
+			ImGui::Checkbox("IsEmitUpdate", &isEmitUpdate);
+			particleEmitter->SetIsEmitUpdate(isEmitUpdate);
+
+			ImGui::Checkbox("IsAccelerationField", &isAccelerationField);
+
+			//ImGui::Text("\n");
+
+			//}
+		}
 
 		//// テクスチャ
 		////ImGui::Checkbox("useMonsterBall", &useMonsterBall);
@@ -411,6 +489,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{
 			object->Update();
 		}
+
+		if (isAccelerationField) {
+			for (std::pair<const std::string, std::unique_ptr<ParticleManager::ParticleGroup>>& pair : ParticleManager::GetInstance()->GetParticleGroups()) {
+				ParticleManager::ParticleGroup& group = *pair.second;
+				int index = 0;
+				for (std::list<MyBase::Particle>::iterator it = group.particles.begin(); it != group.particles.end();) {
+					MyBase::Particle& particle = *it;
+
+					if (MyTools::IsCollision(area, particle.transform.translate)) {
+						particle.velocity = MyTools::Add(particle.velocity, MyTools::Multiply(kDeltaTime, acceleration));
+					}
+
+					++it;
+					++index;
+				}
+			}
+		}
+
+		// パーティクルの更新処理
+		particleEmitter->Update();
+		ParticleManager::GetInstance()->Update();
 
 		// スプライトの更新処理
 		for (Sprite* sprite : sprites)
@@ -439,12 +538,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		object3dBase->SetCommonScreen();
 
 		// 全ての3DObject個々の描画
-		for (Object3d* object : objects)
+		/*for (Object3d* object : objects)
 		{
 			object->Draw();
-		}
+		}*/
 
 #pragma endregion 3Dオブジェクト
+
+#pragma region パーティクル
+
+		// パーティクルの描画準備。パーティクルの描画に共通グラフィックスコマンドを積む
+		ParticleManager::GetInstance()->Draw();
+
+#pragma endregion パーティクル
 
 #pragma region スプライト
 
@@ -452,10 +558,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		spriteBase->SetCommonScreen();
 
 		// 全てのSprite個々の描画
-		for (Sprite* sprite : sprites)
+		/*for (Sprite* sprite : sprites)
 		{
 			sprite->Draw();
-		}
+		}*/
 
 #pragma endregion スプライト
 
@@ -472,6 +578,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	CoUninitialize();
 
 	// 解放処理
+	// パーティクルマネージャの終了
+	ParticleManager::GetInstance()->Finalize();
 	// 3Dモデルマネージャの終了
 	ModelManager::GetInstance()->Finalize();
 	// テクスチャマネージャの終了
@@ -484,6 +592,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ImGui解放
 	delete imGuiManager;
 #endif // _DEBUG
+	// パーティクル
+	delete particleEmitter;
 	// 3Dオブジェクト
 	for (Object3d* object : objects) 
 	{

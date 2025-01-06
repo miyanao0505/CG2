@@ -64,6 +64,12 @@
     <Filter Include="ソース ファイル\engine\3d">
       <UniqueIdentifier>{01e13457-a734-45c4-b0db-206b5ba43141}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\particle">
+      <UniqueIdentifier>{db79a3b4-49d6-49ef-bd83-973d1cf41c20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\engine\particle">
+      <UniqueIdentifier>{04505abe-b3d7-48df-b4e7-a13400358a6c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -132,6 +138,15 @@
     <ClCompile Include="engine\base\ImGuiManager.cpp">
       <Filter>ソース ファイル\engine\base</Filter>
     </ClCompile>
+    <ClCompile Include="engine\particle\ParticleBase.cpp">
+      <Filter>ソース ファイル\engine\particle</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\particle\ParticleManager.cpp">
+      <Filter>ソース ファイル\engine\particle</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\particle\ParticleEmitter.cpp">
+      <Filter>ソース ファイル\engine\particle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\input\Input.h">
@@ -197,6 +212,15 @@
     <ClInclude Include="engine\base\ImGuiManager.h">
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
+    <ClInclude Include="engine\particle\ParticleBase.h">
+      <Filter>ヘッダー ファイル\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\particle\ParticleManager.h">
+      <Filter>ヘッダー ファイル\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\particle\ParticleEmitter.h">
+      <Filter>ヘッダー ファイル\particle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\Object3d.PS.hlsl">
@@ -211,12 +235,21 @@
     <FxCompile Include="resources\shaders\Sprite2d.VS.hlsl">
       <Filter>シェダー ファイル</Filter>
     </FxCompile>
+    <FxCompile Include="resources\shaders\Particle.VS.hlsl">
+      <Filter>シェダー ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\Particle.PS.hlsl">
+      <Filter>シェダー ファイル</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Object3d.hlsli">
       <Filter>シェダー ファイル</Filter>
     </None>
     <None Include="resources\shaders\Sprite2d.hlsli">
+      <Filter>シェダー ファイル</Filter>
+    </None>
+    <None Include="resources\shaders\Particle.hlsli">
       <Filter>シェダー ファイル</Filter>
     </None>
   </ItemGroup>

@@ -293,6 +293,13 @@ public:
 	static Vector3 Transform(const Vector3& vector, const Matrix4x4 matrix);
 
 	/// <summary>
+	/// 4x4行列をスケールと回転の3次元ベクトルに変換して取得
+	/// </summary>
+	/// <param name="vector">ベクトル</param>
+	/// <param name="matrix">行列</param>
+	static Vector3 TransformNormal(const Vector3& vector, const Matrix4x4& matrix);
+
+	/// <summary>
 	/// 4x4逆行列の作成
 	/// </summary>
 	/// <param name="matrix">行列</param>
