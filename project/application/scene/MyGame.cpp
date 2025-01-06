@@ -189,6 +189,12 @@ void MyGame::Finalize()
 // 毎フレーム更新
 void MyGame::Update()
 {
+	// 終了
+	if (winApi_->ProcessMessage() || input_->TriggerKey(DIK_ESCAPE)) {
+		endRequest_ = true;
+		return;
+	}
+
 	// 入力の更新
 	input_->Update();
 
@@ -581,13 +587,4 @@ void MyGame::Draw()
 	// 描画後処理
 	dxBase_->PostDraw();
 
-}
-
-// 終了リクエスト
-bool MyGame::IsEndRequest()
-{
-	if (winApi_->ProcessMessage()) {
-		return true;
-	}
-	return false;
 }

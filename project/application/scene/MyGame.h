@@ -34,8 +34,8 @@ public:	// メンバ関数
 	// 描画
 	void Draw();
 
-	// 終了リクエスト
-	bool IsEndRequest();
+	// 終了フラグのチェック
+	bool IsEndRequest() { return endRequest_; };
 
 private:	// メンバ変数
 	D3DResourceLeakChecker leakCheck;
@@ -87,5 +87,8 @@ private:	// メンバ変数
 	// デルタイム
 	const float kDeltaTime_ = 1.0f / 60.0f;
 #pragma endregion 変数
+
+	// ゲーム終了フラグ
+	bool endRequest_ = false;
 };
 
