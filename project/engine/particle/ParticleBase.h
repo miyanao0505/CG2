@@ -5,8 +5,6 @@
 class ParticleBase
 {
 public:	// 列挙型
-	// namespace省略
-	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 	// ブレンドモード
 	enum class BlendMode {
 		kBlendModeNone,			//!< ブレンドなし
@@ -44,7 +42,6 @@ private:	// メンバ関数
 	D3D12_BLEND_DESC SetBlendModeSubtract();
 	D3D12_BLEND_DESC SetBlendModeMultiply();
 	D3D12_BLEND_DESC SetBlendModeScreen();
-	static D3D12_BLEND_DESC(ParticleBase::* spFuncTable[])();
 
 private:	// メンバ変数
 	// ルートシグネチャ

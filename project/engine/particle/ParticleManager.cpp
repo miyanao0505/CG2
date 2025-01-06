@@ -117,14 +117,88 @@ void ParticleManager::ChangeBlendMode(ParticleBase::BlendMode blendMode)
 
 void ParticleManager::CreateParticleGroup(const std::string name, const std::string textureFilePath)
 {
+	assert(particleGroups.count(name) == 0 && "ParticleGroup with this name already exists");
 
+	// パーティクルグループの作成と初期化
+	auto group = std::make_unique<ParticleGroup>();
+	// .objの参照しているテクスチャファイル読み込み
+	TextureManager::GetInstance()->LoadTexture(textureFilePath);
+	group->materialData.textureFilePath = textureFilePath;
+
+	group->kNumInstance = 0;
+
+	// 頂点リソースの生成
+	group->vertexResource = dxBase_->CreateBufferResource(sizeof(MyBase::ParticleVertexData) * kParticleVertexNum);
+	
+	// 頂点バッファビューの生成
+	group->vertexBufferView.BufferLocation = group->vertexResource->GetGPUVirtualAddress();
+	group->vertexBufferView.SizeInBytes = sizeof(MyBase::ParticleVertexData) * kParticleVertexNum;
+	group->vertexBufferView.StrideInBytes = sizeof(MyBase::ParticleVertexData);
+	// 頂点リソースに頂点データを書き込む
+	group->vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&group->vertexData));
+	// テクスチャの頂点
+	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetaData(textureFilePath);
+	textureSize_.x = static_cast<float>(metadata.width);
+	textureSize_.y = static_cast<float>(metadata.height);
+
+	float texLeft = textureLeftTop_.x / metadata.width;
+	float texRight = (textureLeftTop_.x + textureSize_.x) / metadata.width;
+	float texTop = textureLeftTop_.y / metadata.height;
+	float texBottom = (textureLeftTop_.y + textureSize_.y) / metadata.height;
+
+	// 頂点データを設定(四角形を構成)
+	group->vertexData[0] = { { -0.5f, -0.5f, 0.0f, 1.0f }, { texLeft, texBottom  }, { 1.0f, 1.0f, 1.0f, 1.0f } };
+	group->vertexData[1] = { { -0.5f,  0.5f, 0.0f, 1.0f }, { texLeft, texTop     }, { 1.0f, 1.0f, 1.0f, 1.0f } };
+	group->vertexData[2] = { {  0.5f, -0.5f, 0.0f, 1.0f }, { texRight, texBottom }, { 1.0f, 1.0f, 1.0f, 1.0f } };
+	group->vertexData[3] = { {  0.5f,  0.5f, 0.0f, 1.0f }, { texRight, texTop }, { 1.0f, 1.0f, 1.0f, 1.0f } };
+
+	// TextureManagerからGPUハンドルを取得
+	group->materialData.textureIndex = TextureManager::GetInstance()->GetSrvIndex(textureFilePath);
+
+	// WVP用のリソースを作る。Matrix4x4 1つ分のサイズを用意する
+	group->instancingResource = dxBase_->CreateBufferResource(sizeof(MyBase::ParticleForGPU) * kMaxInstance_);
+	// 書き込むためのアドレスを取得
+	group->instancingResource.Get()->Map(0, nullptr, reinterpret_cast<void**>(&group->instancingData));
+	// 単位行列を書き込んでおく
+	for (uint32_t index = 0; index < kMaxInstance_; index++) {
+		group->instancingData[index].World = Matrix::MakeIdentity4x4();
+		group->instancingData[index].WVP = Matrix::MakeIdentity4x4();
+		group->instancingData[index].color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	}
+
+	group->srvIndexForInstancing = srvManager_->Allocate();
+	srvManager_->CreateSRVforStructuredBuffer(group->srvIndexForInstancing, group->instancingResource.Get(), kMaxInstance_, sizeof(MyBase::ParticleForGPU));
+
+
+	particleGroups[name] = std::move(group);
 }
 
 void ParticleManager::Emit(const std::string name, const MyBase::Vector3& position, uint32_t count)
 {
+	assert(particleGroups.count(name) > 0 && "ParticleGroup with this name does not exist.");
+
+	ParticleGroup& group = *particleGroups[name];
+	std::random_device seedGenerator;
+	std::mt19937 randomEngine(seedGenerator());
+	uint32_t nowInstance = group.kNumInstance;
+	group.kNumInstance += count;
+	if (group.kNumInstance + count >= kMaxInstance_) {
+		group.kNumInstance = kMaxInstance_;
+	}
+	for (uint32_t i = nowInstance; i < group.kNumInstance; ++i) {
+		group.particles.push_back(CreateParticle(randomEngine, position));
+	}
 }
 
-MyBase::Particle ParticleManager::CreateParticle(std::mt19937& randomEngine, const MyBase::Vector3& position)
-{
-	return MyBase::Particle();
+MyBase::Particle ParticleManager::CreateParticle(std::mt19937& randomEngine, const MyBase::Vector3& position) {
+	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
+	MyBase::Particle particle{};
+	particle.transform.scale = { 1.0f, 1.0f, 1.0f };
+	particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
+	MyBase::Vector3 popPosition = position;
+	particle.transform.translate = popPosition;
+	particle.velocity = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
+	particle.color = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine), 1.0f };
+	particle.lifeTime = 2.0f;
+	return particle;
 }

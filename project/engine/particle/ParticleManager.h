@@ -20,8 +20,8 @@ public:	// パーティクルグループ構造体
 		Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource;			// バッファリソース
 		Microsoft::WRL::ComPtr<ID3D12Resource> instancingResource;		// バッファリソース
 		D3D12_VERTEX_BUFFER_VIEW vertexBufferView;						// バッファリソースの使い道を補足するバッファビュー
-		MyBase::VertexData* vertexData = nullptr;								// バッファリソース内のデータを指すポインタ
-		MyBase::ParticleForGPU* instancingData = nullptr;						// バッファリソース内のデータを指すポインタ
+		MyBase::ParticleVertexData* vertexData = nullptr;				// バッファリソース内のデータを指すポインタ
+		MyBase::ParticleForGPU* instancingData = nullptr;				// バッファリソース内のデータを指すポインタ
 	};
 
 public:	// メンバ関数

@@ -29,8 +29,8 @@
     <ClCompile Include="engine\base\StringUtility.cpp" />
     <ClCompile Include="engine\base\WindowsAPI.cpp" />
     <ClCompile Include="engine\input\Input.cpp" />
-    <ClCompile Include="engine\particle\Particle.cpp" />
     <ClCompile Include="engine\particle\ParticleBase.cpp" />
+    <ClCompile Include="engine\particle\ParticleEmitter.cpp" />
     <ClCompile Include="engine\particle\ParticleManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="engine\Script\Matrix.cpp" />
@@ -56,8 +56,8 @@
     <ClInclude Include="engine\base\StringUtility.h" />
     <ClInclude Include="engine\base\WindowsAPI.h" />
     <ClInclude Include="engine\input\Input.h" />
-    <ClInclude Include="engine\particle\Particle.h" />
     <ClInclude Include="engine\particle\ParticleBase.h" />
+    <ClInclude Include="engine\particle\ParticleEmitter.h" />
     <ClInclude Include="engine\particle\ParticleManager.h" />
     <ClInclude Include="engine\Script\Matrix.h" />
     <ClInclude Include="engine\Script\MyBase.h" />
