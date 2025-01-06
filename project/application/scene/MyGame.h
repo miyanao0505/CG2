@@ -1,60 +1,34 @@
 #pragma once
-#include <D3DResourceLeakChecker.h>
-
-#include <WindowsAPI.h>
-#include <DirectXBase.h>
-#include <Input.h>
+#include <MNFramework.h>
 #include <SpriteBase.h>
 #include <ModelBase.h>
 #include <Object3dBase.h>
-#include <SrvManager.h>
-#include <ImGuiManager.h>
-#include <CameraManager.h>
-#include <TextureManager.h>
-#include <ParticleManager.h>
-#include <ModelManager.h>
 #include <Sprite.h>
 #include <Object3d.h>
 #include <ParticleEmitter.h>
 
 // ゲーム全体
-class MyGame
+class MyGame : public MNFramework
 {
 public:	// メンバ関数
 
 	// 初期化
-	void Initialize();
+	void Initialize() override;
 
 	// 終了
-	void Finalize();
+	void Finalize() override;
 
 	// 毎フレーム更新
-	void Update();
+	void Update() override;
 
 	// 描画
-	void Draw();
-
-	// 終了フラグのチェック
-	bool IsEndRequest() { return endRequest_; };
+	void Draw() override;
 
 private:	// メンバ変数
-	D3DResourceLeakChecker leakCheck;
-
-	// ポインタ
-	WindowsAPI* winApi_ = nullptr;
-	DirectXBase* dxBase_ = nullptr;
-	Input* input_ = nullptr;
-
 	// 共通部の宣言
 	SpriteBase* spriteBase_ = nullptr;
 	ModelBase* modelBase_ = nullptr;
 	Object3dBase* object3dBase_ = nullptr;
-	SrvManager* srvManager_ = nullptr;
-
-#ifdef _DEBUG
-	// ImGuiManagerの宣言
-	ImGuiManager* imGuiManager_ = nullptr;
-#endif // _DEBUG
 
 #pragma region シーン初期化
 	// テクスチャファイルパス
@@ -87,8 +61,5 @@ private:	// メンバ変数
 	// デルタイム
 	const float kDeltaTime_ = 1.0f / 60.0f;
 #pragma endregion 変数
-
-	// ゲーム終了フラグ
-	bool endRequest_ = false;
 };
 
