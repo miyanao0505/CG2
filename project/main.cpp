@@ -174,6 +174,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma endregion シーン初期化
 
 #pragma region 変数
+	bool isParticleActive = true;
+	particleEmitter->SetIsEmitUpdate(isParticleActive);
 	bool isAccelerationField = false;
 	MyBase::Vector3 acceleration = { 15.0f, 0.0f, 0.0f };
 	MyBase::AABB area{ .min{-1.0f, -1.0f, -1.0f}, .max{1.0f, 1.0f, 1.0f} };
@@ -192,6 +194,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		
 		// 入力の更新
 		input->Update();
+
+		if (input->TriggerKey(DIK_P)) {
+			isParticleActive = !isParticleActive;
+			particleEmitter->SetIsEmitUpdate(isParticleActive);
+		}
 
 		// ImGuiにここからフレームが始まる旨を告げる
 #ifdef _DEBUG

@@ -50,7 +50,7 @@ private:	// メンバ変数
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_ = nullptr;
 
 	// ブレンドモード
-	BlendMode blendMode_ = BlendMode::kBlendModeNormal;
+	BlendMode blendMode_ = BlendMode::kBlendModeScreen;
 	static D3D12_BLEND_DESC(ParticleBase::* spFuncTable[])();
 
 	// DirectXBase

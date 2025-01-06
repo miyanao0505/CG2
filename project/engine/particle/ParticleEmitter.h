@@ -40,7 +40,7 @@ private:	// メンバ変数
 	// 発生中心
 	MyBase::Transform transform_{};
 	// 発生数
-	uint32_t count_ = 3;
+	uint32_t count_ = 20;
 	// 発生頻度
 	float frequency_ = 0.5f;
 	// 頻度用時刻
