@@ -1,12 +1,10 @@
 #pragma once
 #include "DirectXBase.h"
 
-// 3Dオブジェクト共通部
-class Object3dBase
+// パーティクル共通部
+class ParticleBase
 {
 public:	// 列挙型
-	// namespace省略
-	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 	// ブレンドモード
 	enum class BlendMode {
 		kBlendModeNone,			//!< ブレンドなし
@@ -31,6 +29,7 @@ public:	// メンバ関数
 
 public:	// getter
 	DirectXBase* GetDxBase() const { return dxBase_; }
+	BlendMode GetBlendMode() const { return blendMode_; }
 
 public:	// setter
 	void SetBlendMode(BlendMode blendMode);
@@ -43,7 +42,6 @@ private:	// メンバ関数
 	D3D12_BLEND_DESC SetBlendModeSubtract();
 	D3D12_BLEND_DESC SetBlendModeMultiply();
 	D3D12_BLEND_DESC SetBlendModeScreen();
-	static D3D12_BLEND_DESC(Object3dBase::* spFuncTable[])();
 
 private:	// メンバ変数
 	// ルートシグネチャ
@@ -52,7 +50,8 @@ private:	// メンバ変数
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_ = nullptr;
 
 	// ブレンドモード
-	BlendMode blendMode_ = BlendMode::kBlendModeNormal;
+	BlendMode blendMode_ = BlendMode::kBlendModeScreen;
+	static D3D12_BLEND_DESC(ParticleBase::* spFuncTable[])();
 
 	// DirectXBase
 	DirectXBase* dxBase_;

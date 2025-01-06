@@ -23,7 +23,7 @@ void Model::Initialize(ModelBase* modelBase, const std::string& directorypath, c
 	// .objの参照しているテクスチャファイル読み込み
 	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
 	// 読み込んだテクスチャの番号を取得
-	modelData_.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData_.material.textureFilePath);
+	modelData_.material.textureIndex = TextureManager::GetInstance()->GetSrvIndex(modelData_.material.textureFilePath);
 
 }
 
@@ -35,7 +35,7 @@ void Model::Draw()
 	// マテリアルCBufferの場所を設定
 	modelBase_->GetDxBase()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_.Get()->GetGPUVirtualAddress());
 	// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
-	modelBase_->GetDxBase()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(modelData_.material.textureIndex));
+	modelBase_->GetDxBase()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(modelData_.material.textureFilePath));
 	// 描画！(DrawCall/ドローコール)。3頂点で1つのインスタンス。インスタンスについては今後
 	modelBase_->GetDxBase()->GetCommandList()->DrawInstanced(UINT(modelData_.vertices.size()), 1, 0, 0);
 }
@@ -108,8 +108,6 @@ void Model::LoadObjFile(const std::string& directoryPath, const std::string& fil
 			MyBase::Vector3 normal;
 			s >> normal.x >> normal.y >> normal.z;
 			normal.x *= -1.0f;
-			//normal.z *= -1.f;
-			//normal.y *= -1.f;
 			normals.push_back(normal);
 		}
 		else if (identifier == "mtllib")
@@ -138,8 +136,6 @@ void Model::LoadObjFile(const std::string& directoryPath, const std::string& fil
 				MyBase::Vector4 position = positions[elementIndeces[0] - 1];
 				MyBase::Vector2 texcoord = texcoords[elementIndeces[1] - 1];
 				MyBase::Vector3 normal = normals[elementIndeces[2] - 1];
-				/*MyBase::VertexData vertex = { position, texcoord, normal };
-				modelData.vertices.push_back(vertex);*/
 				triangle[faceVertex] = { position, texcoord, normal };
 			}
 			// 頂点を逆順で登録することで、周り順を逆にする

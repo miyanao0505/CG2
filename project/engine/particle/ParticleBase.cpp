@@ -1,7 +1,7 @@
-#include "SpriteBase.h"
+#include "ParticleBase.h"
 
 // 初期化
-void SpriteBase::Initialize(DirectXBase* dxBase)
+void ParticleBase::Initislize(DirectXBase* dxBase)
 {
 	// 引数で受け取ってメンバ変数に記録する
 	dxBase_ = dxBase;
@@ -11,38 +11,33 @@ void SpriteBase::Initialize(DirectXBase* dxBase)
 }
 
 // ルートシグネチャの作成
-void SpriteBase::CreateRootSignature()
+void ParticleBase::CreateRootSignature()
 {
 	HRESULT hr;
 
 	// DescriptorRange作成
-	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
-	descriptorRange[0].BaseShaderRegister = 0;														// 0から始まる
-	descriptorRange[0].NumDescriptors = 1;															// 数は1つ
-	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;									// SRVを使う
-	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;	// Offsetを自動計算
+	D3D12_DESCRIPTOR_RANGE descriptorRangeForInstancing[1] = {};
+	descriptorRangeForInstancing[0].BaseShaderRegister = 0;														// 0から始まる
+	descriptorRangeForInstancing[0].NumDescriptors = 1;															// 数は1つ
+	descriptorRangeForInstancing[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;								// SRVを使う
+	descriptorRangeForInstancing[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;	// Offsetを自動計算
 
 	// RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 	// RootParameter作成。複数設定できるので配列。
-	D3D12_ROOT_PARAMETER rootParameters[4] = {};
-	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;					// CBVを使う
-	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;					// PixelShaderで使う
-	rootParameters[0].Descriptor.ShaderRegister = 0;									// レジスタ番号0とバインド
-	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;					// CBVを使う
-	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;				// VertexShaderで使う
-	rootParameters[1].Descriptor.ShaderRegister = 0;									// レジスタ番号0とバインド
-	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;		// DescriptorTableを使う
-	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;					// PixelShaderで使う
-	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange;				// Tableの中身の配列を指定
-	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);	// Tableで利用する数
-	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;					// CBVを使う
-	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;					// PixelShaderで使う
-	rootParameters[3].Descriptor.ShaderRegister = 1;									// レジスタ番号1を使う
-	descriptionRootSignature.pParameters = rootParameters;					// ルートパラメータ配列へのポインタ
-	descriptionRootSignature.NumParameters = _countof(rootParameters);		// 配列の長さ
+	D3D12_ROOT_PARAMETER rootParameters[2] = {};
+	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;						// DescriptorTableを使う
+	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;								// VertexShaderで使う
+	rootParameters[0].DescriptorTable.pDescriptorRanges = descriptorRangeForInstancing;					// Tableの中身の配列を指定
+	rootParameters[0].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForInstancing);		// Tableで利用する数
+	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;						//DescriptorTableを使う
+	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;									//PixelShaderで使う
+	rootParameters[1].DescriptorTable.pDescriptorRanges = descriptorRangeForInstancing;					//Tableの中身の配列を指定
+	rootParameters[1].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForInstancing);		//Tableで利用する数
+	descriptionRootSignature.pParameters = rootParameters;												// ルートパラメータ配列へのポインタ
+	descriptionRootSignature.NumParameters = _countof(rootParameters);									// 配列の長さ
 
 	// Samplerの設定
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
@@ -72,7 +67,7 @@ void SpriteBase::CreateRootSignature()
 }
 
 // グラフィックスパイプラインの生成
-void SpriteBase::CreateGraphicsPipeline()
+void ParticleBase::CreateGraphicsPipeline()
 {
 	HRESULT hr;
 
@@ -89,36 +84,36 @@ void SpriteBase::CreateGraphicsPipeline()
 	inputElementDescs[1].SemanticIndex = 0;
 	inputElementDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
 	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-	inputElementDescs[2].SemanticName = "NORMAL";
+	inputElementDescs[2].SemanticName = "COLOR";
 	inputElementDescs[2].SemanticIndex = 0;
-	inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	inputElementDescs[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
 	inputLayoutDesc.pInputElementDescs = inputElementDescs;
 	inputLayoutDesc.NumElements = _countof(inputElementDescs);
 
 	// Shaderをコンパイルする
-	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = dxBase_->CompileShader(L"resources/Shaders/Sprite2d.VS.hlsl", L"vs_6_0");
+	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = dxBase_->CompileShader(L"resources/shaders/Particle.VS.hlsl", L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
 
-	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = dxBase_->CompileShader(L"resources/Shaders/Sprite2d.PS.hlsl", L"ps_6_0");
+	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = dxBase_->CompileShader(L"resources/shaders/Particle.PS.hlsl", L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
 	// RasiterzerStateの設定
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
 	// 裏面(時計回り)を表示しない
-	//rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
+	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
 	// カリングしない(裏面も表示する)
-	rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
+	//rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
 	// 三角形の中を塗りつぶす
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-	graphicsPipelineStateDesc.pRootSignature = rootSignature_.Get();											// RootSignature
+	graphicsPipelineStateDesc.pRootSignature = rootSignature_.Get();												// RootSignature
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;													// InputLayout
 	graphicsPipelineStateDesc.VS = { vertexShaderBlob->GetBufferPointer(), vertexShaderBlob->GetBufferSize() };	// VertexShader
 	graphicsPipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(), pixelShaderBlob->GetBufferSize() };	// PixelShader
-	graphicsPipelineStateDesc.BlendState = (this->*spFuncTable[static_cast<size_t>(blendMode_)])();				// BlendState											// BlendState
+	graphicsPipelineStateDesc.BlendState = (this->*spFuncTable[static_cast<size_t>(blendMode_)])();				// BlendState
 	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;													// RasterizerState
 	// 書き込むRTVの情報
 	graphicsPipelineStateDesc.NumRenderTargets = 1;
@@ -133,8 +128,8 @@ void SpriteBase::CreateGraphicsPipeline()
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
 	// Depthの機能を有効する
 	depthStencilDesc.DepthEnable = true;
-	// 書き込みします
-	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	// 書き込みしない
+	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 	// 比較関数はLessEqual。つまり、近ければ描画される
 	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 	// DepthStencilの設定
@@ -148,7 +143,7 @@ void SpriteBase::CreateGraphicsPipeline()
 }
 
 // 共通画面設定
-void SpriteBase::SetCommonScreen()
+void ParticleBase::SetCommonScreen()
 {
 	// ルートシグネチャをセットするコマンド
 	dxBase_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
@@ -158,13 +153,13 @@ void SpriteBase::SetCommonScreen()
 	dxBase_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-void SpriteBase::SetBlendMode(BlendMode blendMode)
+void ParticleBase::SetBlendMode(BlendMode blendMode)
 {
 	blendMode_ = blendMode;
 	CreateGraphicsPipeline();
 }
 
-D3D12_BLEND_DESC SpriteBase::SetBlendModeNone()
+D3D12_BLEND_DESC ParticleBase::SetBlendModeNone()
 {
 	D3D12_BLEND_DESC blendDesc{};
 	//すべての色要素を書き込む
@@ -173,7 +168,7 @@ D3D12_BLEND_DESC SpriteBase::SetBlendModeNone()
 	return blendDesc;
 }
 
-D3D12_BLEND_DESC SpriteBase::SetBlendModeNormal()
+D3D12_BLEND_DESC ParticleBase::SetBlendModeNormal()
 {
 	D3D12_BLEND_DESC blendDesc{};
 	//すべての色要素を書き込む
@@ -191,7 +186,7 @@ D3D12_BLEND_DESC SpriteBase::SetBlendModeNormal()
 	return blendDesc;
 }
 
-D3D12_BLEND_DESC SpriteBase::SetBlendModeAdd()
+D3D12_BLEND_DESC ParticleBase::SetBlendModeAdd()
 {
 	D3D12_BLEND_DESC blendDesc{};
 	//すべての色要素を書き込む
@@ -209,7 +204,7 @@ D3D12_BLEND_DESC SpriteBase::SetBlendModeAdd()
 	return blendDesc;
 }
 
-D3D12_BLEND_DESC SpriteBase::SetBlendModeSubtract()
+D3D12_BLEND_DESC ParticleBase::SetBlendModeSubtract()
 {
 	D3D12_BLEND_DESC blendDesc{};
 	//すべての色要素を書き込む
@@ -227,7 +222,7 @@ D3D12_BLEND_DESC SpriteBase::SetBlendModeSubtract()
 	return blendDesc;
 }
 
-D3D12_BLEND_DESC SpriteBase::SetBlendModeMultiply()
+D3D12_BLEND_DESC ParticleBase::SetBlendModeMultiply()
 {
 	D3D12_BLEND_DESC blendDesc{};
 	//すべての色要素を書き込む
@@ -245,7 +240,7 @@ D3D12_BLEND_DESC SpriteBase::SetBlendModeMultiply()
 	return blendDesc;
 }
 
-D3D12_BLEND_DESC SpriteBase::SetBlendModeScreen()
+D3D12_BLEND_DESC ParticleBase::SetBlendModeScreen()
 {
 	D3D12_BLEND_DESC blendDesc{};
 	//すべての色要素を書き込む
@@ -263,11 +258,11 @@ D3D12_BLEND_DESC SpriteBase::SetBlendModeScreen()
 	return blendDesc;
 }
 
-D3D12_BLEND_DESC(SpriteBase::* SpriteBase::spFuncTable[])() = {
-	&SpriteBase::SetBlendModeNone,
-	&SpriteBase::SetBlendModeNormal,
-	&SpriteBase::SetBlendModeAdd,
-	&SpriteBase::SetBlendModeSubtract,
-	&SpriteBase::SetBlendModeMultiply,
-	&SpriteBase::SetBlendModeScreen,
+D3D12_BLEND_DESC(ParticleBase::* ParticleBase::spFuncTable[])() = {
+	&ParticleBase::SetBlendModeNone,
+	&ParticleBase::SetBlendModeNormal,
+	&ParticleBase::SetBlendModeAdd,
+	&ParticleBase::SetBlendModeSubtract,
+	&ParticleBase::SetBlendModeMultiply,
+	&ParticleBase::SetBlendModeScreen,
 };
