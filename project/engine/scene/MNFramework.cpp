@@ -75,11 +75,15 @@ void MNFramework::Finalize()
 	particleManager_->Finalize();
 	textureManager_->Finalize();
 	cameraManager_->Finalize();
+#ifdef _DEBUG
 	imGuiManager_->Finalize();
+#endif // _DEBUG
 	winApi_->Finalize();
 
 	// 解放
+#ifdef DEBUG
 	delete imGuiManager_;
+#endif // DEBUG
 	delete srvManager_;
 	delete input_;
 	delete dxBase_;
