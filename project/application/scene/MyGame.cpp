@@ -1,5 +1,5 @@
 #include "MyGame.h"
-#include"TitleScene.h"
+#include"SceneFactory.h"
 #include "imgui_impl_dx12.h"
 #include "imgui_impl_win32.h"
 #pragma comment(lib, "dxcompiler.lib")
@@ -10,10 +10,11 @@ void MyGame::Initialize()
 	// 基底クラスの初期化処理
 	MNFramework::Initialize();
 
-	// 最初のシーンの生成
-	BaseScene* scene = new TitleScene();
+	// シーンファクトリーを生成し、マネージャにセット
+	sceneFactory_ = new SceneFactory();
+	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_);
 	// シーンマネージャに最初のシーンをセット
-	sceneManager_->SetNextScene(scene);
+	SceneManager::GetInstance()->ChangeScene("TITLE");
 }
 
 // 終了

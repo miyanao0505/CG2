@@ -10,6 +10,7 @@
 #include "ParticleManager.h"
 #include "ModelManager.h"
 #include "SceneManager.h"
+#include "AbstractSceneFactory.h"
 
 // ゲーム全体
 class MNFramework
@@ -64,5 +65,7 @@ protected:	// メンバ変数
 	ModelManager* modelManager_ = nullptr;
 	// シーン基底クラス
 	SceneManager* sceneManager_ = nullptr;
+	// シーンファクトリー
+	AbstractSceneFactory* sceneFactory_ = nullptr;
 };
 
