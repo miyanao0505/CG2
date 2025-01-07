@@ -37,6 +37,7 @@
     <ClCompile Include="engine\particle\ParticleEmitter.cpp" />
     <ClCompile Include="engine\particle\ParticleManager.cpp" />
     <ClCompile Include="engine\scene\MNFramework.cpp" />
+    <ClCompile Include="engine\scene\SceneManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="engine\Script\Matrix.cpp" />
     <ClCompile Include="engine\Script\MyBase.cpp" />
@@ -69,6 +70,7 @@
     <ClInclude Include="engine\particle\ParticleEmitter.h" />
     <ClInclude Include="engine\particle\ParticleManager.h" />
     <ClInclude Include="engine\scene\MNFramework.h" />
+    <ClInclude Include="engine\scene\SceneManager.h" />
     <ClInclude Include="engine\Script\Matrix.h" />
     <ClInclude Include="engine\Script\MyBase.h" />
     <ClInclude Include="engine\Script\MyTools.h" />

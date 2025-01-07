@@ -1,15 +1,18 @@
 #include "TitleScene.h"
 #include <imgui.h>
-#include "Input.h"
 #include "CameraManager.h"
 #include "ModelManager.h"
 #include "TextureManager.h"
 #include "ParticleManager.h"
+#include"SceneManager.h"
 #include "MyTools.h"
+#include"GameScene.h"
 
 // 初期化
 void TitleScene::Initialize()
 {
+	BaseScene::Initialize();
+
 #pragma region シーン初期化
 	// テクスチャの読み込み
 	TextureManager::GetInstance()->LoadTexture(filePath1_);
@@ -70,6 +73,8 @@ void TitleScene::Initialize()
 // 終了
 void TitleScene::Finalize()
 {
+	BaseScene::Finalize();
+
 	// パーティクル
 	delete particleEmitter_;
 	// 3Dオブジェクト
@@ -87,7 +92,9 @@ void TitleScene::Finalize()
 // 毎フレーム更新
 void TitleScene::Update()
 {
-	//#ifdef _DEBUG
+	BaseScene::Update();
+
+#ifdef _DEBUG
 //	// 開発用UIの処理。実際に開発用のUIを出す場合はここをゲーム固有の処理に置き換える
 //	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);		// ウィンドウの座標(プログラム起動時のみ読み込み)
 //	ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_Once);		// ウィンドウのサイズ(プログラム起動時のみ読み込み)
@@ -368,7 +375,15 @@ void TitleScene::Update()
 //	//ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);*/
 //
 //	ImGui::End();
-//#endif // _DEBUG
+#endif // _DEBUG
+
+	// ENTERキーを押したら
+	if (input_->TriggerKey(DIK_RETURN)) {
+		// ゲームプレイシーン(次のシーン)を生成
+		BaseScene* scene = new GameScene();
+		// シーン切り替え依頼
+		sceneManager_->SetNextScene(scene);
+	}
 
 	// 3Dオブジェクトの更新処理
 	for (Object3d* object : objects_)

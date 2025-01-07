@@ -22,7 +22,7 @@ void MNFramework::Initialize()
 
 #pragma region 汎用機能初期化
 	// 入力の初期化
-	input_ = new Input();
+	input_ = Input::GetInstance();
 	input_->Initialize(winApi_);
 #pragma endregion 汎用機能初期化
 
@@ -66,19 +66,17 @@ void MNFramework::Initialize()
 	// モデルマネージャの初期化
 	modelManager_ = ModelManager::GetInstance();
 	modelManager_->Initialize(dxBase_);
-#pragma endregion マネージャ初期化
 
-#pragma region シーン初期化
-	scene_ = new GameScene();
-	scene_->Initialize();
-#pragma endregion シーン初期化
+	// シーンマネージャの生成
+	sceneManager_ = SceneManager::GetInstance();
+#pragma endregion マネージャ初期化
 }
 
 // 終了
 void MNFramework::Finalize()
 {
 	// 終了
-	scene_->Finalize();
+	sceneManager_->Finalize();
 	modelManager_->Finalize();
 	particleManager_->Finalize();
 	textureManager_->Finalize();
@@ -86,15 +84,14 @@ void MNFramework::Finalize()
 #ifdef _DEBUG
 	imGuiManager_->Finalize();
 #endif // _DEBUG
+	input_->Finalize();
 	winApi_->Finalize();
 
 	// 解放
-	delete scene_;
 #ifdef DEBUG
 	delete imGuiManager_;
 #endif // DEBUG
 	delete srvManager_;
-	delete input_;
 	delete dxBase_;
 	delete winApi_;
 }
@@ -103,7 +100,9 @@ void MNFramework::Finalize()
 void MNFramework::Update()
 {
 	// ゲーム処理
-	input_->Update();
+
+	// 入力の更新処理
+	Input::GetInstance()->Update();
 
 	// 終了
 	if (winApi_->ProcessMessage() || input_->TriggerKey(DIK_ESCAPE)) {
@@ -114,22 +113,11 @@ void MNFramework::Update()
 	// ImGuiにここからフレームが始まる旨を告げる
 #ifdef _DEBUG
 	imGuiManager_->Begin();
-
-	if (input_->TriggerKey(DIK_1)) {
-		scene_->Finalize();
-		scene_ = new TitleScene();
-		scene_->Initialize();
-	}
-	else if (input_->TriggerKey(DIK_2)) {
-		scene_->Finalize();
-		scene_ = new GameScene();
-		scene_->Initialize();
-	}
 #endif // _DEBUG
 
-	// シーン
-	scene_->Update();
-
+	// シーンマネージャの更新処理
+	sceneManager_->Update();
+	
 	// ImGuiの内部コマンドを生成する
 #ifdef _DEBUG
 	imGuiManager_->End();
