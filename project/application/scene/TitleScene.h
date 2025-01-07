@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 #include "Sprite.h"
-#include "Object3d.h"
 #include "ParticleEmitter.h"
 #include "MyBase.h"
 
@@ -26,21 +25,13 @@ public:	// メンバ関数
 private:	// メンバ変数
 #pragma region シーン初期化
 	// テクスチャファイルパス
-	std::string filePath1_ = { "resources/uvChecker.png" };
-	std::string filePath2_ = { "resources/monsterBall.png" };
+	std::string filePath1_ = { "resources/title.png" };
+	//std::string filePath2_ = { "resources/monsterBall.png" };
 	//std::string filePath3_ = { "resources/fence.png" };
 	//std::string filePath4_ = { "resources/circle.png" };
 
 	// スプライト
 	std::vector<Sprite*> sprites_;
-
-	// モデルファイルパス
-	MyBase::ModelFilePath modelFilePath1_ = { {"resources/plane"}, {"plane.obj"} };
-	MyBase::ModelFilePath modelFilePath2_ = { {"resources/axis"}, {"axis.obj"} };
-	MyBase::ModelFilePath modelFilePath3_ = { {"resources/fence"}, {"fence.obj"} };
-
-	// 3Dオブジェクト
-	std::vector<Object3d*> objects_;
 
 	// パーティクル
 	ParticleEmitter* particleEmitter_ = nullptr;

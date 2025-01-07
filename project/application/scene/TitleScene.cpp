@@ -1,7 +1,5 @@
 #include "TitleScene.h"
 #include <imgui.h>
-#include "CameraManager.h"
-#include "ModelManager.h"
 #include "TextureManager.h"
 #include "ParticleManager.h"
 #include"SceneManager.h"
@@ -15,45 +13,21 @@ void TitleScene::Initialize()
 #pragma region シーン初期化
 	// テクスチャの読み込み
 	TextureManager::GetInstance()->LoadTexture(filePath1_);
-	TextureManager::GetInstance()->LoadTexture(filePath2_);
-	//TextureManager::GetInstance()->LoadTexture(filePath3_);
-	//TextureManager::GetInstance()->LoadTexture(filePath4_);
 
 	// スプライト
-	for (uint32_t i = 0; i < 5; ++i)
+	for (uint32_t i = 0; i < 1; ++i)
 	{
 		// スプライトの初期化
 		Sprite* sprite = new Sprite();
 		sprite->Initialize(filePath1_);
-		sprite->SetPosition({ 200.0f * float(i), 100.0f });
-		sprite->SetSize({ 100.f, 100.f });
 		sprite->SetAnchorPoint({ 0.0f, 0.0f });
 		sprite->SetIsFlipX(false);
 		sprite->SetIsFlipY(false);
 		sprites_.push_back(sprite);
 	}
 
-	sprites_[1]->SetTexture(filePath2_);
-	sprites_[1]->SetSize({ 100.0f, 100.0f });
-	sprites_[3]->SetTexture(filePath2_);
-	sprites_[3]->SetSize({ 100.0f, 100.0f });
-
-	// .objファイルからモデルを読み込む
-	ModelManager::GetInstance()->LoadModel(modelFilePath1_.directoryPath, modelFilePath1_.filename);
-	ModelManager::GetInstance()->LoadModel(modelFilePath2_.directoryPath, modelFilePath2_.filename);
-	ModelManager::GetInstance()->LoadModel(modelFilePath3_.directoryPath, modelFilePath3_.filename);
-
-	// 3Dオブジェクト
-	for (uint32_t i = 0; i < 3; ++i) {
-		// 3Dオブジェクトの初期化
-		Object3d* object = new Object3d;
-		object->Initislize();
-		object->SetTranslate({ -2.5f + i * 2.5f, 0.0f, 0.0f });
-		object->SetModel(modelFilePath1_.filename);
-		objects_.push_back(object);
-	}
-	objects_[1]->SetModel(modelFilePath2_.filename);
-	objects_[2]->SetModel(modelFilePath3_.filename);
+	sprites_[0]->SetPosition({ 0.0f, 0.0f });
+	sprites_[0]->SetSize({ 1280.0f, 720.f });
 
 	// パーティクル
 	particleEmitter_ = new ParticleEmitter;
@@ -61,7 +35,7 @@ void TitleScene::Initialize()
 #pragma endregion シーン初期化
 
 #pragma region 変数
-	isParticleActive_ = true;
+	isParticleActive_ = false;
 	particleEmitter_->SetIsEmitUpdate(isParticleActive_);
 	isAccelerationField_ = false;
 	acceleration_ = { 15.0f, 0.0f, 0.0f };
@@ -76,11 +50,6 @@ void TitleScene::Finalize()
 
 	// パーティクル
 	delete particleEmitter_;
-	// 3Dオブジェクト
-	for (Object3d* object : objects_)
-	{
-		delete object;
-	}
 	// スプライト
 	for (Sprite* sprite : sprites_)
 	{
@@ -382,12 +351,6 @@ void TitleScene::Update()
 		SceneManager::GetInstance()->ChangeScene("GAME");
 	}
 
-	// 3Dオブジェクトの更新処理
-	for (Object3d* object : objects_)
-	{
-		object->Update();
-	}
-
 	if (isAccelerationField_) {
 		for (std::pair<const std::string, std::unique_ptr<ParticleManager::ParticleGroup>>& pair : ParticleManager::GetInstance()->GetParticleGroups()) {
 			ParticleManager::ParticleGroup& group = *pair.second;
@@ -419,19 +382,6 @@ void TitleScene::Update()
 // 描画
 void TitleScene::Draw()
 {
-#pragma region 3Dオブジェクト
-
-	// 3Dオブジェクトの描画準備。3Dオブジェクトの描画に共通のグラフィックスコマンドを積む
-	ModelManager::GetInstance()->SetCommonScreen();
-
-	// 全ての3DObject個々の描画
-	for (Object3d* object : objects_)
-	{
-		object->Draw();
-	}
-
-#pragma endregion 3Dオブジェクト
-
 #pragma region パーティクル
 
 	// パーティクルの描画準備。パーティクルの描画に共通グラフィックスコマンドを積む
@@ -445,10 +395,10 @@ void TitleScene::Draw()
 	TextureManager::GetInstance()->SetCommonScreen();
 
 	// 全てのSprite個々の描画
-	/*for (Sprite* sprite : sprites_)
+	for (Sprite* sprite : sprites_)
 	{
 		sprite->Draw();
-	}*/
+	}
 
 #pragma endregion スプライト
 

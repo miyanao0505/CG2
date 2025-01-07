@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="application\scene\BaseScene.cpp" />
+    <ClCompile Include="application\scene\ClearScene.cpp" />
     <ClCompile Include="application\scene\GameScene.cpp" />
     <ClCompile Include="application\scene\MyGame.cpp" />
     <ClCompile Include="application\scene\SceneFactory.cpp" />
@@ -46,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\BaseScene.h" />
+    <ClInclude Include="application\scene\ClearScene.h" />
     <ClInclude Include="application\scene\GameScene.h" />
     <ClInclude Include="application\scene\MyGame.h" />
     <ClInclude Include="application\scene\SceneFactory.h" />

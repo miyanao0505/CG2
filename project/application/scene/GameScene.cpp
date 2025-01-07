@@ -20,7 +20,7 @@ void GameScene::Initialize()
 	//TextureManager::GetInstance()->LoadTexture(filePath4_);
 
 	// スプライト
-	for (uint32_t i = 0; i < 5; ++i)
+	for (uint32_t i = 0; i < 2; ++i)
 	{
 		// スプライトの初期化
 		Sprite* sprite = new Sprite();
@@ -33,10 +33,10 @@ void GameScene::Initialize()
 		sprites_.push_back(sprite);
 	}
 
+	sprites_[0]->SetTexture(filePath2_);
+	sprites_[0]->SetSize({ 100.0f, 100.0f });
 	sprites_[1]->SetTexture(filePath2_);
 	sprites_[1]->SetSize({ 100.0f, 100.0f });
-	sprites_[3]->SetTexture(filePath2_);
-	sprites_[3]->SetSize({ 100.0f, 100.0f });
 
 	// .objファイルからモデルを読み込む
 	ModelManager::GetInstance()->LoadModel(modelFilePath1_.directoryPath, modelFilePath1_.filename);
@@ -44,7 +44,7 @@ void GameScene::Initialize()
 	ModelManager::GetInstance()->LoadModel(modelFilePath3_.directoryPath, modelFilePath3_.filename);
 
 	// 3Dオブジェクト
-	for (uint32_t i = 0; i < 3; ++i) {
+	for (uint32_t i = 0; i < 1; ++i) {
 		// 3Dオブジェクトの初期化
 		Object3d* object = new Object3d;
 		object->Initislize();
@@ -52,8 +52,11 @@ void GameScene::Initialize()
 		object->SetModel(modelFilePath1_.filename);
 		objects_.push_back(object);
 	}
-	objects_[1]->SetModel(modelFilePath2_.filename);
-	objects_[2]->SetModel(modelFilePath3_.filename);
+	objects_[0]->SetTranslate({ 0.0f, 0.0f, 5.0f });
+	objects_[0]->SetScale({ 10.0f, 10.0f, 1.0f });
+	objects_[0]->SetRotate({ 0.5f, 0.0f, 0.0f });
+	//objects_[1]->SetModel(modelFilePath2_.filename);
+	//objects_[2]->SetModel(modelFilePath3_.filename);
 
 	// パーティクル
 	particleEmitter_ = new ParticleEmitter;
@@ -425,10 +428,10 @@ void GameScene::Draw()
 	ModelManager::GetInstance()->SetCommonScreen();
 
 	// 全ての3DObject個々の描画
-	/*for (Object3d* object : objects_)
+	for (Object3d* object : objects_)
 	{
 		object->Draw();
-	}*/
+	}
 
 #pragma endregion 3Dオブジェクト
 
