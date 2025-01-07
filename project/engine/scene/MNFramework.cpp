@@ -96,22 +96,18 @@ void MNFramework::Update()
 	// ゲーム処理
 	input_->Update();
 
-	// ImGuiにここからフレームが始まる旨を告げる
-#ifdef _DEBUG
-	imGuiManager_->Begin();
-#endif // _DEBUG
-
 	// 終了
 	if (winApi_->ProcessMessage() || input_->TriggerKey(DIK_ESCAPE)) {
 		endRequest_ = true;
 		return;
 	}
 
-	// 入力の更新
-	input_->Update();
+	// ImGuiにここからフレームが始まる旨を告げる
+#ifdef _DEBUG
+	imGuiManager_->Begin();
+#endif // _DEBUG
 
-	// カメラの更新
-	cameraManager_->GetCamera()->Update();
+
 
 	// ImGuiの内部コマンドを生成する
 #ifdef _DEBUG

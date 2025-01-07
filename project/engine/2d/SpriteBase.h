@@ -5,8 +5,6 @@
 class SpriteBase
 {
 public:	// 列挙型
-	// namespace省略
-	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 	// ブレンドモード
 	enum class BlendMode {
 		kBlendModeNone,			//!< ブレンドなし
@@ -56,6 +54,6 @@ private:	// メンバ変数
 	BlendMode blendMode_ = BlendMode::kBlendModeNormal;
 
 	// DirectXBase
-	DirectXBase* dxBase_;
+	DirectXBase* dxBase_ = nullptr;
 };
 

@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="application\scene\GameScene.cpp" />
     <ClCompile Include="application\scene\MyGame.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp" />
     <ClCompile Include="engine\2d\SpriteBase.cpp" />
@@ -40,6 +41,7 @@
     <ClCompile Include="engine\Script\MyTools.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application\scene\GameScene.h" />
     <ClInclude Include="application\scene\MyGame.h" />
     <ClInclude Include="engine\2d\Sprite.h" />
     <ClInclude Include="engine\2d\SpriteBase.h" />

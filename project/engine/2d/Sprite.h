@@ -2,7 +2,6 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include "MyBase.h"
-#include "TextureManager.h"
 
 // 前方宣言
 class SpriteBase;
@@ -12,7 +11,7 @@ class Sprite
 {
 public:	// メンバ関数
 	// 初期化
-	void Initialize(SpriteBase* spriteBase, std::string textureFilePath);
+	void Initialize(std::string textureFilePath);
 	// 更新処理
 	void Update();
 	// 描画処理

@@ -106,9 +106,9 @@ private:
 
 private:	// メンバ変数
 	// DirectX12デバイス
-	Microsoft::WRL::ComPtr<ID3D12Device> device_;
+	Microsoft::WRL::ComPtr<ID3D12Device> device_ = nullptr;
 	// DXGIファクトリ
-	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory_;
+	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory_ = nullptr;
 	// コマンドアロケータ
 	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator_ = nullptr;
 	// コマンドリスト
@@ -116,19 +116,19 @@ private:	// メンバ変数
 	// コマンドキュー
 	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue_ = nullptr;
 	// スワップチェーン
-	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain_;
+	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain_ = nullptr;
 	// 深度バッファ
-	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource_;
+	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource_ = nullptr;
 	// RTV用デスクリプタヒープ
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_ = nullptr;
 	// DSV用デスクリプタヒープ
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_ = nullptr;
 	// SwapChainからResourceを引っ張ってきたリソース(バックバッファ)
 	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> swapChainResources_;
 	// 取得したRTVハンドル
-	std::array<D3D12_CPU_DESCRIPTOR_HANDLE, 2> rtvHandles_;
+	std::array<D3D12_CPU_DESCRIPTOR_HANDLE, 2> rtvHandles_ ;
 	// Fence
-	Microsoft::WRL::ComPtr<ID3D12Fence> fence_;
+	Microsoft::WRL::ComPtr<ID3D12Fence> fence_ = nullptr;
 	// FenceのSignal
 	uint64_t fenceValue_;
 	HANDLE fenceEvent_;
@@ -137,11 +137,11 @@ private:	// メンバ変数
 	// シザー矩形
 	D3D12_RECT scissorRect_;
 	// DXCユーティリティ
-	IDxcUtils* dxcUtils_;
+	IDxcUtils* dxcUtils_ = nullptr;
 	// DXCコンパイラ
-	IDxcCompiler3* dxcCompiler_;
+	IDxcCompiler3* dxcCompiler_ = nullptr;
 	// デフォルトインクルードハンドラ
-	IDxcIncludeHandler* includeHandler_;
+	IDxcIncludeHandler* includeHandler_ = nullptr;
 
 	// WindowsAPI
 	WindowsAPI* winApi_ = nullptr;
