@@ -1,14 +1,15 @@
 #pragma once
-#include <D3DResourceLeakChecker.h>
-#include <WindowsAPI.h>
-#include <DirectXBase.h>
-#include <Input.h>
-#include <SrvManager.h>
-#include <ImGuiManager.h>
-#include <CameraManager.h>
-#include <TextureManager.h>
-#include <ParticleManager.h>
-#include <ModelManager.h>
+#include "D3DResourceLeakChecker.h"
+#include "WindowsAPI.h"
+#include "DirectXBase.h"
+#include "Input.h"
+#include "SrvManager.h"
+#include "ImGuiManager.h"
+#include "CameraManager.h"
+#include "TextureManager.h"
+#include "ParticleManager.h"
+#include "ModelManager.h"
+#include "BaseScene.h"
 
 // ゲーム全体
 class MNFramework
@@ -61,5 +62,7 @@ protected:	// メンバ変数
 	ParticleManager* particleManager_ = nullptr;
 	// モデルマネージャ
 	ModelManager* modelManager_ = nullptr;
+	// シーン基底クラス
+	BaseScene* scene_ = nullptr;
 };
 

@@ -1,5 +1,5 @@
 #pragma once
-#include <DirectXBase.h>
+#include "DirectXBase.h"
 
 // SRV管理
 class SrvManager

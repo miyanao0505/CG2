@@ -8,10 +8,6 @@ void MyGame::Initialize()
 {
 	// 基底クラスの初期化処理
 	MNFramework::Initialize();
-
-	// シーンの初期化
-	scene_ = new TitleScene;
-	scene_->Initialize();
 }
 
 // 終了
@@ -19,10 +15,6 @@ void MyGame::Finalize()
 {
 	// COMの終了処理
 	CoUninitialize();
-
-	// シーンの終了処理
-	scene_->Finalize();
-	delete scene_;
 
 	// 基底クラスの終了処理
 	MNFramework::Finalize();
@@ -33,9 +25,6 @@ void MyGame::Update()
 {
 	// 基底クラスの更新処理
 	MNFramework::Update();
-
-	// シーンの更新処理
-	scene_->Update();
 }
 
 // 描画

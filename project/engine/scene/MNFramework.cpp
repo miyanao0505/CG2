@@ -1,4 +1,6 @@
 #include "MNFramework.h"
+#include "TitleScene.h"
+#include "GameScene.h"
 
 // 初期化
 void MNFramework::Initialize()
@@ -65,12 +67,18 @@ void MNFramework::Initialize()
 	modelManager_ = ModelManager::GetInstance();
 	modelManager_->Initialize(dxBase_);
 #pragma endregion マネージャ初期化
+
+#pragma region シーン初期化
+	scene_ = new GameScene();
+	scene_->Initialize();
+#pragma endregion シーン初期化
 }
 
 // 終了
 void MNFramework::Finalize()
 {
 	// 終了
+	scene_->Finalize();
 	modelManager_->Finalize();
 	particleManager_->Finalize();
 	textureManager_->Finalize();
@@ -81,6 +89,7 @@ void MNFramework::Finalize()
 	winApi_->Finalize();
 
 	// 解放
+	delete scene_;
 #ifdef DEBUG
 	delete imGuiManager_;
 #endif // DEBUG
@@ -105,9 +114,21 @@ void MNFramework::Update()
 	// ImGuiにここからフレームが始まる旨を告げる
 #ifdef _DEBUG
 	imGuiManager_->Begin();
+
+	if (input_->TriggerKey(DIK_1)) {
+		scene_->Finalize();
+		scene_ = new TitleScene();
+		scene_->Initialize();
+	}
+	else if (input_->TriggerKey(DIK_2)) {
+		scene_->Finalize();
+		scene_ = new GameScene();
+		scene_->Initialize();
+	}
 #endif // _DEBUG
 
-
+	// シーン
+	scene_->Update();
 
 	// ImGuiの内部コマンドを生成する
 #ifdef _DEBUG

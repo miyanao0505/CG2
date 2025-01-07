@@ -1,7 +1,5 @@
 #pragma once
 #include "MNFramework.h"
-#include "GameScene.h"
-#include "TitleScene.h"
 
 // ゲーム全体
 class MyGame : public MNFramework
@@ -21,7 +19,6 @@ public:	// メンバ関数
 	void Draw() override;
 
 private:	// メンバ変数
-	// シーン
-	TitleScene* scene_ = nullptr;
+
 };
 
