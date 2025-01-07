@@ -1,4 +1,4 @@
-#include "GameScene.h"
+#include "TitleScene.h"
 #include <imgui.h>
 #include "Input.h"
 #include "CameraManager.h"
@@ -8,7 +8,7 @@
 #include "MyTools.h"
 
 // 初期化
-void GameScene::Initialize()
+void TitleScene::Initialize()
 {
 #pragma region シーン初期化
 	// テクスチャの読み込み
@@ -68,7 +68,7 @@ void GameScene::Initialize()
 }
 
 // 終了
-void GameScene::Finalize()
+void TitleScene::Finalize()
 {
 	// パーティクル
 	delete particleEmitter_;
@@ -85,7 +85,7 @@ void GameScene::Finalize()
 }
 
 // 毎フレーム更新
-void GameScene::Update()
+void TitleScene::Update()
 {
 	//#ifdef _DEBUG
 //	// 開発用UIの処理。実際に開発用のUIを出す場合はここをゲーム固有の処理に置き換える
@@ -405,7 +405,7 @@ void GameScene::Update()
 }
 
 // 描画
-void GameScene::Draw()
+void TitleScene::Draw()
 {
 #pragma region 3Dオブジェクト
 
@@ -413,17 +413,17 @@ void GameScene::Draw()
 	ModelManager::GetInstance()->SetCommonScreen();
 
 	// 全ての3DObject個々の描画
-	/*for (Object3d* object : objects_)
+	for (Object3d* object : objects_)
 	{
 		object->Draw();
-	}*/
+	}
 
 #pragma endregion 3Dオブジェクト
 
 #pragma region パーティクル
 
 	// パーティクルの描画準備。パーティクルの描画に共通グラフィックスコマンドを積む
-	ParticleManager::GetInstance()->Draw();
+	//ParticleManager::GetInstance()->Draw();
 
 #pragma endregion パーティクル
 
@@ -439,4 +439,5 @@ void GameScene::Draw()
 	}*/
 
 #pragma endregion スプライト
+
 }

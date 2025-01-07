@@ -1,6 +1,7 @@
 #pragma once
 #include "MNFramework.h"
 #include "GameScene.h"
+#include "TitleScene.h"
 
 // ゲーム全体
 class MyGame : public MNFramework
@@ -21,6 +22,6 @@ public:	// メンバ関数
 
 private:	// メンバ変数
 	// シーン
-	GameScene* scene_ = nullptr;
+	TitleScene* scene_ = nullptr;
 };
 

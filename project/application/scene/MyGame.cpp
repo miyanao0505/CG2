@@ -10,7 +10,7 @@ void MyGame::Initialize()
 	MNFramework::Initialize();
 
 	// シーンの初期化
-	scene_ = new GameScene;
+	scene_ = new TitleScene;
 	scene_->Initialize();
 }
 
