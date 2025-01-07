@@ -55,7 +55,7 @@ private:	// メンバ変数
 	BlendMode blendMode_ = BlendMode::kBlendModeNormal;
 
 	// DirectXBase
-	DirectXBase* dxBase_;
+	DirectXBase* dxBase_ = nullptr;
 
 };
 

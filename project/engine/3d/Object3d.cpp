@@ -7,10 +7,10 @@
 #include "CameraManager.h"
 
 // 初期化
-void Object3d::Initislize(Object3dBase* object3dBase)
+void Object3d::Initislize()
 {
 	// 引数で受け取ってメンバ変数に記録する
-	object3dBase_ = object3dBase;
+	object3dBase_ = ModelManager::GetInstance()->GetObject3dBase();
 
 	// 座標変換行列データの作成
 	CreateTransformationMatrixData();
