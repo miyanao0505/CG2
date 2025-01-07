@@ -117,6 +117,10 @@ void ParticleManager::ChangeBlendMode(ParticleBase::BlendMode blendMode)
 
 void ParticleManager::CreateParticleGroup(const std::string name, const std::string textureFilePath)
 {
+	if (particleGroups.count(name) != 0) {
+		return;
+	}
+
 	assert(particleGroups.count(name) == 0 && "ParticleGroup with this name already exists");
 
 	// パーティクルグループの作成と初期化

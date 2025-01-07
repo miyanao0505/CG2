@@ -1,12 +1,13 @@
 #include "Sprite.h"
 #include "SpriteBase.h"
 #include "Matrix.h"
+#include "TextureManager.h"
 
 // 初期化
-void Sprite::Initialize(SpriteBase* spriteBase, std::string textureFilePath)
+void Sprite::Initialize(std::string textureFilePath)
 {
 	// 引数を受け取ってメンバ変数に記録する
-	spriteBase_ = spriteBase;
+	spriteBase_ = TextureManager::GetInstance()->GetSpriteBase();
 	filePath_ = textureFilePath;
 
 	// 頂点データの作成

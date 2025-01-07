@@ -5,9 +5,6 @@ using namespace StringUtility;
 
 TextureManager* TextureManager::instance = nullptr;
 
-// ImGuiで0番を使用するため、1番から使用
-uint32_t TextureManager::kSRVIndexTop = 1;
-
 // シングルトンインスタンスの取得
 TextureManager* TextureManager::GetInstance()
 {
@@ -30,6 +27,9 @@ void TextureManager::Initialize(DirectXBase* dxBase, SrvManager* srvManager)
 	dxBase_ = dxBase;
 
 	srvManager_ = srvManager;
+
+	spriteBase_ = std::make_unique<SpriteBase>();
+	spriteBase_->Initialize(dxBase_);
 
 	// SRVの数と同数
 	textureDatas.reserve(SrvManager::kMaxSRVCount);
@@ -98,4 +98,11 @@ const DirectX::TexMetadata& TextureManager::GetMetaData(const std::string& fileP
 	assert(srvManager_->isSecure());
 	TextureData& textureData = textureDatas[filePath];
 	return textureData.metadata;
+}
+
+// ブレンドモードのセット
+void TextureManager::SetBlendMode(SpriteBase::BlendMode blendMode)
+{
+	spriteBase_->SetBlendMode(blendMode);
+	spriteBase_->CreateGraphicsPipeline();
 }

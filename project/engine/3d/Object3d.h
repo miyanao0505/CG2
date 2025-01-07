@@ -12,7 +12,7 @@ class Object3d
 {
 public:	// メンバ関数
 	// 初期化
-	void Initislize(Object3dBase* object3dBase);
+	void Initislize();
 	// 更新処理
 	void Update();
 	// 描画処理

@@ -11,7 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="application\scene\BaseScene.cpp" />
+    <ClCompile Include="application\scene\GameScene.cpp" />
     <ClCompile Include="application\scene\MyGame.cpp" />
+    <ClCompile Include="application\scene\TitleScene.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp" />
     <ClCompile Include="engine\2d\SpriteBase.cpp" />
     <ClCompile Include="engine\2d\TextureManager.cpp" />
@@ -40,7 +43,10 @@
     <ClCompile Include="engine\Script\MyTools.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application\scene\BaseScene.h" />
+    <ClInclude Include="application\scene\GameScene.h" />
     <ClInclude Include="application\scene\MyGame.h" />
+    <ClInclude Include="application\scene\TitleScene.h" />
     <ClInclude Include="engine\2d\Sprite.h" />
     <ClInclude Include="engine\2d\SpriteBase.h" />
     <ClInclude Include="engine\2d\TextureManager.h" />
