@@ -9,7 +9,7 @@
 #include "TextureManager.h"
 #include "ParticleManager.h"
 #include "ModelManager.h"
-#include "BaseScene.h"
+#include "SceneManager.h"
 
 // ゲーム全体
 class MNFramework
@@ -63,6 +63,6 @@ protected:	// メンバ変数
 	// モデルマネージャ
 	ModelManager* modelManager_ = nullptr;
 	// シーン基底クラス
-	BaseScene* scene_ = nullptr;
+	SceneManager* sceneManager_ = nullptr;
 };
 

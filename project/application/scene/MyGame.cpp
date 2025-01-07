@@ -1,4 +1,5 @@
 #include "MyGame.h"
+#include"TitleScene.h"
 #include "imgui_impl_dx12.h"
 #include "imgui_impl_win32.h"
 #pragma comment(lib, "dxcompiler.lib")
@@ -8,6 +9,11 @@ void MyGame::Initialize()
 {
 	// 基底クラスの初期化処理
 	MNFramework::Initialize();
+
+	// 最初のシーンの生成
+	BaseScene* scene = new TitleScene();
+	// シーンマネージャに最初のシーンをセット
+	sceneManager_->SetNextScene(scene);
 }
 
 // 終了
@@ -37,8 +43,8 @@ void MyGame::Draw()
 	// カメラの更新
 	cameraManager_->GetCamera()->Update();
 
-	// シーンの描画
-	scene_->Draw();
+	// シーンマネージャの描画
+	sceneManager_->Draw();
 
 	// 実際のcommandListのImGuiの描画コマンドを積む
 #ifdef _DEBUG
