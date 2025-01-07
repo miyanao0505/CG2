@@ -6,7 +6,6 @@
 #include "ParticleManager.h"
 #include"SceneManager.h"
 #include "MyTools.h"
-#include"GameScene.h"
 
 // 初期化
 void TitleScene::Initialize()
@@ -379,10 +378,8 @@ void TitleScene::Update()
 
 	// ENTERキーを押したら
 	if (input_->TriggerKey(DIK_RETURN)) {
-		// ゲームプレイシーン(次のシーン)を生成
-		BaseScene* scene = new GameScene();
 		// シーン切り替え依頼
-		sceneManager_->SetNextScene(scene);
+		SceneManager::GetInstance()->ChangeScene("GAME");
 	}
 
 	// 3Dオブジェクトの更新処理

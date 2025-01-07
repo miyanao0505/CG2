@@ -88,6 +88,7 @@ void MNFramework::Finalize()
 	winApi_->Finalize();
 
 	// 解放
+	delete sceneFactory_;
 #ifdef DEBUG
 	delete imGuiManager_;
 #endif // DEBUG
