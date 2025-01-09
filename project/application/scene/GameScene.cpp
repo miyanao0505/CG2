@@ -4,15 +4,17 @@
 #include "ModelManager.h"
 #include "TextureManager.h"
 #include "ParticleManager.h"
-#include "MyTools.h"
+#include "AudioManager.h"
 #include"SceneManager.h"
+#include "MyTools.h"
+
 
 // 初期化
 void GameScene::Initialize()
 {
 	BaseScene::Initialize();
 
-#pragma region シーン初期化
+#pragma region スプライト
 	// テクスチャの読み込み
 	TextureManager::GetInstance()->LoadTexture(filePath1_);
 	TextureManager::GetInstance()->LoadTexture(filePath2_);
@@ -37,7 +39,9 @@ void GameScene::Initialize()
 	sprites_[1]->SetSize({ 100.0f, 100.0f });
 	sprites_[3]->SetTexture(filePath2_);
 	sprites_[3]->SetSize({ 100.0f, 100.0f });
+#pragma endregion スプライト
 
+#pragma region 3Dオブジェクト
 	// .objファイルからモデルを読み込む
 	ModelManager::GetInstance()->LoadModel(modelFilePath1_.directoryPath, modelFilePath1_.filename);
 	ModelManager::GetInstance()->LoadModel(modelFilePath2_.directoryPath, modelFilePath2_.filename);
@@ -54,11 +58,20 @@ void GameScene::Initialize()
 	}
 	objects_[1]->SetModel(modelFilePath2_.filename);
 	objects_[2]->SetModel(modelFilePath3_.filename);
+#pragma endregion 3Dオブジェクト
 
+#pragma region パーティクル
 	// パーティクル
 	particleEmitter_ = new ParticleEmitter;
 	particleEmitter_->Initialize("circle", "resources/circle.png");
-#pragma endregion シーン初期化
+#pragma endregion パーティクル
+
+#pragma region オーディオ
+	// BGM
+
+	// お試し用
+	AudioManager::GetInstance()->LoadAudioWave("fanfare.wav");
+#pragma endregion オーディオ
 
 #pragma region 変数
 	isParticleActive_ = true;
@@ -95,11 +108,14 @@ void GameScene::Update()
 
 #ifdef _DEBUG
 //	// 開発用UIの処理。実際に開発用のUIを出す場合はここをゲーム固有の処理に置き換える
-//	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);		// ウィンドウの座標(プログラム起動時のみ読み込み)
-//	ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_Once);		// ウィンドウのサイズ(プログラム起動時のみ読み込み)
-//
-//	// デモウィンドウの表示オン
-//	//ImGui::ShowDemoWindow();
+	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);		// ウィンドウの座標(プログラム起動時のみ読み込み)
+	ImGui::SetNextWindowSize(ImVec2(100, 10), ImGuiCond_Once);		// ウィンドウのサイズ(プログラム起動時のみ読み込み)
+
+	ImGui::Begin("Game");
+	ImGui::End();
+
+	// デモウィンドウの表示オン
+	//ImGui::ShowDemoWindow();
 //
 //	ImGui::Begin("Settings");
 //
@@ -380,6 +396,22 @@ void GameScene::Update()
 	if (input_->TriggerKey(DIK_RETURN)) {
 		// シーン切り替え依頼
 		SceneManager::GetInstance()->ChangeScene("TITLE");
+	}
+
+	// SPACEキーを押したら
+	if (input_->TriggerKey(DIK_SPACE)) {
+		// お試しの音を鳴らす
+		AudioManager::GetInstance()->PlayWave("fanfare.wav");
+	}
+	// Qキーを押したら
+	if (input_->TriggerKey(DIK_Q)) {
+		// お試しの音を解放する
+		AudioManager::GetInstance()->UnLoadAudio("fanfare.wav");
+	}
+	// Rキーを押したら
+	if (input_->TriggerKey(DIK_R)) {
+		// お試しの音をロードする
+		AudioManager::GetInstance()->LoadAudioWave("fanfare.wav");
 	}
 
 	// 3Dオブジェクトの更新処理

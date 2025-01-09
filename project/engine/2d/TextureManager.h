@@ -65,7 +65,7 @@ private: // シングルトン
 
 private: // メンバ変数
 	// テクスチャデータ
-	std::unordered_map<std::string, TextureData> textureDatas;
+	std::unordered_map<std::string, TextureData> textureDatas_;
 
 	// DirectXBase
 	DirectXBase* dxBase_ = nullptr;
