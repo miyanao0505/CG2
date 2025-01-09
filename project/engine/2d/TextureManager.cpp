@@ -5,9 +5,6 @@ using namespace StringUtility;
 
 TextureManager* TextureManager::instance = nullptr;
 
-// ImGuiで0番を使用するため、1番から使用
-uint32_t TextureManager::kSRVIndexTop = 1;
-
 // シングルトンインスタンスの取得
 TextureManager* TextureManager::GetInstance()
 {
@@ -31,14 +28,17 @@ void TextureManager::Initialize(DirectXBase* dxBase, SrvManager* srvManager)
 
 	srvManager_ = srvManager;
 
+	spriteBase_ = std::make_unique<SpriteBase>();
+	spriteBase_->Initialize(dxBase_);
+
 	// SRVの数と同数
-	textureDatas.reserve(SrvManager::kMaxSRVCount);
+	textureDatas_.reserve(SrvManager::kMaxSRVCount);
 }
 
 void TextureManager::LoadTexture(const std::string& filePath)
 {
 	// 読み込み済みテクスチャを検索
-	if (textureDatas.contains(filePath)) {
+	if (textureDatas_.contains(filePath)) {
 		return;
 	}
 
@@ -49,7 +49,7 @@ void TextureManager::LoadTexture(const std::string& filePath)
 	ScratchImage mipImages = dxBase_->LoadTexture(filePath);
 
 	// 追加したテクスチャデータの参照を取得する
-	TextureData& textureData = textureDatas[filePath];
+	TextureData& textureData = textureDatas_[filePath];
 
 	// テクスチャデータの書き込み
 	textureData.metadata = mipImages.GetMetadata();
@@ -73,9 +73,9 @@ void TextureManager::LoadTexture(const std::string& filePath)
 uint32_t TextureManager::GetSrvIndex(const std::string& filePath)
 {
 	// 読み込み済みテクスチャを検索
-	if (textureDatas.contains(filePath)) {
+	if (textureDatas_.contains(filePath)) {
 		// 読み込み済みなら要素番号を返す
-		uint32_t textureIndex = static_cast<uint32_t>(std::distance(textureDatas.begin(), textureDatas.end()));
+		uint32_t textureIndex = static_cast<uint32_t>(std::distance(textureDatas_.begin(), textureDatas_.end()));
 		return textureIndex;
 	}
 	assert(0);
@@ -87,7 +87,7 @@ D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSrvHandleGPU(const std::string& f
 {
 	// 範囲外指定違反チェック
 	assert(srvManager_->isSecure());
-	TextureData& textureData = textureDatas[filePath];
+	TextureData& textureData = textureDatas_[filePath];
 	return textureData.srvHandleGPU;
 }
 
@@ -96,6 +96,13 @@ const DirectX::TexMetadata& TextureManager::GetMetaData(const std::string& fileP
 {
 	// 範囲外指定違反チェック
 	assert(srvManager_->isSecure());
-	TextureData& textureData = textureDatas[filePath];
+	TextureData& textureData = textureDatas_[filePath];
 	return textureData.metadata;
+}
+
+// ブレンドモードのセット
+void TextureManager::SetBlendMode(SpriteBase::BlendMode blendMode)
+{
+	spriteBase_->SetBlendMode(blendMode);
+	spriteBase_->CreateGraphicsPipeline();
 }

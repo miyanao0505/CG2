@@ -8,12 +8,14 @@
 // 入力
 class Input
 {
-public:
-	// namespace省略
-	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 public:	// メンバ関数
+	// シングルトンインスタンスの取得
+	static Input* GetInstance();
+
 	// 初期化
 	void Initialize(WindowsAPI* winApi);
+	// 終了
+	void Finalize();
 	// 更新
 	void Update();
 
@@ -31,11 +33,19 @@ public:	// メンバ関数
 	/// <returns>押されているか</returns>
 	bool PushKey(BYTE keyNumber);
 
+private:	// シングルトンインスタンス
+	static Input* instance;
+
+	Input() = default;
+	~Input() = default;
+	Input(Input&) = default;
+	Input& operator=(Input&) = delete;
+
 private: // メンバ変数
 	// キーボードのデバイス
-	ComPtr<IDirectInputDevice8> keyboard;
+	Microsoft::WRL::ComPtr<IDirectInputDevice8> keyboard;
 	// DirectInputのインスタンス
-	ComPtr<IDirectInput8> directInput;
+	Microsoft::WRL::ComPtr<IDirectInput8> directInput;
 
 	// WindowsAPI
 	WindowsAPI* winApi_ = nullptr;

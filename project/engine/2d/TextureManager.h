@@ -1,11 +1,11 @@
 #pragma once
 #include <string>
-#include <wrl.h>
 #include <d3d12.h>
 #include <unordered_map>
 #include "DirectXBase.h"
 #include "SrvManager.h"
 #include "DirectXTex.h"
+#include "SpriteBase.h"
 
 // テクスチャマネージャー
 class TextureManager
@@ -45,6 +45,16 @@ public: // getter
 	// メタデータを取得
 	const DirectX::TexMetadata& GetMetaData(const std::string& filePath);
 
+	// spriteBaseの取得
+	SpriteBase* GetSpriteBase() const { return spriteBase_.get(); }
+
+public:	// setter
+	// スプライト共有部のセット
+	void SetCommonScreen() { spriteBase_->SetCommonScreen();}
+
+	// ブレンドモードのセット
+	void SetBlendMode(SpriteBase::BlendMode blendMode);
+
 private: // シングルトン
 	static TextureManager* instance;
 
@@ -55,16 +65,15 @@ private: // シングルトン
 
 private: // メンバ変数
 	// テクスチャデータ
-	std::unordered_map<std::string, TextureData> textureDatas;
+	std::unordered_map<std::string, TextureData> textureDatas_;
 
 	// DirectXBase
-	DirectXBase* dxBase_;
+	DirectXBase* dxBase_ = nullptr;
 
 	// SrvManager
-	SrvManager* srvManager_;
+	SrvManager* srvManager_ = nullptr;
 
-	// SRVインデックスの開始番号
-	static uint32_t kSRVIndexTop;
-
+	// スプライト共通部
+	std::unique_ptr<SpriteBase> spriteBase_ = nullptr;
 };
 

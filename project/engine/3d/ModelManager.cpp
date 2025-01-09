@@ -22,8 +22,12 @@ void ModelManager::Finalize()
 void ModelManager::Initialize(DirectXBase* dxBase)
 {
 	// モデル共通部の初期化
-	modelBase_ = new ModelBase;
+	modelBase_ = std::make_unique<ModelBase>();
 	modelBase_->Initislize(dxBase);
+
+	// 3dオブジェクト共通部の初期化
+	object3dBase_ = std::make_unique<Object3dBase>();
+	object3dBase_->Initislize(dxBase);
 }
 
 /// モデルファイルの読み込み
@@ -37,7 +41,7 @@ void ModelManager::LoadModel(const std::string& directoryPath, const std::string
 
 	// モデルの生成とファイル読み込み、初期化
 	std::unique_ptr<Model> model = std::make_unique<Model>();
-	model->Initialize(modelBase_, directoryPath, filePath);
+	model->Initialize(modelBase_.get(), directoryPath, filePath);
 
 	// モデルをmapコンテナに格納する
 	models_.insert(std::make_pair(filePath, std::move(model)));
@@ -54,4 +58,11 @@ Model* ModelManager::FindModel(const std::string& filePath)
 
 	// ファイル名一致なし
 	return nullptr;
+}
+
+
+void ModelManager::SetBlendMode(Object3dBase::BlendMode blendMode)
+{
+	object3dBase_->SetBlendMode(blendMode);
+	object3dBase_->CreateGraphicsPipeline();
 }

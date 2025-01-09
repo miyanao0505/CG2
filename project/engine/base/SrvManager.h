@@ -1,5 +1,5 @@
 #pragma once
-#include <DirectXBase.h>
+#include "DirectXBase.h"
 
 // SRV管理
 class SrvManager
@@ -37,7 +37,7 @@ private:	// メンバ変数
 	DirectXBase* dxBase_ = nullptr;
 
 	// デスクリプタヒープ
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap_;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap_ = nullptr;
 	// デスクリプタサイズ
 	uint32_t descriptorSize_;
 
