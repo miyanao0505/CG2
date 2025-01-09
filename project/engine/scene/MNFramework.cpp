@@ -44,8 +44,8 @@ void MNFramework::Initialize()
 	cameraManager_->Initialize();
 	cameraManager_->SetCamera("default");
 	cameraManager_->FindCamera("default");
-	cameraManager_->GetCamera()->SetRotate({ 0.3f, 0.0f, 0.0f });
-	cameraManager_->GetCamera()->SetTranslate({ 0.0f, 4.0f, -10.0f });
+	cameraManager_->GetCamera()->SetRotate({ 0.0f, 0.0f, 0.0f });
+	cameraManager_->GetCamera()->SetTranslate({ 0.0f, 0.0f, -20.0f });
 	cameraManager_->SetCamera("sub");
 	cameraManager_->FindCamera("sub");
 	cameraManager_->GetCamera()->SetRotate({ 0.3f, 3.1f, 0.0f });

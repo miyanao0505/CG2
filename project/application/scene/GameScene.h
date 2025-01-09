@@ -6,6 +6,7 @@
 #include "Object3d.h"
 #include "ParticleEmitter.h"
 #include "MyBase.h"
+#include "Skydome.h"
 
 // ゲームプレイシーン
 class GameScene : public BaseScene
@@ -41,6 +42,7 @@ private:	// メンバ変数
 
 	// 3Dオブジェクト
 	std::vector<Object3d*> objects_;
+	Skydome* skydome_ = nullptr;
 
 	// パーティクル
 	ParticleEmitter* particleEmitter_ = nullptr;
