@@ -67,6 +67,10 @@ void MNFramework::Initialize()
 	modelManager_ = ModelManager::GetInstance();
 	modelManager_->Initialize(dxBase_);
 
+	// オーディオマネージャの初期化
+	audioManager_ = AudioManager::GetInstance();
+	audioManager_->Initialize();
+
 	// シーンマネージャの生成
 	sceneManager_ = SceneManager::GetInstance();
 #pragma endregion マネージャ初期化
@@ -77,6 +81,7 @@ void MNFramework::Finalize()
 {
 	// 終了
 	sceneManager_->Finalize();
+	audioManager_->Finalize();
 	modelManager_->Finalize();
 	particleManager_->Finalize();
 	textureManager_->Finalize();

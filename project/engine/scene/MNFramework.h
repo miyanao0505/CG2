@@ -9,6 +9,7 @@
 #include "TextureManager.h"
 #include "ParticleManager.h"
 #include "ModelManager.h"
+#include "AudioManager.h"
 #include "SceneManager.h"
 #include "AbstractSceneFactory.h"
 
@@ -63,7 +64,9 @@ protected:	// メンバ変数
 	ParticleManager* particleManager_ = nullptr;
 	// モデルマネージャ
 	ModelManager* modelManager_ = nullptr;
-	// シーン基底クラス
+	// オーディオマネージャ
+	AudioManager* audioManager_ = nullptr;
+	// シーンマネージャ
 	SceneManager* sceneManager_ = nullptr;
 	// シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;

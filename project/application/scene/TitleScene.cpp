@@ -94,12 +94,15 @@ void TitleScene::Update()
 	BaseScene::Update();
 
 #ifdef _DEBUG
-//	// 開発用UIの処理。実際に開発用のUIを出す場合はここをゲーム固有の処理に置き換える
-//	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);		// ウィンドウの座標(プログラム起動時のみ読み込み)
-//	ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_Once);		// ウィンドウのサイズ(プログラム起動時のみ読み込み)
-//
-//	// デモウィンドウの表示オン
-//	//ImGui::ShowDemoWindow();
+	// 開発用UIの処理。実際に開発用のUIを出す場合はここをゲーム固有の処理に置き換える
+	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);		// ウィンドウの座標(プログラム起動時のみ読み込み)
+	ImGui::SetNextWindowSize(ImVec2(100, 10), ImGuiCond_Once);		// ウィンドウのサイズ(プログラム起動時のみ読み込み)
+
+	ImGui::Begin("Title");
+	ImGui::End();
+
+	// デモウィンドウの表示オン
+	//ImGui::ShowDemoWindow();
 //
 //	ImGui::Begin("Settings");
 //

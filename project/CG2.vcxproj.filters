@@ -169,7 +169,10 @@
       <Filter>ソース ファイル\engine\scene</Filter>
     </ClCompile>
     <ClCompile Include="application\scene\SceneFactory.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\engine\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\audio\AudioManager.cpp">
+      <Filter>ソース ファイル\engine\audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -267,7 +270,10 @@
       <Filter>ヘッダー ファイル\scene</Filter>
     </ClInclude>
     <ClInclude Include="application\scene\SceneFactory.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\audio\AudioManager.h">
+      <Filter>ヘッダー ファイル\audio</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
