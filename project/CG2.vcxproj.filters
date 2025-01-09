@@ -94,6 +94,12 @@
     <Filter Include="ヘッダー ファイル\application\tools">
       <UniqueIdentifier>{fe4e58ba-8079-4a83-817e-a66fe84dd9da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\application\collision">
+      <UniqueIdentifier>{d1ace75f-a8fc-458d-ae4d-95d56e986b19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application\collision">
+      <UniqueIdentifier>{02eaa00b-371d-46ce-8220-22919c3570b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -201,6 +207,12 @@
     <ClCompile Include="application\tools\TimedCall.cpp">
       <Filter>ソース ファイル\application\tools</Filter>
     </ClCompile>
+    <ClCompile Include="application\collsion\Collider.cpp">
+      <Filter>ソース ファイル\application\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="application\collsion\CollisionManager.cpp">
+      <Filter>ソース ファイル\application\collision</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\input\Input.h">
@@ -307,6 +319,15 @@
     </ClInclude>
     <ClInclude Include="application\tools\TimedCall.h">
       <Filter>ヘッダー ファイル\application\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="application\collsion\Collider.h">
+      <Filter>ヘッダー ファイル\application\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="application\collsion\CollisionConfig.h">
+      <Filter>ヘッダー ファイル\application\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="application\collsion\CollisionManager.h">
+      <Filter>ヘッダー ファイル\application\collision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
