@@ -57,6 +57,10 @@ void GameScene::Initialize()
 	}
 	objects_[1]->SetModel(modelFilePath2_.filename);
 	objects_[2]->SetModel(modelFilePath3_.filename);
+
+	// 天球
+	skydome_ = new Skydome();
+	skydome_->Initialize("skydome");
 #pragma endregion 3Dオブジェクト
 
 #pragma region パーティクル
@@ -89,6 +93,7 @@ void GameScene::Finalize()
 	// パーティクル
 	delete particleEmitter_;
 	// 3Dオブジェクト
+	delete skydome_;
 	for (Object3d* object : objects_)
 	{
 		delete object;
@@ -106,12 +111,11 @@ void GameScene::Update()
 	BaseScene::Update();
 
 #ifdef _DEBUG
-//	// 開発用UIの処理。実際に開発用のUIを出す場合はここをゲーム固有の処理に置き換える
+	// 開発用UIの処理。実際に開発用のUIを出す場合はここをゲーム固有の処理に置き換える
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);		// ウィンドウの座標(プログラム起動時のみ読み込み)
-	ImGui::SetNextWindowSize(ImVec2(100, 10), ImGuiCond_Once);		// ウィンドウのサイズ(プログラム起動時のみ読み込み)
+	ImGui::SetNextWindowSize(ImVec2(400, 150), ImGuiCond_Once);		// ウィンドウのサイズ(プログラム起動時のみ読み込み)
 
 	ImGui::Begin("Game");
-	ImGui::End();
 
 	// デモウィンドウの表示オン
 	//ImGui::ShowDemoWindow();
@@ -414,6 +418,7 @@ void GameScene::Update()
 	}
 
 	// 3Dオブジェクトの更新処理
+	skydome_->Update();
 	for (Object3d* object : objects_)
 	{
 		object->Update();
@@ -445,6 +450,11 @@ void GameScene::Update()
 	{
 		sprite->Update();
 	}
+
+#ifdef _DEBUG
+	ImGui::End();
+#endif // _DEBUG
+
 }
 
 // 描画
@@ -454,6 +464,9 @@ void GameScene::Draw()
 
 	// 3Dオブジェクトの描画準備。3Dオブジェクトの描画に共通のグラフィックスコマンドを積む
 	ModelManager::GetInstance()->SetCommonScreen();
+
+	// 天球
+	skydome_->Draw();
 
 	// 全ての3DObject個々の描画
 	/*for (Object3d* object : objects_)
@@ -466,7 +479,7 @@ void GameScene::Draw()
 #pragma region パーティクル
 
 	// パーティクルの描画準備。パーティクルの描画に共通グラフィックスコマンドを積む
-	ParticleManager::GetInstance()->Draw();
+	//ParticleManager::GetInstance()->Draw();
 
 #pragma endregion パーティクル
 
