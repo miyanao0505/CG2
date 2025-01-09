@@ -5,9 +5,8 @@
 #include "TextureManager.h"
 #include "ParticleManager.h"
 #include "AudioManager.h"
-#include"SceneManager.h"
+#include "SceneManager.h"
 #include "MyTools.h"
-
 
 // 初期化
 void GameScene::Initialize()

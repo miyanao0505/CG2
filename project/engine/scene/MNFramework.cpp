@@ -1,6 +1,4 @@
 #include "MNFramework.h"
-#include "TitleScene.h"
-#include "GameScene.h"
 
 // 初期化
 void MNFramework::Initialize()
@@ -11,7 +9,7 @@ void MNFramework::Initialize()
 #pragma region ゲームウィンドウ作成
 	// WindowsAPIの初期化
 	winApi_ = new WindowsAPI();
-	winApi_->Initialize();
+	winApi_->Initialize(L"LE2B_22_ミヤザワ_ナオキ_AL3");
 #pragma endregion ゲームウィンドウ作成
 
 #pragma region DirectX初期化

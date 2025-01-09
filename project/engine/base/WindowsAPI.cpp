@@ -25,7 +25,7 @@ LRESULT CALLBACK WindowsAPI::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPAR
 }
 
 // 初期化
-void WindowsAPI::Initialize(){
+void WindowsAPI::Initialize(const wchar_t* title){
 	// システムタイマーの分解能を上げる
 	timeBeginPeriod(1);
 
@@ -54,7 +54,7 @@ void WindowsAPI::Initialize(){
 	// ウィンドウの生成
 	hwnd = CreateWindow(
 		wc.lpszClassName,			// 利用するクラス名
-		L"GE3",						// タイトルバーの文字(何でも良い)
+		title,						// タイトルバーの文字(何でも良い)
 		WS_OVERLAPPEDWINDOW,		// よく見るウィンドウスタイル
 		CW_USEDEFAULT,				// 表示X座標(Windowsに任せる)
 		CW_USEDEFAULT,				// 表示Y座標(WindowsOSに任せる)
