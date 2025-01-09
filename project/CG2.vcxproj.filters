@@ -88,6 +88,12 @@
     <Filter Include="ヘッダー ファイル\application\scene">
       <UniqueIdentifier>{14ee18f8-bae1-4f2e-b819-82734b785619}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\application\tools">
+      <UniqueIdentifier>{39581beb-2928-4818-b2fe-2c1b2640053a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application\tools">
+      <UniqueIdentifier>{fe4e58ba-8079-4a83-817e-a66fe84dd9da}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -192,6 +198,9 @@
     <ClCompile Include="application\skydome\Skydome.cpp">
       <Filter>ソース ファイル\application\skydome</Filter>
     </ClCompile>
+    <ClCompile Include="application\tools\TimedCall.cpp">
+      <Filter>ソース ファイル\application\tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\input\Input.h">
@@ -295,6 +304,9 @@
     </ClInclude>
     <ClInclude Include="application\scene\TitleScene.h">
       <Filter>ヘッダー ファイル\application\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="application\tools\TimedCall.h">
+      <Filter>ヘッダー ファイル\application\tools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
