@@ -76,7 +76,7 @@ void GameScene::Initialize()
 #pragma region 変数
 	isParticleActive_ = true;
 	particleEmitter_->SetIsEmitUpdate(isParticleActive_);
-	isAccelerationField_ = false;
+	isAccelerationField_ = true;
 	acceleration_ = { 15.0f, 0.0f, 0.0f };
 	area_ = { .min{-1.0f, -1.0f, -1.0f}, .max{1.0f, 1.0f, 1.0f} };
 #pragma endregion 変数
