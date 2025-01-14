@@ -74,9 +74,9 @@ void GameScene::Initialize()
 #pragma endregion オーディオ
 
 #pragma region 変数
-	isParticleActive_ = true;
+	isParticleActive_ = false;
 	particleEmitter_->SetIsEmitUpdate(isParticleActive_);
-	isAccelerationField_ = true;
+	isAccelerationField_ = false;
 	acceleration_ = { 15.0f, 0.0f, 0.0f };
 	area_ = { .min{-1.0f, -1.0f, -1.0f}, .max{1.0f, 1.0f, 1.0f} };
 #pragma endregion 変数
@@ -109,10 +109,9 @@ void GameScene::Update()
 #ifdef _DEBUG
 //	// 開発用UIの処理。実際に開発用のUIを出す場合はここをゲーム固有の処理に置き換える
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);		// ウィンドウの座標(プログラム起動時のみ読み込み)
-	ImGui::SetNextWindowSize(ImVec2(100, 10), ImGuiCond_Once);		// ウィンドウのサイズ(プログラム起動時のみ読み込み)
+	ImGui::SetNextWindowSize(ImVec2(350, 300), ImGuiCond_Once);		// ウィンドウのサイズ(プログラム起動時のみ読み込み)
 
 	ImGui::Begin("Game");
-	ImGui::End();
 
 	// デモウィンドウの表示オン
 	//ImGui::ShowDemoWindow();
@@ -315,70 +314,72 @@ void GameScene::Update()
 //			ImGui::PopID();
 //		}
 //	}
-//	if (ImGui::CollapsingHeader("particle")) {
-//		static ImGuiComboFlags particleFlags = 0;
-//		const char* blendModeIndex[] = { "kBlendModeNone", "kBlendModeNormal", "kBlendModeAdd", "kBlendModeSubtract", "kBlendModeMultiply", "kBlendModeScreen" };
-//		static int selectID = 2;
-//
-//		const char* previewValue = blendModeIndex[selectID];
-//
-//		if (ImGui::BeginCombo("Now Blend", previewValue, particleFlags))
-//		{
-//			for (int n = 0; n < IM_ARRAYSIZE(blendModeIndex); n++)
-//			{
-//				const bool isSelected = (selectID == n);
-//				if (ImGui::Selectable(blendModeIndex[n], isSelected)) {
-//					selectID = n;
-//					ParticleManager::GetInstance()->ChangeBlendMode(static_cast<ParticleBase::BlendMode>(n));
-//				}
-//				if (isSelected) {
-//					ImGui::SetItemDefaultFocus();
-//				}
-//			}
-//			ImGui::EndCombo();
-//		}
-//
-//		/*size_t spriteCount = 0;
-//		for (ParticleEmitter* particle : sprites) {*/
-//		MyBase::Vector3 position = particleEmitter_->GetPosition();
-//		ImGui::DragFloat2("particleEmitter_.Translate", &position.x, 0.1f);
-//		/*if (position.y > 640.0f) {
-//			position.y = 640.0f;
-//		}*/
-//		particleEmitter_->SetPosition(position);
-//
-//		/*Vector3 rotation = particleEmitter_->GetRotation();
-//		ImGui::SliderAngle("particleEmitter_.Rotate", &rotation.x);
-//		particleEmitter_->SetRotation(rotation);
-//
-//		Vector3 size = particleEmitter_->GetSize();
-//		ImGui::DragFloat2("particleEmitter_.Scale", &size.x, 0.1f);
-//		if (size.y > 360.0f) {
-//			size.y = 360.0f;
-//		}
-//		particleEmitter_->SetSize(size);*/
-//
-//		int count = particleEmitter_->GetCount();
-//		ImGui::DragInt("particleEmitter_.count", &count, 1, 0, 1000);
-//		particleEmitter_->SetCount(count);
-//
-//		float frequency = particleEmitter_->GetFrequency();
-//		ImGui::DragFloat("particleEmitter_.frequency", &frequency, 0.1f);
-//		particleEmitter_->SetFrequency(frequency);
-//
-//		if (ImGui::Button("ParticleEmit", { 100,50 })) {
-//			particleEmitter_->Emit();
-//		}
-//
-//		bool isEmitUpdate = particleEmitter_->GetIsEmitUpdate();
-//		ImGui::Checkbox("IsEmitUpdate", &isEmitUpdate);
-//		particleEmitter_->SetIsEmitUpdate(isEmitUpdate);
-//
-//		ImGui::Checkbox("IsAccelerationField", &isAccelerationField_);
-//
-//		//ImGui::Text("\n");
-//
-//		//}
+	if (ImGui::CollapsingHeader("particle")) {
+		static ImGuiComboFlags particleFlags = 0;
+		const char* blendModeIndex[] = { "kBlendModeNone", "kBlendModeNormal", "kBlendModeAdd", "kBlendModeSubtract", "kBlendModeMultiply", "kBlendModeScreen" };
+		static int selectID = 2;
+
+		const char* previewValue = blendModeIndex[selectID];
+
+		if (ImGui::BeginCombo("Now Blend", previewValue, particleFlags))
+		{
+			for (int n = 0; n < IM_ARRAYSIZE(blendModeIndex); n++)
+			{
+				const bool isSelected = (selectID == n);
+				if (ImGui::Selectable(blendModeIndex[n], isSelected)) {
+					selectID = n;
+					ParticleManager::GetInstance()->ChangeBlendMode(static_cast<ParticleBase::BlendMode>(n));
+				}
+				if (isSelected) {
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
+
+		/*size_t spriteCount = 0;
+		for (ParticleEmitter* particle : sprites) {*/
+		MyBase::Vector3 position = particleEmitter_->GetPosition();
+		ImGui::DragFloat2("particleEmitter_.Translate", &position.x, 0.1f);
+		/*if (position.y > 640.0f) {
+			position.y = 640.0f;
+		}*/
+		particleEmitter_->SetPosition(position);
+
+		/*Vector3 rotation = particleEmitter_->GetRotation();
+		ImGui::SliderAngle("particleEmitter_.Rotate", &rotation.x);
+		particleEmitter_->SetRotation(rotation);
+
+		Vector3 size = particleEmitter_->GetSize();
+		ImGui::DragFloat2("particleEmitter_.Scale", &size.x, 0.1f);
+		if (size.y > 360.0f) {
+			size.y = 360.0f;
+		}
+		particleEmitter_->SetSize(size);*/
+
+		int count = particleEmitter_->GetCount();
+		ImGui::DragInt("particleEmitter_.count", &count, 1, 0, 1000);
+		particleEmitter_->SetCount(count);
+
+		float frequency = particleEmitter_->GetFrequency();
+		ImGui::DragFloat("particleEmitter_.frequency", &frequency, 0.1f);
+		particleEmitter_->SetFrequency(frequency);
+
+		if (ImGui::Button("ParticleEmit", { 100,50 })) {
+			particleEmitter_->Emit();
+		}
+
+		bool isEmitUpdate = particleEmitter_->GetIsEmitUpdate();
+		ImGui::Checkbox("IsEmitUpdate", &isEmitUpdate);
+		particleEmitter_->SetIsEmitUpdate(isEmitUpdate);
+
+		ImGui::Checkbox("IsAccelerationField", &isAccelerationField_);
+	}
+
+	ImGui::Text("\n");
+
+	ImGui::Text("ParticleActive On / Off : SPACE");
+
 //	}
 //
 //	//// テクスチャ
@@ -389,7 +390,7 @@ void GameScene::Update()
 //	//ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
 //	//ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);*/
 //
-//	ImGui::End();
+	ImGui::End();
 #endif // _DEBUG
 
 	// ENTERキーを押したら
@@ -400,6 +401,19 @@ void GameScene::Update()
 
 	// SPACEキーを押したら
 	if (input_->TriggerKey(DIK_SPACE)) {
+		// パーティクル描画フラグのOn / Off
+		isParticleActive_ = particleEmitter_->GetIsEmitUpdate();
+		isParticleActive_ = !isParticleActive_;
+		particleEmitter_->SetIsEmitUpdate(isParticleActive_);
+	}
+	// Pキーを押したら
+	if (input_->TriggerKey(DIK_P)) {
+		// アクセラレーションのOn / Off
+		isAccelerationField_ = !isAccelerationField_;
+	}
+
+	// Oキーを押したら
+	if (input_->TriggerKey(DIK_O)) {
 		// お試しの音を鳴らす
 		AudioManager::GetInstance()->PlayWave("fanfare.wav");
 	}
