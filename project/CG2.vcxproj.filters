@@ -100,6 +100,12 @@
     <Filter Include="ヘッダー ファイル\application\collision">
       <UniqueIdentifier>{02eaa00b-371d-46ce-8220-22919c3570b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\application\player">
+      <UniqueIdentifier>{74840136-69ab-4576-a27b-4106a852ec27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application\player">
+      <UniqueIdentifier>{bbf791fb-73e7-4bac-90ff-6f20ebc534ff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -212,6 +218,9 @@
     </ClCompile>
     <ClCompile Include="application\collision\CollisionManager.cpp">
       <Filter>ソース ファイル\application\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="application\player\Player.cpp">
+      <Filter>ソース ファイル\application\player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -328,6 +337,9 @@
     </ClInclude>
     <ClInclude Include="application\collision\CollisionManager.h">
       <Filter>ヘッダー ファイル\application\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="application\player\Player.h">
+      <Filter>ヘッダー ファイル\application\player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

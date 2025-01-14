@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClCompile Include="application\collision\Collider.cpp" />
     <ClCompile Include="application\collision\CollisionManager.cpp" />
+    <ClCompile Include="application\player\Player.cpp" />
     <ClCompile Include="application\scene\BaseScene.cpp" />
     <ClCompile Include="application\scene\GameScene.cpp" />
     <ClCompile Include="application\scene\MyGame.cpp" />
@@ -53,6 +54,7 @@
     <ClInclude Include="application\collision\Collider.h" />
     <ClInclude Include="application\collision\CollisionConfig.h" />
     <ClInclude Include="application\collision\CollisionManager.h" />
+    <ClInclude Include="application\player\Player.h" />
     <ClInclude Include="application\scene\BaseScene.h" />
     <ClInclude Include="application\scene\GameScene.h" />
     <ClInclude Include="application\scene\MyGame.h" />
