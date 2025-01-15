@@ -16,27 +16,6 @@
     <Filter Include="シェダー ファイル">
       <UniqueIdentifier>{2a0485e5-7219-41d6-a9ca-f58f77fdaf3a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\Input">
-      <UniqueIdentifier>{5fef2883-4e23-4c76-a6f3-9967996d1092}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\base">
-      <UniqueIdentifier>{39e9fc35-1f2f-48b6-bce1-ffec3fcd3378}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\2d">
-      <UniqueIdentifier>{c012a5f2-d947-4ab7-8a2d-853d5eba758c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\3d">
-      <UniqueIdentifier>{7c7b339d-32c4-417b-ae85-7f7a1bad1d44}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\audio">
-      <UniqueIdentifier>{e0b0705c-de17-4c0b-89eb-84da64beea04}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\math">
-      <UniqueIdentifier>{7fad104e-79ca-4566-9ed9-4ecc643c2503}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\scene">
-      <UniqueIdentifier>{b0d2df59-3a70-482d-892e-d2da4ee27579}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\engine">
       <UniqueIdentifier>{3f1e642a-d2a3-46f1-8158-8d7c0df43c46}</UniqueIdentifier>
     </Filter>
@@ -64,14 +43,50 @@
     <Filter Include="ソース ファイル\engine\3d">
       <UniqueIdentifier>{01e13457-a734-45c4-b0db-206b5ba43141}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\particle">
-      <UniqueIdentifier>{db79a3b4-49d6-49ef-bd83-973d1cf41c20}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\engine\particle">
       <UniqueIdentifier>{04505abe-b3d7-48df-b4e7-a13400358a6c}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\application\scene">
       <UniqueIdentifier>{7c0b026f-2499-45a6-9a02-f70f006b300a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application">
+      <UniqueIdentifier>{d5142566-769e-4c80-803c-b742eab587d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\engine">
+      <UniqueIdentifier>{09f16309-4896-4e96-927f-7209abd10998}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\engine\2d">
+      <UniqueIdentifier>{c012a5f2-d947-4ab7-8a2d-853d5eba758c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\engine\3d">
+      <UniqueIdentifier>{7c7b339d-32c4-417b-ae85-7f7a1bad1d44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\engine\audio">
+      <UniqueIdentifier>{e0b0705c-de17-4c0b-89eb-84da64beea04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\engine\base">
+      <UniqueIdentifier>{39e9fc35-1f2f-48b6-bce1-ffec3fcd3378}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\engine\Input">
+      <UniqueIdentifier>{5fef2883-4e23-4c76-a6f3-9967996d1092}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\engine\math">
+      <UniqueIdentifier>{7fad104e-79ca-4566-9ed9-4ecc643c2503}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\engine\particle">
+      <UniqueIdentifier>{db79a3b4-49d6-49ef-bd83-973d1cf41c20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\engine\scene">
+      <UniqueIdentifier>{b0d2df59-3a70-482d-892e-d2da4ee27579}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application\scene">
+      <UniqueIdentifier>{11e25ab3-b597-493d-ae27-9fc5a1d12369}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\application\Collsion">
+      <UniqueIdentifier>{b8061789-49e9-485f-98ab-6a40c96d5d43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application\Collsion">
+      <UniqueIdentifier>{ea5c7590-7b4d-41fa-adc7-10aed5e9479d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -175,111 +190,126 @@
       <Filter>ソース ファイル\engine\audio</Filter>
     </ClCompile>
     <ClCompile Include="application\scene\ClearScene.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\application\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="application\collision\Collider.cpp">
+      <Filter>ソース ファイル\application\Collsion</Filter>
+    </ClCompile>
+    <ClCompile Include="application\collision\CollisionManager.cpp">
+      <Filter>ソース ファイル\application\Collsion</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\input\Input.h">
-      <Filter>ヘッダー ファイル\Input</Filter>
+      <Filter>ヘッダー ファイル\engine\Input</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\WindowsAPI.h">
-      <Filter>ヘッダー ファイル\base</Filter>
+      <Filter>ヘッダー ファイル\engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\DirectXBase.h">
-      <Filter>ヘッダー ファイル\base</Filter>
+      <Filter>ヘッダー ファイル\engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\Logger.h">
-      <Filter>ヘッダー ファイル\base</Filter>
+      <Filter>ヘッダー ファイル\engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\StringUtility.h">
-      <Filter>ヘッダー ファイル\base</Filter>
+      <Filter>ヘッダー ファイル\engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\D3DResourceLeakChecker.h">
-      <Filter>ヘッダー ファイル\base</Filter>
+      <Filter>ヘッダー ファイル\engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\2d\SpriteBase.h">
-      <Filter>ヘッダー ファイル\2d</Filter>
+      <Filter>ヘッダー ファイル\engine\2d</Filter>
     </ClInclude>
     <ClInclude Include="engine\2d\Sprite.h">
-      <Filter>ヘッダー ファイル\2d</Filter>
+      <Filter>ヘッダー ファイル\engine\2d</Filter>
     </ClInclude>
     <ClInclude Include="engine\2d\TextureManager.h">
-      <Filter>ヘッダー ファイル\2d</Filter>
+      <Filter>ヘッダー ファイル\engine\2d</Filter>
     </ClInclude>
     <ClInclude Include="engine\3d\Object3dBase.h">
-      <Filter>ヘッダー ファイル\3d</Filter>
+      <Filter>ヘッダー ファイル\engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="engine\3d\Object3d.h">
-      <Filter>ヘッダー ファイル\3d</Filter>
+      <Filter>ヘッダー ファイル\engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="engine\3d\Model.h">
-      <Filter>ヘッダー ファイル\3d</Filter>
+      <Filter>ヘッダー ファイル\engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="engine\3d\ModelBase.h">
-      <Filter>ヘッダー ファイル\3d</Filter>
+      <Filter>ヘッダー ファイル\engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="engine\3d\ModelManager.h">
-      <Filter>ヘッダー ファイル\3d</Filter>
+      <Filter>ヘッダー ファイル\engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="engine\Script\Matrix.h">
-      <Filter>ヘッダー ファイル\math</Filter>
+      <Filter>ヘッダー ファイル\engine\math</Filter>
     </ClInclude>
     <ClInclude Include="engine\Script\MyBase.h">
-      <Filter>ヘッダー ファイル\math</Filter>
+      <Filter>ヘッダー ファイル\engine\math</Filter>
     </ClInclude>
     <ClInclude Include="engine\Script\MyTools.h">
-      <Filter>ヘッダー ファイル\math</Filter>
+      <Filter>ヘッダー ファイル\engine\math</Filter>
     </ClInclude>
     <ClInclude Include="engine\3d\Camera.h">
-      <Filter>ヘッダー ファイル\3d</Filter>
+      <Filter>ヘッダー ファイル\engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="engine\3d\CameraManager.h">
-      <Filter>ヘッダー ファイル\3d</Filter>
+      <Filter>ヘッダー ファイル\engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\SrvManager.h">
-      <Filter>ヘッダー ファイル\base</Filter>
+      <Filter>ヘッダー ファイル\engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\ImGuiManager.h">
-      <Filter>ヘッダー ファイル\base</Filter>
+      <Filter>ヘッダー ファイル\engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\particle\ParticleBase.h">
-      <Filter>ヘッダー ファイル\particle</Filter>
+      <Filter>ヘッダー ファイル\engine\particle</Filter>
     </ClInclude>
     <ClInclude Include="engine\particle\ParticleManager.h">
-      <Filter>ヘッダー ファイル\particle</Filter>
+      <Filter>ヘッダー ファイル\engine\particle</Filter>
     </ClInclude>
     <ClInclude Include="engine\particle\ParticleEmitter.h">
-      <Filter>ヘッダー ファイル\particle</Filter>
-    </ClInclude>
-    <ClInclude Include="application\scene\MyGame.h">
-      <Filter>ヘッダー ファイル\scene</Filter>
+      <Filter>ヘッダー ファイル\engine\particle</Filter>
     </ClInclude>
     <ClInclude Include="engine\scene\MNFramework.h">
-      <Filter>ヘッダー ファイル\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="application\scene\GameScene.h">
-      <Filter>ヘッダー ファイル\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="application\scene\BaseScene.h">
-      <Filter>ヘッダー ファイル\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="application\scene\TitleScene.h">
-      <Filter>ヘッダー ファイル\scene</Filter>
+      <Filter>ヘッダー ファイル\engine\scene</Filter>
     </ClInclude>
     <ClInclude Include="engine\scene\SceneManager.h">
-      <Filter>ヘッダー ファイル\scene</Filter>
+      <Filter>ヘッダー ファイル\engine\scene</Filter>
     </ClInclude>
     <ClInclude Include="engine\scene\AbstractSceneFactory.h">
-      <Filter>ヘッダー ファイル\scene</Filter>
+      <Filter>ヘッダー ファイル\engine\scene</Filter>
     </ClInclude>
     <ClInclude Include="application\scene\SceneFactory.h">
-      <Filter>ヘッダー ファイル\scene</Filter>
+      <Filter>ヘッダー ファイル\engine\scene</Filter>
     </ClInclude>
     <ClInclude Include="engine\audio\AudioManager.h">
-      <Filter>ヘッダー ファイル\audio</Filter>
+      <Filter>ヘッダー ファイル\engine\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="application\scene\BaseScene.h">
+      <Filter>ヘッダー ファイル\application\scene</Filter>
     </ClInclude>
     <ClInclude Include="application\scene\ClearScene.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\application\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="application\scene\GameScene.h">
+      <Filter>ヘッダー ファイル\application\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="application\scene\MyGame.h">
+      <Filter>ヘッダー ファイル\application\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="application\scene\TitleScene.h">
+      <Filter>ヘッダー ファイル\application\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="application\collision\CollisionConfig.h">
+      <Filter>ヘッダー ファイル\application\Collsion</Filter>
+    </ClInclude>
+    <ClInclude Include="application\collision\CollisionManager.h">
+      <Filter>ヘッダー ファイル\application\Collsion</Filter>
+    </ClInclude>
+    <ClInclude Include="application\collision\Collider.h">
+      <Filter>ヘッダー ファイル\application\Collsion</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
