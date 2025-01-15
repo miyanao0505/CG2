@@ -46,18 +46,19 @@ void GameScene::Initialize()
 	ModelManager::GetInstance()->LoadModel(modelFilePath1_.directoryPath, modelFilePath1_.filename);
 	ModelManager::GetInstance()->LoadModel(modelFilePath2_.directoryPath, modelFilePath2_.filename);
 	ModelManager::GetInstance()->LoadModel(modelFilePath3_.directoryPath, modelFilePath3_.filename);
+	ModelManager::GetInstance()->LoadModel(modelFilePath4_.directoryPath, modelFilePath4_.filename);
 
 	// 3Dオブジェクト
-	for (uint32_t i = 0; i < 3; ++i) {
+	for (uint32_t i = 0; i < 1; ++i) {
 		// 3Dオブジェクトの初期化
 		Object3d* object = new Object3d;
 		object->Initislize();
-		object->SetTranslate({ -2.5f + i * 2.5f, 0.0f, 0.0f });
-		object->SetModel(modelFilePath1_.filename);
+		object->SetTranslate({ 0.0f, 0.0f, 0.0f });
+		object->SetModel(modelFilePath4_.filename);
 		objects_.push_back(object);
 	}
-	objects_[1]->SetModel(modelFilePath2_.filename);
-	objects_[2]->SetModel(modelFilePath3_.filename);
+	//objects_[1]->SetModel(modelFilePath2_.filename);
+	//objects_[2]->SetModel(modelFilePath3_.filename);
 #pragma endregion 3Dオブジェクト
 
 #pragma region パーティクル
@@ -234,86 +235,86 @@ void GameScene::Update()
 //		}
 //	}
 //
-//	// 3Dオブジェクト
-//	MyBase::Vector3 rotate = objects_[0]->GetRotate();
-//	rotate.y += 0.02f;
-//	objects_[0]->SetRotate(rotate);
-//	rotate = objects_[1]->GetRotate();
-//	rotate.z += 0.02f;
-//	objects_[1]->SetRotate(rotate);
-//	if (ImGui::CollapsingHeader("3dObject"))
-//	{
-//		// ブレンドモード
-//		if (ImGui::CollapsingHeader("BlendMode3dObject")) {
-//			static ImGuiComboFlags spriteFlags = 0;
-//			const char* blendModeIndex[] = { "kBlendModeNone", "kBlendModeNormal", "kBlendModeAdd", "kBlendModeSubtract", "kBlendModeMultiply", "kBlendModeScreen" };
-//			static int selectID = 1;
-//
-//			const char* previewValue = blendModeIndex[selectID];
-//
-//			if (ImGui::BeginCombo("now Blend", previewValue, spriteFlags))
-//			{
-//				for (int n = 0; n < IM_ARRAYSIZE(blendModeIndex); n++)
-//				{
-//					const bool isSelected = (selectID == n);
-//					if (ImGui::Selectable(blendModeIndex[n], isSelected)) {
-//						selectID = n;
-//						object3dBase_->SetBlendMode(static_cast<Object3dBase::BlendMode>(n));
-//					}
-//
-//					if (isSelected) {
-//						ImGui::SetItemDefaultFocus();
-//					}
-//				}
-//				ImGui::EndCombo();
-//			}
-//		}
-//
-//		for (Object3d* object : objects_)
-//		{
-//			ImGui::PushID(object);
-//			if (ImGui::CollapsingHeader("Object"))
-//			{
-//				MyBase::Transform transform{ object->GetScale(), object->GetRotate(), object->GetTranslate() };
-//
-//				// 移動
-//				ImGui::SliderFloat3("Translate", &transform.translate.x, -5.0f, 5.0f);
-//				object->SetTranslate(transform.translate);
-//				// 回転
-//				ImGui::SliderFloat3("Rotate", &transform.rotate.x, -3.14f, 3.14f);
-//				object->SetRotate(transform.rotate);
-//				// 拡縮
-//				ImGui::SliderFloat3("Scale", &transform.scale.x, 0.0f, 3.0f);
-//				object->SetScale(transform.scale);
-//
-//				if (ImGui::CollapsingHeader("Material"))
-//				{
-//					// 平行光源フラグ
-//					bool isEnableLighting = true;
-//					//isEnableLighting = object->GetEnableLighting();
-//
-//					if (isEnableLighting)
-//					{
-//						// 平行光源
-//						MyBase::DirectionalLight directionalLight{};
-//						// 色
-//						directionalLight.color = object->GetDirectionalLightColor();
-//						ImGui::ColorEdit4("LightColor", &directionalLight.color.x);
-//						object->SetDirectionalLightColor(directionalLight.color);
-//						// 方向
-//						directionalLight.direction = object->GetDirectionalLightDirection();
-//						ImGui::SliderFloat3("LightDirection", &directionalLight.direction.x, -1, 1);
-//						object->SetDirectionalLightDirection(directionalLight.direction);
-//						// 輝度
-//						directionalLight.intensity = object->GetDirectionalLightIntensity();
-//						ImGui::DragFloat("Intensity", &directionalLight.intensity, 0.01f);
-//						object->SetDirectionalLightIntensity(directionalLight.intensity);
-//					}
-//				}
-//			}
-//			ImGui::PopID();
-//		}
-//	}
+	// 3Dオブジェクト
+	/*MyBase::Vector3 rotate = objects_[0]->GetRotate();
+	rotate.y += 0.02f;
+	objects_[0]->SetRotate(rotate);
+	rotate = objects_[1]->GetRotate();
+	rotate.z += 0.02f;
+	objects_[1]->SetRotate(rotate);*/
+	if (ImGui::CollapsingHeader("3dObject"))
+	{
+		// ブレンドモード
+		if (ImGui::CollapsingHeader("BlendMode3dObject")) {
+			static ImGuiComboFlags spriteFlags = 0;
+			const char* blendModeIndex[] = { "kBlendModeNone", "kBlendModeNormal", "kBlendModeAdd", "kBlendModeSubtract", "kBlendModeMultiply", "kBlendModeScreen" };
+			static int selectID = 1;
+
+			const char* previewValue = blendModeIndex[selectID];
+
+			if (ImGui::BeginCombo("now Blend", previewValue, spriteFlags))
+			{
+				for (int n = 0; n < IM_ARRAYSIZE(blendModeIndex); n++)
+				{
+					const bool isSelected = (selectID == n);
+					if (ImGui::Selectable(blendModeIndex[n], isSelected)) {
+						selectID = n;
+						ModelManager::GetInstance()->GetObject3dBase()->SetBlendMode(static_cast<Object3dBase::BlendMode>(n));
+					}
+
+					if (isSelected) {
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndCombo();
+			}
+		}
+
+		for (Object3d* object : objects_)
+		{
+			ImGui::PushID(object);
+			if (ImGui::CollapsingHeader("Object"))
+			{
+				MyBase::Transform transform{ object->GetScale(), object->GetRotate(), object->GetTranslate() };
+
+				// 移動
+				ImGui::SliderFloat3("Translate", &transform.translate.x, -5.0f, 5.0f);
+				object->SetTranslate(transform.translate);
+				// 回転
+				ImGui::SliderFloat3("Rotate", &transform.rotate.x, -3.14f, 3.14f);
+				object->SetRotate(transform.rotate);
+				// 拡縮
+				ImGui::SliderFloat3("Scale", &transform.scale.x, 0.0f, 3.0f);
+				object->SetScale(transform.scale);
+
+				if (ImGui::CollapsingHeader("Material"))
+				{
+					// 平行光源フラグ
+					bool isEnableLighting = true;
+					//isEnableLighting = object->GetEnableLighting();
+
+					if (isEnableLighting)
+					{
+						// 平行光源
+						MyBase::DirectionalLight directionalLight{};
+						// 色
+						directionalLight.color = object->GetDirectionalLightColor();
+						ImGui::ColorEdit4("LightColor", &directionalLight.color.x);
+						object->SetDirectionalLightColor(directionalLight.color);
+						// 方向
+						directionalLight.direction = object->GetDirectionalLightDirection();
+						ImGui::SliderFloat3("LightDirection", &directionalLight.direction.x, -1, 1);
+						object->SetDirectionalLightDirection(directionalLight.direction);
+						// 輝度
+						directionalLight.intensity = object->GetDirectionalLightIntensity();
+						ImGui::DragFloat("Intensity", &directionalLight.intensity, 0.01f);
+						object->SetDirectionalLightIntensity(directionalLight.intensity);
+					}
+				}
+			}
+			ImGui::PopID();
+		}
+	}
 	if (ImGui::CollapsingHeader("particle")) {
 		static ImGuiComboFlags particleFlags = 0;
 		const char* blendModeIndex[] = { "kBlendModeNone", "kBlendModeNormal", "kBlendModeAdd", "kBlendModeSubtract", "kBlendModeMultiply", "kBlendModeScreen" };
@@ -471,10 +472,10 @@ void GameScene::Draw()
 	ModelManager::GetInstance()->SetCommonScreen();
 
 	// 全ての3DObject個々の描画
-	/*for (Object3d* object : objects_)
+	for (Object3d* object : objects_)
 	{
 		object->Draw();
-	}*/
+	}
 
 #pragma endregion 3Dオブジェクト
 
