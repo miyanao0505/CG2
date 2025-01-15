@@ -8,7 +8,6 @@
 #include"SceneManager.h"
 #include "MyTools.h"
 
-
 // 初期化
 void GameScene::Initialize()
 {
@@ -61,6 +60,10 @@ void GameScene::Initialize()
 	//objects_[1]->SetModel(modelFilePath2_.filename);
 	//objects_[2]->SetModel(modelFilePath3_.filename);
 
+	// 天球
+	skydome_ = new Skydome();
+	skydome_->Initialize("skydome");
+
 #pragma region パーティクル
 	// パーティクル
 	particleEmitter_ = new ParticleEmitter;
@@ -90,6 +93,7 @@ void GameScene::Finalize()
 
 	// パーティクル
 	delete particleEmitter_;
+	delete skydome_;
 	// 3Dオブジェクト
 	for (Object3d* object : objects_)
 	{
@@ -416,6 +420,7 @@ void GameScene::Update()
 	}
 
 	// 3Dオブジェクトの更新処理
+	skydome_->Update();
 	for (Object3d* object : objects_)
 	{
 		object->Update();
@@ -456,6 +461,9 @@ void GameScene::Draw()
 
 	// 3Dオブジェクトの描画準備。3Dオブジェクトの描画に共通のグラフィックスコマンドを積む
 	ModelManager::GetInstance()->SetCommonScreen();
+
+	// 天球
+	skydome_->Draw();
 
 	// 全ての3DObject個々の描画
 	for (Object3d* object : objects_)

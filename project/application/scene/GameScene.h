@@ -5,6 +5,7 @@
 #include "Sprite.h"
 #include "Object3d.h"
 #include "ParticleEmitter.h"
+#include"Skydome.h"
 #include "MyBase.h"
 
 // ゲームプレイシーン
@@ -41,6 +42,7 @@ private:	// メンバ変数
 
 	// 3Dオブジェクト
 	std::vector<Object3d*> objects_;
+	Skydome* skydome_ = nullptr;
 
 	// パーティクル
 	ParticleEmitter* particleEmitter_ = nullptr;
