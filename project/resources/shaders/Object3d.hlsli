@@ -25,3 +25,8 @@ struct DirectionalLight
 	float intensity;
 };
 
+struct Camera
+{
+    float3 worldPosition;
+};
+

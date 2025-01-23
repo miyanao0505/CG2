@@ -16,7 +16,10 @@ void Object3d::Initislize()
 	CreateTransformationMatrixData();
 
 	// 平行光源データの作成
-	CreateDirectionalLightdata();
+	CreateDirectionalLightData();
+
+	// カメラデータの作成
+	CreateCameraData();
 
 	// Transform変数を作る
 	transform_ = { { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
@@ -31,6 +34,7 @@ void Object3d::Update()
 	if (CameraManager::GetInstance()->GetCamera()) {
 		const MyBase::Matrix4x4& viewProjectionMatrix = CameraManager::GetInstance()->GetCamera()->GetViewProjectionMatrix();
 		worldViewProjectionMatrix = Matrix::Multiply(worldMatrix, viewProjectionMatrix);
+		cameraData_->worldPosition = CameraManager::GetInstance()->GetCamera()->GetTranslate();
 	} else {
 		worldViewProjectionMatrix = worldMatrix;
 	}
@@ -45,6 +49,8 @@ void Object3d::Draw()
 	object3dBase_->GetDxBase()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource_.Get()->GetGPUVirtualAddress());
 	// 平行光源用のCBufferの場所を設定
 	object3dBase_->GetDxBase()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource_.Get()->GetGPUVirtualAddress());
+	// カメラ用のCBufferの場所を設定
+	object3dBase_->GetDxBase()->GetCommandList()->SetGraphicsRootConstantBufferView(4, cameraResource_.Get()->GetGPUVirtualAddress());
 
 	// 3Dモデルが割り当てられていれば描画する
 	if (model_) {
@@ -71,7 +77,7 @@ void Object3d::CreateTransformationMatrixData()
 }
 
 // 平行光源データ作成
-void Object3d::CreateDirectionalLightdata()
+void Object3d::CreateDirectionalLightData()
 {
 	// 平行光源用のリソースを作る
 	directionalLightResource_ = object3dBase_->GetDxBase()->CreateBufferResource(sizeof(MyBase::DirectionalLight));
@@ -81,4 +87,18 @@ void Object3d::CreateDirectionalLightdata()
 	directionalLightData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	directionalLightData_->direction = { 0.0f, -1.0f, 0.0f };
 	directionalLightData_->intensity = 1.0f;
+}
+
+// カメラデータ作成
+void Object3d::CreateCameraData()
+{
+	// カメラ用のリソースを作る
+	cameraResource_ = object3dBase_->GetDxBase()->CreateBufferResource(sizeof(MyBase::CameraForGPU));
+	// 書き込むためのアドレス取得
+	cameraResource_.Get()->Map(0, nullptr, reinterpret_cast<void**>(&cameraData_));
+	cameraData_->worldPosition = { 0.0f, 0.0f, 0.0f };
+	if (CameraManager::GetInstance()->GetCamera()) {
+		CameraManager::GetInstance()->FindCamera("default");
+		cameraData_->worldPosition = CameraManager::GetInstance()->GetCamera()->GetTranslate();
+	}
 }

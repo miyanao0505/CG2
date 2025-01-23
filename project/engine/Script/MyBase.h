@@ -312,5 +312,11 @@ public:
 		Vector4 color;
 	};
 
+	/// <summary>
+	/// カメラの位置
+	/// </summary>
+	struct CameraForGPU {
+		Vector3 worldPosition;
+	};
 };
 
