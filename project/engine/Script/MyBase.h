@@ -205,9 +205,18 @@ public:
 	};
 
 	/// <summary>
-	/// 頂点データ(オブジェクト用)
+	/// 頂点データ(スプライト用)
 	/// </summary>
-	struct VertexData {
+	struct SpriteVertexData {
+		Vector4 position;
+		Vector2 texcoord;
+		Vector3 normal;
+	};
+
+	/// <summary>
+	/// 頂点データ(3Dオブジェクト用)
+	/// </summary>
+	struct ModelVertexData {
 		Vector4 position;
 		Vector2 texcoord;
 		Vector3 normal;
@@ -271,7 +280,7 @@ public:
 	/// objモデルデータ
 	/// </summary>
 	struct ModelData {
-		std::vector<VertexData> vertices;
+		std::vector<ModelVertexData> vertices;
 		MaterialData material;
 	};
 

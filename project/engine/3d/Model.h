@@ -42,7 +42,7 @@ private:	// メンバ変数
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_ = nullptr;				// マテリアル
 
 	// バッファリソース内のデータを指すポインタ
-	MyBase::VertexData* vertexData_ = nullptr;										// vertex
+	MyBase::ModelVertexData* vertexData_ = nullptr;										// vertex
 	MyBase::ModelMaterial* materialData_ = nullptr;									// マテリアル
 
 	// バッファリソースの使い道を補足するバッファビュー
