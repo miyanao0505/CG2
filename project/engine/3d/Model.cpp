@@ -175,4 +175,6 @@ void Model::CreateMaterialData()
 	materialData_->enableLighting = true;
 	// 単位行列で初期化
 	materialData_->uvTransform = Matrix::MakeIdentity4x4();
+	// 光沢度
+	materialData_->shininess = 40.80f;
 }
