@@ -75,7 +75,7 @@ private:	// メンバ変数
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_ = nullptr;				// マテリアル
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource_ = nullptr;	// 座標変換行列
 	// バッファリソース内のデータを指すポインタ
-	MyBase::VertexData* vertexData_ = nullptr;										// vertex
+	MyBase::SpriteVertexData* vertexData_ = nullptr;										// vertex
 	uint32_t* indexData_ = nullptr;													// index
 	MyBase::SpriteMaterial* materialData_ = nullptr;										// マテリアル
 	MyBase::TransformationMatrix* transformationMatrixData_ = nullptr;				// 座標変換行列

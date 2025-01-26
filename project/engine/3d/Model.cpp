@@ -119,7 +119,7 @@ void Model::LoadObjFile(const std::string& directoryPath, const std::string& fil
 			modelData_.material = LoadMaterialTemplateFile(directoryPath, materialFilename);
 		}
 		else if (identifier == "f") {
-			MyBase::VertexData triangle[3];
+			MyBase::ModelVertexData triangle[3];
 			// 面は三角形限定。その他は未対応
 			for (int32_t faceVertex = 0; faceVertex < 3; ++faceVertex) {
 				std::string vertexDefinition;
@@ -150,15 +150,15 @@ void Model::LoadObjFile(const std::string& directoryPath, const std::string& fil
 void Model::CreateVertexData()
 {
 	// 頂点リソースを作る
-	vertexResource_ = modelBase_->GetDxBase()->CreateBufferResource(sizeof(MyBase::VertexData) * modelData_.vertices.size());
+	vertexResource_ = modelBase_->GetDxBase()->CreateBufferResource(sizeof(MyBase::ModelVertexData) * modelData_.vertices.size());
 	// 頂点バッファビューを作成する
 	vertexBufferView_.BufferLocation = vertexResource_.Get()->GetGPUVirtualAddress();					// リソースの先頭のアドレスから使う
-	vertexBufferView_.SizeInBytes = UINT(sizeof(MyBase::VertexData) * modelData_.vertices.size());		// 使用するリソースのサイズは頂点のサイズ
-	vertexBufferView_.StrideInBytes = sizeof(MyBase::VertexData);										// 頂点あたりのサイズ
+	vertexBufferView_.SizeInBytes = UINT(sizeof(MyBase::ModelVertexData) * modelData_.vertices.size());		// 使用するリソースのサイズは頂点のサイズ
+	vertexBufferView_.StrideInBytes = sizeof(MyBase::ModelVertexData);										// 頂点あたりのサイズ
 
 	// 頂点リソースにデータを書き込む
 	vertexResource_.Get()->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));									// 書き込むためのアドレスを取得
-	std::memcpy(vertexData_, modelData_.vertices.data(), sizeof(MyBase::VertexData) * modelData_.vertices.size());	// 頂点データをリソースにコピー
+	std::memcpy(vertexData_, modelData_.vertices.data(), sizeof(MyBase::ModelVertexData) * modelData_.vertices.size());	// 頂点データをリソースにコピー
 
 }
 
@@ -175,4 +175,6 @@ void Model::CreateMaterialData()
 	materialData_->enableLighting = true;
 	// 単位行列で初期化
 	materialData_->uvTransform = Matrix::MakeIdentity4x4();
+	// 光沢度
+	materialData_->shininess = 40.80f;
 }

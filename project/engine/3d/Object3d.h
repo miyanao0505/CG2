@@ -42,7 +42,9 @@ private:	// メンバ関数
 	// 座標変換行列データ作成
 	void CreateTransformationMatrixData();
 	// 平行光源データ作成
-	void CreateDirectionalLightdata();
+	void CreateDirectionalLightData();
+	// カメラデータ作成
+	void CreateCameraData();
 
 private:	// メンバ変数
 	Object3dBase* object3dBase_ = nullptr;
@@ -52,9 +54,11 @@ private:	// メンバ変数
 	// バッファリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource_ = nullptr;	// 座標変換行列
 	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;		// 平行光源
+	Microsoft::WRL::ComPtr<ID3D12Resource> cameraResource_ = nullptr;				// カメラ
 	// バッファリソース内のデータを指すポインタ
 	MyBase::TransformationMatrix* transformationMatrixData_ = nullptr;				// 座標変換行列
 	MyBase::DirectionalLight* directionalLightData_ = nullptr;						// 平行光源
+	MyBase::CameraForGPU* cameraData_ = nullptr;									// カメラ
 
 	// Transform
 	MyBase::Transform transform_;			// 3Dオブジェクト

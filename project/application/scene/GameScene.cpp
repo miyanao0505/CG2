@@ -119,46 +119,46 @@ void GameScene::Update()
 //
 //	ImGui::Begin("Settings");
 //
-//	//// カメラ
-//	//if (ImGui::CollapsingHeader("Camera"))
-//	//{
-//	//	// 変更するための変数
-//	//	MyBase::Transform transformCamera{ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
-//
-//	//	static ImGuiComboFlags flags = 0;
-//	//	const char* cameraNames[] = { "default", "sub" };
-//	//	static int cameraIndex = 0;
-//
-//	//	const char* cameraNowVlue = cameraNames[cameraIndex];
-//
-//	//	if (ImGui::BeginCombo("Now Camera", cameraNowVlue, flags))
-//	//	{
-//	//		for (int i = 0; i < IM_ARRAYSIZE(cameraNames); i++)
-//	//		{
-//	//			const bool isSelected = (cameraIndex == i);
-//	//			if (ImGui::Selectable(cameraNames[i], isSelected)) {
-//	//				cameraIndex = i;
-//	//				CameraManager::GetInstance()->FindCamera(cameraNames[i]);
-//	//			}
-//
-//	//			if (isSelected) {
-//	//				ImGui::SetItemDefaultFocus();
-//	//			}
-//	//		}
-//	//		ImGui::EndCombo();
-//	//	}
-//
-//	//	transformCamera.translate = CameraManager::GetInstance()->GetCamera()->GetTranslate();
-//	//	ImGui::DragFloat3("translate", &transformCamera.translate.x, 0.05f);
-//	//	CameraManager::GetInstance()->GetCamera()->SetTranslate(transformCamera.translate);
-//	//	transformCamera.rotate = CameraManager::GetInstance()->GetCamera()->GetRotate();
-//	//	ImGui::DragFloat3("rotate", &transformCamera.rotate.x, 0.05f);
-//	//	CameraManager::GetInstance()->GetCamera()->SetRotate(transformCamera.rotate);
-//
-//	//	ImGui::Text("\n");
-//	//}
-//	//
-//
+	// カメラ
+	if (ImGui::CollapsingHeader("Camera"))
+	{
+		// 変更するための変数
+		MyBase::Transform transformCamera{ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
+
+		static ImGuiComboFlags flags = 0;
+		const char* cameraNames[] = { "default", "sub" };
+		static int cameraIndex = 0;
+
+		const char* cameraNowVlue = cameraNames[cameraIndex];
+
+		if (ImGui::BeginCombo("Now Camera", cameraNowVlue, flags))
+		{
+			for (int i = 0; i < IM_ARRAYSIZE(cameraNames); i++)
+			{
+				const bool isSelected = (cameraIndex == i);
+				if (ImGui::Selectable(cameraNames[i], isSelected)) {
+					cameraIndex = i;
+					CameraManager::GetInstance()->FindCamera(cameraNames[i]);
+				}
+
+				if (isSelected) {
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
+
+		transformCamera.translate = CameraManager::GetInstance()->GetCamera()->GetTranslate();
+		ImGui::DragFloat3("translate", &transformCamera.translate.x, 0.05f);
+		CameraManager::GetInstance()->GetCamera()->SetTranslate(transformCamera.translate);
+		transformCamera.rotate = CameraManager::GetInstance()->GetCamera()->GetRotate();
+		ImGui::DragFloat3("rotate", &transformCamera.rotate.x, 0.05f);
+		CameraManager::GetInstance()->GetCamera()->SetRotate(transformCamera.rotate);
+
+		ImGui::Text("\n");
+	}
+	
+
 //	//// スプライト
 //	if (ImGui::CollapsingHeader("Sprite"))
 //	{
@@ -304,7 +304,7 @@ void GameScene::Update()
 						// 方向
 						directionalLight.direction = object->GetDirectionalLightDirection();
 						ImGui::SliderFloat3("LightDirection", &directionalLight.direction.x, -1, 1);
-						object->SetDirectionalLightDirection(directionalLight.direction);
+						object->SetDirectionalLightDirection(MyTools::Normalize(directionalLight.direction));
 						// 輝度
 						directionalLight.intensity = object->GetDirectionalLightIntensity();
 						ImGui::DragFloat("Intensity", &directionalLight.intensity, 0.01f);
@@ -314,6 +314,8 @@ void GameScene::Update()
 			}
 			ImGui::PopID();
 		}
+
+		ImGui::Text("\n");
 	}
 	if (ImGui::CollapsingHeader("particle")) {
 		static ImGuiComboFlags particleFlags = 0;
