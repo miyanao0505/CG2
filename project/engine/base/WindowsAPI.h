@@ -10,7 +10,7 @@ public:	// 静的メンバ関数
 
 public:	// メンバ関数
 	// 初期化
-	void Initialize();
+	void Initialize(const wchar_t* title);
 	// 更新
 	void Update();
 

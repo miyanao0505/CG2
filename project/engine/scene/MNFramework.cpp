@@ -11,7 +11,7 @@ void MNFramework::Initialize()
 #pragma region ゲームウィンドウ作成
 	// WindowsAPIの初期化
 	winApi_ = new WindowsAPI();
-	winApi_->Initialize();
+	winApi_->Initialize(L"GE3");
 #pragma endregion ゲームウィンドウ作成
 
 #pragma region DirectX初期化
