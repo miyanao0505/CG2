@@ -2,7 +2,6 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include "MyBase.h"
-#include "TextureManager.h"
 
 // 前方宣言
 class SpriteBase;
@@ -12,7 +11,7 @@ class Sprite
 {
 public:	// メンバ関数
 	// 初期化
-	void Initialize(SpriteBase* spriteBase, std::string textureFilePath);
+	void Initialize(std::string textureFilePath);
 	// 更新処理
 	void Update();
 	// 描画処理
@@ -78,14 +77,14 @@ private:	// メンバ変数
 	// バッファリソース内のデータを指すポインタ
 	MyBase::VertexData* vertexData_ = nullptr;										// vertex
 	uint32_t* indexData_ = nullptr;													// index
-	MyBase::Material* materialData_ = nullptr;										// マテリアル
+	MyBase::SpriteMaterial* materialData_ = nullptr;										// マテリアル
 	MyBase::TransformationMatrix* transformationMatrixData_ = nullptr;				// 座標変換行列
 	// バッファリソースの使い道を補足するバッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};									// vertex
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};										// index
 
-	// テクスチャ番号
-	uint32_t textureIndex_ = 0;
+	// ファイルパス
+	std::string filePath_;
 	// スプライトのサイズ
 	MyBase::Vector2 spriteSize_ = { 0.0f, 0.0f };
 

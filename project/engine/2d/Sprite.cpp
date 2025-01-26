@@ -1,13 +1,14 @@
 #include "Sprite.h"
 #include "SpriteBase.h"
 #include "Matrix.h"
+#include "TextureManager.h"
 
 // 初期化
-void Sprite::Initialize(SpriteBase* spriteBase, std::string textureFilePath)
+void Sprite::Initialize(std::string textureFilePath)
 {
 	// 引数を受け取ってメンバ変数に記録する
-	spriteBase_ = spriteBase;
-	textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByFilePath(textureFilePath);
+	spriteBase_ = TextureManager::GetInstance()->GetSpriteBase();
+	filePath_ = textureFilePath;
 
 	// 頂点データの作成
 	CreateVertexData();
@@ -44,7 +45,7 @@ void Sprite::Update()
 	}
 
 	// テクスチャ範囲指定の反映処理
-	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetaData(textureIndex_);
+	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetaData(filePath_);
 	float tex_left = textureLeftTop_.x / metadata.width;
 	float tex_right = (textureLeftTop_.x + textureSize_.x) / metadata.width;
 	float tex_top = textureLeftTop_.y / metadata.height;
@@ -100,7 +101,8 @@ void Sprite::Draw()
 	spriteBase_->GetDxBase()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource_.Get()->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableの先頭を設定
-	spriteBase_->GetDxBase()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureIndex_));
+	
+	spriteBase_->GetDxBase()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(filePath_));
 	// 描画！(DrawCall/ドローコール)
 	spriteBase_->GetDxBase()->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
@@ -108,8 +110,8 @@ void Sprite::Draw()
 // テクスチャのセット
 void Sprite::SetTexture(std::string textureFilePath)
 {
-	// テクスチャのセット
-	textureIndex_ = TextureManager::GetInstance()->GetTextureIndexByFilePath(textureFilePath);
+	// ファイルパスのセット
+	filePath_ = textureFilePath;
 
 	// テクスチャ変更に合わせてサイズも再度セット
 	AdjustTextureSize();
@@ -149,7 +151,7 @@ void Sprite::CreateVertexData()
 void Sprite::CreateMaterialData()
 {
 	// マテリアルリソースを作る
-	materialResource_ = spriteBase_->GetDxBase()->CreateBufferResource(sizeof(MyBase::Material));
+	materialResource_ = spriteBase_->GetDxBase()->CreateBufferResource(sizeof(MyBase::SpriteMaterial));
 
 	// マテリアルリソースにデータを書き込むためのアドレスを取得してmaterialDataに割り当てる
 	materialResource_.Get()->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
@@ -157,7 +159,6 @@ void Sprite::CreateMaterialData()
 	// マテリアルデータの初期値を書き込む
 	materialData_->color = MyBase::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	materialData_->enableLighting = false;
-	materialData_->uvTransform = Matrix::MakeIdentity4x4();
 }
 
 // 座標変換行列データ作成
@@ -178,7 +179,7 @@ void Sprite::CreateTransformationMatrixData()
 void Sprite::AdjustTextureSize()
 {
 	// テクスチャメタデータを取得
-	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetaData(textureIndex_);
+	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetaData(filePath_);
 
 	textureSize_.x = static_cast<float>(metadata.width);
 	textureSize_.y = static_cast<float>(metadata.height);

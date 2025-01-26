@@ -19,6 +19,12 @@ public:	// メンバ関数
 	// .objファイルの読み取り
 	void LoadObjFile(const std::string& directoryPath, const std::string& filename);
 
+public:	// getter
+	const bool& GetEnableLighting() const { return materialData_->enableLighting; }
+
+public:	// setter
+	void SetEnableLighting(const bool& enableLighting) { materialData_->enableLighting = enableLighting; }
+
 private:	// メンバ関数
 	// 頂点データ作成
 	void CreateVertexData();
@@ -37,7 +43,7 @@ private:	// メンバ変数
 
 	// バッファリソース内のデータを指すポインタ
 	MyBase::VertexData* vertexData_ = nullptr;										// vertex
-	MyBase::Material* materialData_ = nullptr;										// マテリアル
+	MyBase::ModelMaterial* materialData_ = nullptr;									// マテリアル
 
 	// バッファリソースの使い道を補足するバッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};									// vertex

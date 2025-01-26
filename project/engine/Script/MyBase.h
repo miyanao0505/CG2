@@ -1,6 +1,7 @@
 #pragma once
-#include <vector>
 #include <string>
+#include <cstdint>
+#include <vector>
 
 class MyBase
 {
@@ -153,6 +154,48 @@ public:
 	};
 
 	/// <summary>
+	/// OBB
+	/// </summary>
+	struct OBB {
+		Vector3 center;				//!< 中心点
+		Vector3 orientations[3];	//!< 座標軸。正規化・直交必須
+		Vector3 size;				//!< 座標軸方向の長さの半分。中心から面までの距離
+	};
+
+	/// <summary>
+	/// バネ
+	/// </summary>
+	struct Spring
+	{
+		Vector3 anchor;				// アンカー。固定された端の位置
+		float naturalLength;		// 自然長
+		float stiffness;			// 剛性。バネ定数k
+		float dampungCoefficient;	// 減衰係数
+	};
+
+	/// <summary>
+	/// 振り子
+	/// </summary>
+	struct Pendulum {
+		Vector3 anchor;					// アンカーポイント。固定された端の位置
+		float length;					// 紐の長さ
+		float angle;					// 現在の角度
+		float angularVelocity;			// 角速度ω
+		float angularAcceleration;		// 角加速度
+	};
+
+	/// <summary>
+	/// 円錐振り子
+	/// </summary>
+	struct ConicalPendulum {
+		Vector3 anchor;					// アンカーポイント。固定された端の位置
+		float length;					// 紐の長さ
+		float halfApexAngle;			// 円錐の頂角の半分
+		float angle;					// 現在の角度
+		float angularVelocity;			// 角速度ω
+	};
+
+	/// <summary>
 	/// Transform
 	/// </summary>
 	struct Transform {
@@ -162,7 +205,7 @@ public:
 	};
 
 	/// <summary>
-	/// 頂点データ
+	/// 頂点データ(オブジェクト用)
 	/// </summary>
 	struct VertexData {
 		Vector4 position;
@@ -171,13 +214,32 @@ public:
 	};
 
 	/// <summary>
-	/// マテリアル
+	/// 頂点データ(パーティクル)
 	/// </summary>
-	struct Material {
+	struct ParticleVertexData {
+		Vector4 position;
+		Vector2 texcoord;
+		Vector4 color;
+	};
+	
+
+	/// <summary>
+	/// マテリアル(モデル用)
+	/// </summary>
+	struct ModelMaterial {
 		Vector4 color;
 		int enableLighting;
 		float padding[3];
 		Matrix4x4 uvTransform;
+	};
+
+	/// <summary>
+	/// マテリアル(スプライト用)
+	/// </summary>
+	struct SpriteMaterial {
+		Vector4 color;
+		int enableLighting;
+		float padding[3];
 	};
 
 	/// <summary>
@@ -221,5 +283,25 @@ public:
 		std::string filename;
 	};
 	
+	/// <summary>
+	/// パーティクル
+	/// </summary>
+	struct Particle {
+		Transform transform;
+		Vector3 velocity;
+		Vector4 color;
+		float lifeTime;
+		float currentTime;
+	};
+
+	/// <summary>
+	/// ParticleForGPU
+	/// </summary>
+	struct ParticleForGPU {
+		Matrix4x4 WVP;
+		Matrix4x4 World;
+		Vector4 color;
+	};
+
 };
 

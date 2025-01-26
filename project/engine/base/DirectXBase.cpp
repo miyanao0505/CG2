@@ -2,10 +2,9 @@
 #include <cassert>
 #include <format>
 #include <thread>
-#include "externals/DirectXTex/DirectXTex.h"
-#include "externals/imgui/imgui_impl_dx12.h"
-#include "externals/imgui/imgui_impl_win32.h"
-#include "externals/DirectXTex/d3dx12.h"
+#include "imgui_impl_dx12.h"
+#include "imgui_impl_win32.h"
+#include "d3dx12.h"
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -14,8 +13,6 @@ using namespace Microsoft::WRL;
 using namespace DirectX;
 using namespace Logger;
 using namespace StringUtility;
-
-const uint32_t DirectXBase::kMaxSRVCount = 512;
 
 // 初期化
 void DirectXBase::Initialize(WindowsAPI* winApi)
@@ -52,7 +49,7 @@ void DirectXBase::Initialize(WindowsAPI* winApi)
 	// DCXコンパイラの生成
 	CreateDxcCompiler();
 	// ImGuiの初期化
-	InitializeImGui();
+	//InitializeImGui();
 }
 
 // 描画前処理
@@ -84,10 +81,6 @@ void DirectXBase::PreDraw()
 	commandList_->ClearRenderTargetView(rtvHandles_[backBufferIndex], clearColor, 0, nullptr);
 	// 指定した深度で画面全体をクリアする
 	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-	
-	// 描画用のDescriptorHeapの設定
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeaps[] = { srvDescriptorHeap_ };
-	commandList_->SetDescriptorHeaps(1, descriptorHeaps->GetAddressOf());
 
 	commandList_->RSSetViewports(1, &viewport_);		// Viewportを設定
 	commandList_->RSSetScissorRects(1, &scissorRect_);	// Scirssorを設定
@@ -150,18 +143,6 @@ void DirectXBase::PostDraw()
 	assert(SUCCEEDED(hr));
 	hr = commandList_->Reset(commandAllocator_.Get(), nullptr);
 	assert(SUCCEEDED(hr));
-}
-
-// SRVの指定番号のCPUデスクリプタハンドルを取得する
-D3D12_CPU_DESCRIPTOR_HANDLE DirectXBase::GetSRVCPUDescriptorHandle(uint32_t index)
-{
-	return GetCPUDescriptorHandle(srvDescriptorHeap_, descriptorSizeSRV_, index);
-}
-
-// SRVの指定番号のGPUデスクリプタハンドルを取得する
-D3D12_GPU_DESCRIPTOR_HANDLE DirectXBase::GetSRVGPUDescriptorHandle(uint32_t index)
-{
-	return GetGPUDescriptorHandle(srvDescriptorHeap_, descriptorSizeSRV_, index);
 }
 
 // RTVの指定番号のCPUデスクリプタハンドルを取得する
@@ -452,7 +433,7 @@ void DirectXBase::CreateCommand()
 
 	// コマンドアロケータの生成
 	commandAllocator_ = nullptr;
-	hr = device_->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator_));
+	hr = device_->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, __uuidof(**(&commandAllocator_)), IID_PPV_ARGS_Helper(&commandAllocator_));
 	// コマンドアロケータの生成がうまくいかなかったので起動できない
 	assert(SUCCEEDED(hr));
 
@@ -545,8 +526,6 @@ ComPtr<ID3D12DescriptorHeap> DirectXBase::CreateDescriptorHeap(D3D12_DESCRIPTOR_
 // 各種デスクリプタヒープの生成
 void DirectXBase::CreateDescriptorHeapAllKinds()
 {
-	// SRV用のDescriptorSizeを取得しておく
-	descriptorSizeSRV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	// RTV用のDescriptorSizeを取得しておく
 	descriptorSizeRTV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	// DSV用のDescriptorSizeを取得しておく
@@ -554,8 +533,6 @@ void DirectXBase::CreateDescriptorHeapAllKinds()
 
 	// RTV用のでスクリプタヒープの生成
 	rtvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
-	// SRV用のでスクリプタヒープの生成
-	srvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, kMaxSRVCount, true);
 	// DSV用のでスクリプタヒープの生成
 	dsvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 }
@@ -676,11 +653,11 @@ void DirectXBase::InitializeImGui()
 {
 #ifdef _DEBUG
 	// ImGuiの初期化
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGui::StyleColorsDark();
-	ImGui_ImplWin32_Init(winApi_->GetHwnd());
-	ImGui_ImplDX12_Init(device_.Get(), swapChainDesc_.BufferCount, rtvDesc_.Format, srvDescriptorHeap_.Get(), srvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart(), srvDescriptorHeap_->GetGPUDescriptorHandleForHeapStart());
+	//IMGUI_CHECKVERSION();
+	//ImGui::CreateContext();
+	//ImGui::StyleColorsDark();
+	//ImGui_ImplWin32_Init(winApi_->GetHwnd());
+	//ImGui_ImplDX12_Init(device_.Get(), swapChainDesc_.BufferCount, rtvDesc_.Format, srvDescriptorHeap_.Get(), srvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart(), srvDescriptorHeap_->GetGPUDescriptorHandleForHeapStart());
 #endif // _DEBUG
 }
 
