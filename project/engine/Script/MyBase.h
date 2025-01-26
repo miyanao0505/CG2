@@ -205,9 +205,18 @@ public:
 	};
 
 	/// <summary>
-	/// 頂点データ(オブジェクト用)
+	/// 頂点データ(スプライト用)
 	/// </summary>
-	struct VertexData {
+	struct SpriteVertexData {
+		Vector4 position;
+		Vector2 texcoord;
+		Vector3 normal;
+	};
+
+	/// <summary>
+	/// 頂点データ(3Dオブジェクト用)
+	/// </summary>
+	struct ModelVertexData {
 		Vector4 position;
 		Vector2 texcoord;
 		Vector3 normal;
@@ -231,6 +240,7 @@ public:
 		int enableLighting;
 		float padding[3];
 		Matrix4x4 uvTransform;
+		float shininess;
 	};
 
 	/// <summary>
@@ -248,6 +258,7 @@ public:
 	struct TransformationMatrix {
 		Matrix4x4 WVP;
 		Matrix4x4 World;
+		Matrix4x4 WorldInverseTranspose;
 	};
 
 	/// <summary>
@@ -271,7 +282,7 @@ public:
 	/// objモデルデータ
 	/// </summary>
 	struct ModelData {
-		std::vector<VertexData> vertices;
+		std::vector<ModelVertexData> vertices;
 		MaterialData material;
 	};
 
@@ -303,5 +314,11 @@ public:
 		Vector4 color;
 	};
 
+	/// <summary>
+	/// カメラの位置
+	/// </summary>
+	struct CameraForGPU {
+		Vector3 worldPosition;
+	};
 };
 

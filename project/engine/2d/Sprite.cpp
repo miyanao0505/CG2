@@ -121,7 +121,7 @@ void Sprite::SetTexture(std::string textureFilePath)
 void Sprite::CreateVertexData()
 {
 	// VertexResourceを作る
-	vertexResource_ = spriteBase_->GetDxBase()->CreateBufferResource(sizeof(MyBase::VertexData) * 6);
+	vertexResource_ = spriteBase_->GetDxBase()->CreateBufferResource(sizeof(MyBase::SpriteVertexData) * 6);
 	// IndexResourceを作る
 	indexResource_ = spriteBase_->GetDxBase()->CreateBufferResource(sizeof(uint32_t) * 6);
 	
@@ -129,9 +129,9 @@ void Sprite::CreateVertexData()
 	// リソースの先頭のアドレスから使う
 	vertexBufferView_.BufferLocation = vertexResource_.Get()->GetGPUVirtualAddress();
 	// 使用するリソースのサイズは頂点6つ分のサイズ
-	vertexBufferView_.SizeInBytes = sizeof(MyBase::VertexData) * 4;
+	vertexBufferView_.SizeInBytes = sizeof(MyBase::SpriteVertexData) * 4;
 	// 1頂点あたりのサイズ
-	vertexBufferView_.StrideInBytes = sizeof(MyBase::VertexData);
+	vertexBufferView_.StrideInBytes = sizeof(MyBase::SpriteVertexData);
 	
 	// IndexBufferViewを作成する(値を設定するだけ)
 	// リソースの先頭のアドレスから使う
