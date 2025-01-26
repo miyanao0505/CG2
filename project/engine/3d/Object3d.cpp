@@ -40,6 +40,7 @@ void Object3d::Update()
 	}
 	transformationMatrixData_->WVP = worldViewProjectionMatrix;
 	transformationMatrixData_->World = worldMatrix;
+	transformationMatrixData_->WorldInverseTranspose = Matrix::Transpose(Matrix::Inverse(worldMatrix));
 }
 
 // 描画処理
@@ -74,6 +75,7 @@ void Object3d::CreateTransformationMatrixData()
 	// 単位行列を書き込んでおく
 	transformationMatrixData_->WVP = Matrix::MakeIdentity4x4();
 	transformationMatrixData_->World = Matrix::MakeIdentity4x4();
+	transformationMatrixData_->WorldInverseTranspose = Matrix::MakeIdentity4x4();
 }
 
 // 平行光源データ作成
