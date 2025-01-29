@@ -21,6 +21,9 @@ void Object3d::Initislize()
 	// カメラデータの作成
 	CreateCameraData();
 
+	// 点光源データの作成
+	CreatePointLightData();
+
 	// Transform変数を作る
 	transform_ = { { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
 }
@@ -52,6 +55,8 @@ void Object3d::Draw()
 	object3dBase_->GetDxBase()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource_.Get()->GetGPUVirtualAddress());
 	// カメラ用のCBufferの場所を設定
 	object3dBase_->GetDxBase()->GetCommandList()->SetGraphicsRootConstantBufferView(4, cameraResource_.Get()->GetGPUVirtualAddress());
+	// 点光源用のCBufferの場所を設定
+	object3dBase_->GetDxBase()->GetCommandList()->SetGraphicsRootConstantBufferView(5, pointLightResource_.Get()->GetGPUVirtualAddress());
 
 	// 3Dモデルが割り当てられていれば描画する
 	if (model_) {
@@ -103,4 +108,18 @@ void Object3d::CreateCameraData()
 		CameraManager::GetInstance()->FindCamera("default");
 		cameraData_->worldPosition = CameraManager::GetInstance()->GetCamera()->GetTranslate();
 	}
+}
+
+// 点光源データ作成
+void Object3d::CreatePointLightData()
+{
+	// 点光源データ用のリソースを作る
+	pointLightResource_ = object3dBase_->GetDxBase()->CreateBufferResource(sizeof(MyBase::PointLight));
+	// 書き込むためのアドレス取得
+	pointLightResource_.Get()->Map(0, nullptr, reinterpret_cast<void**>(&pointLightData_));
+	pointLightData_->color = { 1.0f, 1.0f, 1.0f,1.0f };
+	pointLightData_->position = { 0.0f, 0.0f, 0.0f };
+	pointLightData_->intensity = 1.0f;
+	pointLightData_->radius = 1.0f;
+	pointLightData_->decay = 1.0f;
 }
