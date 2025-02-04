@@ -3,6 +3,7 @@
 #include <dinput.h>
 #include <Windows.h>
 #include <wrl.h>
+#include <array>
 #include "WindowsAPI.h"
 
 // 入力
@@ -51,8 +52,8 @@ private: // メンバ変数
 	WindowsAPI* winApi_ = nullptr;
 
 	// 前回の全キーの状態
-	BYTE keyPre[256] = {};
+	std::array<BYTE, 256> keyPre_;
 	// 全キーの状態
-	BYTE key[256] = {};
+	std::array<BYTE, 256> key_;
 };
 

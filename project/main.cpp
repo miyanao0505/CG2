@@ -4,13 +4,10 @@
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// 宣言
-	MNFramework* game = new MyGame;
+	std::unique_ptr<MNFramework> game = std::make_unique<MyGame>();
 
 	// ゲームループ
 	game->Run();
-
-	// 解放
-	delete game;
 
 	return 0;
 }
