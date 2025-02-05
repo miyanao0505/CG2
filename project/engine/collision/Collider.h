@@ -25,6 +25,8 @@ public:	// setter
 	void SetCollisionAttribute(uint32_t collisionAttribute) { collisionAttribute_ = collisionAttribute; }
 	// 衝突マスク(相手)を設定
 	void SetCollisionMask(uint32_t collisionMask) { collisionMask_ = collisionMask; }
+	// 半径のセット
+	void SetRadius(float radius) { radius_ = radius; }
 
 private:	// メンバ変数
 	// 衝突判定

@@ -5,6 +5,7 @@
 #include "Sprite.h"
 #include "Object3d.h"
 #include "ParticleEmitter.h"
+#include "Player.h"
 #include"Skydome.h"
 #include "MyBase.h"
 
@@ -33,27 +34,33 @@ private:	// メンバ変数
 	//std::string filePath4_ = { "resources/circle.png" };
 
 	// スプライト
-	std::vector<Sprite*> sprites_;
+	//std::vector<Sprite*> sprites_;
 
 	// モデルファイルパス
 	MyBase::ModelFilePath modelFilePath1_ = { {"resources/plane"}, {"plane.obj"} };
 	MyBase::ModelFilePath modelFilePath2_ = { {"resources/axis"}, {"axis.obj"} };
 	MyBase::ModelFilePath modelFilePath3_ = { {"resources/fence"}, {"fence.obj"} };
+	MyBase::ModelFilePath modelFilePath4_ = { {"resources/box"}, {"box.obj"} };
+	MyBase::ModelFilePath modelFilePath5_ = { {"resources/goal"}, {"goal.obj"} };
 
 	// 3Dオブジェクト
-	std::vector<Object3d*> objects_;
+	//std::vector<Object3d*> objects_;
+	Player* player_ = nullptr;
 	Skydome* skydome_ = nullptr;
 
+	Object3d* block_ = nullptr;
+	Object3d* goal_ = nullptr;
+
 	// パーティクル
-	ParticleEmitter* particleEmitter_ = nullptr;
+	//ParticleEmitter* particleEmitter_ = nullptr;
 #pragma endregion シーン初期化
 
-	bool isParticleActive_;
-	bool isAccelerationField_;
-	MyBase::Vector3 acceleration_{};
-	MyBase::AABB area_{};
+	//bool isParticleActive_;
+	//bool isAccelerationField_;
+	//MyBase::Vector3 acceleration_{};
+	//MyBase::AABB area_{};
 
-	// デルタイム
-	const float kDeltaTime_ = 1.0f / 60.0f;
+	//// デルタイム
+	//const float kDeltaTime_ = 1.0f / 60.0f;
 };
 

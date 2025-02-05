@@ -100,6 +100,9 @@
     <Filter Include="ヘッダー ファイル\application\player">
       <UniqueIdentifier>{3c01af66-25c0-4d6e-8fe9-a33bde58e1db}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\application\goal">
+      <UniqueIdentifier>{0b4662d3-85e9-4b41-a47c-cce9595f1844}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
