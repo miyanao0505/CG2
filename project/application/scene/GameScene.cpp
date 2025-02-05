@@ -83,6 +83,7 @@ void GameScene::Initialize()
 	goal_->SetScale({ 0.5f, 0.5f, 0.5f });
 	goal_->SetTranslate({ 0.0f, 0.0f, 23.0f });
 
+
 #pragma region パーティクル
 	// パーティクル
 	/*particleEmitter_ = new ParticleEmitter;

@@ -27,6 +27,9 @@ void Player::Initialize(const std::string& filename)
 	model_->SetModel(path_.filename);
 
 	SetRadius(0.5f);
+
+	CameraManager::GetInstance()->FindCamera("default");
+	CameraManager::GetInstance()->GetCamera()->SetTranslate({ 0.0f, 4.0f, -10.0f });
 }
 
 void Player::Update()
