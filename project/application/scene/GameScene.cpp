@@ -25,14 +25,14 @@ void GameScene::Initialize()
 	for (uint32_t i = 0; i < 5; ++i)
 	{
 		// スプライトの初期化
-		Sprite* sprite = new Sprite();
+		std::unique_ptr<Sprite> sprite(new Sprite());
 		sprite->Initialize(filePath1_);
 		sprite->SetPosition({ 200.0f * float(i), 100.0f });
 		sprite->SetSize({ 100.f, 100.f });
 		sprite->SetAnchorPoint({ 0.0f, 0.0f });
 		sprite->SetIsFlipX(false);
 		sprite->SetIsFlipY(false);
-		sprites_.push_back(sprite);
+		sprites_.push_back(std::move(sprite));
 	}
 
 	sprites_[1]->SetTexture(filePath2_);
@@ -51,11 +51,11 @@ void GameScene::Initialize()
 	// 3Dオブジェクト
 	for (uint32_t i = 0; i < 1; ++i) {
 		// 3Dオブジェクトの初期化
-		Object3d* object = new Object3d;
+		std::unique_ptr<Object3d> object(new Object3d);
 		object->Initislize();
 		object->SetTranslate({ 0.0f, 0.0f, 0.0f });
 		object->SetModel(modelFilePath4_.filename);
-		objects_.push_back(object);
+		objects_.push_back(std::move(object));
 	}
 	//objects_[1]->SetModel(modelFilePath2_.filename);
 	//objects_[2]->SetModel(modelFilePath3_.filename);
@@ -63,7 +63,7 @@ void GameScene::Initialize()
 
 #pragma region パーティクル
 	// パーティクル
-	particleEmitter_ = new ParticleEmitter;
+	particleEmitter_.reset(new ParticleEmitter);
 	particleEmitter_->Initialize("circle", "resources/circle.png");
 #pragma endregion パーティクル
 
@@ -88,17 +88,15 @@ void GameScene::Finalize()
 {
 	BaseScene::Finalize();
 
-	// パーティクル
-	delete particleEmitter_;
 	// 3Dオブジェクト
-	for (Object3d* object : objects_)
+	for (std::unique_ptr<Object3d>& object : objects_)
 	{
-		delete object;
+		object.reset();
 	}
 	// スプライト
-	for (Sprite* sprite : sprites_)
+	for (std::unique_ptr<Sprite>& sprite : sprites_)
 	{
-		delete sprite;
+		sprite.reset();
 	}
 }
 
@@ -187,9 +185,9 @@ void GameScene::Update()
 //				ImGui::EndCombo();
 //			}
 //		}
-//		for (Sprite* sprite : sprites_)
+//		for (std::unique_ptr<Sprite>& sprite : sprites_)
 //		{
-//			ImGui::PushID(sprite);
+//			ImGui::PushID(sprite.get());
 //			if (ImGui::CollapsingHeader("Object"))
 //			{
 //				// 移動
@@ -270,9 +268,9 @@ void GameScene::Update()
 			}
 		}
 
-		for (Object3d* object : objects_)
+		for (std::unique_ptr<Object3d>& object : objects_)
 		{
-			ImGui::PushID(object);
+			ImGui::PushID(object.get());
 			if (ImGui::CollapsingHeader("Object"))
 			{
 				MyBase::Transform transform{ object->GetScale(), object->GetRotate(), object->GetTranslate() };
@@ -432,7 +430,7 @@ void GameScene::Update()
 	}
 
 	// 3Dオブジェクトの更新処理
-	for (Object3d* object : objects_)
+	for (std::unique_ptr<Object3d>& object : objects_)
 	{
 		object->Update();
 	}
@@ -459,7 +457,7 @@ void GameScene::Update()
 	ParticleManager::GetInstance()->Update();
 
 	// スプライトの更新処理
-	for (Sprite* sprite : sprites_)
+	for (std::unique_ptr<Sprite>& sprite : sprites_)
 	{
 		sprite->Update();
 	}
@@ -474,7 +472,7 @@ void GameScene::Draw()
 	ModelManager::GetInstance()->SetCommonScreen();
 
 	// 全ての3DObject個々の描画
-	for (Object3d* object : objects_)
+	for (std::unique_ptr<Object3d>& object : objects_)
 	{
 		object->Draw();
 	}
@@ -494,7 +492,7 @@ void GameScene::Draw()
 	TextureManager::GetInstance()->SetCommonScreen();
 
 	// 全てのSprite個々の描画
-	/*for (Sprite* sprite : sprites_)
+	/*for (std::unique_ptr<Sprite>& sprite : sprites_)
 	{
 		sprite->Draw();
 	}*/

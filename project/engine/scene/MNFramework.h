@@ -45,16 +45,16 @@ protected:	// メンバ変数
 
 	// ポインタ
 	// windowsAPI
-	WindowsAPI* winApi_ = nullptr;
+	std::unique_ptr<WindowsAPI> winApi_ = nullptr;
 	// DirectXBase
-	DirectXBase* dxBase_ = nullptr;
+	std::unique_ptr<DirectXBase> dxBase_ = nullptr;
 	// 入力
 	Input* input_ = nullptr;
 	// SRVマネージャ
-	SrvManager* srvManager_ = nullptr;
+	std::unique_ptr<SrvManager> srvManager_ = nullptr;
 #ifdef _DEBUG
 	// ImGuiManagerの宣言
-	ImGuiManager* imGuiManager_ = nullptr;
+	std::unique_ptr<ImGuiManager> imGuiManager_ = nullptr;
 #endif // _DEBUG
 	// カメラマネージャ
 	CameraManager* cameraManager_ = nullptr;
@@ -69,6 +69,6 @@ protected:	// メンバ変数
 	// シーンマネージャ
 	SceneManager* sceneManager_ = nullptr;
 	// シーンファクトリー
-	AbstractSceneFactory* sceneFactory_ = nullptr;
+	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
 };
 

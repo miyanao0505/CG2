@@ -10,9 +10,6 @@ void MyGame::Initialize()
 	// 基底クラスの初期化処理
 	MNFramework::Initialize();
 
-	// シーンファクトリーを生成し、マネージャにセット
-	sceneFactory_ = new SceneFactory();
-	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_);
 	// シーンマネージャに最初のシーンをセット
 	SceneManager::GetInstance()->ChangeScene("GAME");
 }
