@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include"Input.h"
 
 // 前方宣言

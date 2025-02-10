@@ -1,6 +1,5 @@
 #include "MNFramework.h"
-#include "TitleScene.h"
-#include "GameScene.h"
+#include "SceneFactory.h"
 
 // 初期化
 void MNFramework::Initialize()
@@ -10,34 +9,34 @@ void MNFramework::Initialize()
 
 #pragma region ゲームウィンドウ作成
 	// WindowsAPIの初期化
-	winApi_ = new WindowsAPI();
+	winApi_.reset(new WindowsAPI());
 	winApi_->Initialize(L"GE3");
 #pragma endregion ゲームウィンドウ作成
 
 #pragma region DirectX初期化
 	// DirectXBaseの初期化
-	dxBase_ = new DirectXBase();
-	dxBase_->Initialize(winApi_);
+	dxBase_.reset(new DirectXBase());
+	dxBase_->Initialize(winApi_.get());
 #pragma endregion DirectX初期化
 
 #pragma region 汎用機能初期化
 	// 入力の初期化
 	input_ = Input::GetInstance();
-	input_->Initialize(winApi_);
+	input_->Initialize(winApi_.get());
 #pragma endregion 汎用機能初期化
 
 #pragma region 基盤システム初期化
 	// SRVマネージャーの初期化
-	srvManager_ = new SrvManager();
-	srvManager_->Initialize(dxBase_);
+	srvManager_.reset(new SrvManager());
+	srvManager_->Initialize(dxBase_.get());
 #pragma endregion 基盤システム初期化
 
 #pragma region マネージャ初期化
 #ifdef _DEBUG
 #pragma region ImGui初期化
 	// ImGuiManagerの初期化
-	imGuiManager_ = new ImGuiManager();
-	imGuiManager_->Initialize(winApi_, dxBase_, srvManager_);
+	imGuiManager_.reset(new ImGuiManager());
+	imGuiManager_->Initialize(winApi_.get(), dxBase_.get(), srvManager_.get());
 #pragma endregion
 #endif // _DEBUG
 
@@ -57,22 +56,24 @@ void MNFramework::Initialize()
 
 	// テクスチャマネージャの初期化
 	textureManager_ = TextureManager::GetInstance();
-	textureManager_->Initialize(dxBase_, srvManager_);
+	textureManager_->Initialize(dxBase_.get(), srvManager_.get());
 
 	// パーティクルマネージャの初期化
 	particleManager_ = ParticleManager::GetInstance();
-	particleManager_->Initialize(dxBase_, srvManager_);
+	particleManager_->Initialize(dxBase_.get(), srvManager_.get());
 
 	// モデルマネージャの初期化
 	modelManager_ = ModelManager::GetInstance();
-	modelManager_->Initialize(dxBase_);
+	modelManager_->Initialize(dxBase_.get());
 
 	// オーディオマネージャの初期化
 	audioManager_ = AudioManager::GetInstance();
 	audioManager_->Initialize();
 
 	// シーンマネージャの生成
+	sceneFactory_.reset(new SceneFactory());
 	sceneManager_ = SceneManager::GetInstance();
+	sceneManager_->SetSceneFactory(sceneFactory_.get());
 #pragma endregion マネージャ初期化
 }
 
@@ -91,15 +92,6 @@ void MNFramework::Finalize()
 #endif // _DEBUG
 	input_->Finalize();
 	winApi_->Finalize();
-
-	// 解放
-	delete sceneFactory_;
-#ifdef DEBUG
-	delete imGuiManager_;
-#endif // DEBUG
-	delete srvManager_;
-	delete dxBase_;
-	delete winApi_;
 }
 
 // 毎フレーム更新
