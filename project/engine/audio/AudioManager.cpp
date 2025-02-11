@@ -172,4 +172,6 @@ void AudioManager::UnLoadAudio(const std::string& filename)
 	soundData.pBuffer = 0;
 	soundData.bufferSize = 0;
 	soundData.wfex = {};
+
+	soundDatas_.erase(filename);
 }

@@ -106,6 +106,17 @@ void GameScene::Update()
 	BaseScene::Update();
 
 #ifdef _DEBUG
+	// Qキーを押したら
+	if (input_->TriggerKey(DIK_Q)) {
+		// お試しの音を解放する
+		AudioManager::GetInstance()->UnLoadAudio("fanfare.wav");
+	}
+	// Rキーを押したら
+	if (input_->TriggerKey(DIK_R)) {
+		// お試しの音をロードする
+		AudioManager::GetInstance()->LoadAudioWave("fanfare.wav");
+	}
+
 //	// 開発用UIの処理。実際に開発用のUIを出す場合はここをゲーム固有の処理に置き換える
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);		// ウィンドウの座標(プログラム起動時のみ読み込み)
 	ImGui::SetNextWindowSize(ImVec2(350, 300), ImGuiCond_Once);		// ウィンドウのサイズ(プログラム起動時のみ読み込み)
@@ -417,16 +428,6 @@ void GameScene::Update()
 	if (input_->TriggerKey(DIK_O)) {
 		// お試しの音を鳴らす
 		AudioManager::GetInstance()->PlayWave("fanfare.wav");
-	}
-	// Qキーを押したら
-	if (input_->TriggerKey(DIK_Q)) {
-		// お試しの音を解放する
-		AudioManager::GetInstance()->UnLoadAudio("fanfare.wav");
-	}
-	// Rキーを押したら
-	if (input_->TriggerKey(DIK_R)) {
-		// お試しの音をロードする
-		AudioManager::GetInstance()->LoadAudioWave("fanfare.wav");
 	}
 
 	// 3Dオブジェクトの更新処理
