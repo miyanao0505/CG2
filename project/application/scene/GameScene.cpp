@@ -57,14 +57,12 @@ void GameScene::Initialize()
 		object->SetTranslate({ 0.0f, 0.0f, 0.0f });
 		object->SetModel(modelFilePath4_.filename);
 		// お試し用設定
-		object->SetDirectionalLightIntensity(0.0f);
-		object->SetPointLightIntensity(0.0f);
-		object->SetSpotLightColor({ 1.0f, 1.0f, 1.0f, 1.0f });
-		object->SetSpotLightPosition({ 2.0f, 1.25f, 0.0f });
-		object->SetSpotLightDistance(7.0f);
-		object->SetSpotLightDirection(MyTools::Normalize({ -1.0f, -1.0f, 0.0f }));
-		object->SetSpotLightIntensity(4.0f);
-		object->SetSpotLightCosAngle(std::cosf(std::numbers::pi_v<float> / 3.0f));
+		MyBase::DirectionalLight directionalLight{ .color{1.0f, 1.0f, 1.0f, 1.0f}, .direction{0.0f, 0.0f, 0.0f}, .intensity{0.0f} };
+		object->SetDirectionalLight(directionalLight);
+		MyBase::PointLight pointLight{ .color{1.0f, 1.0f, 1.0f, 1.0f}, .position{0.0f, 0.0f, 0.0f}, .intensity{0.0f}, .radius{5.0f}, .decay{1.0f} };
+		object->SetPointLight(pointLight);
+		MyBase::SpotLight spotLight{ .color{1.0f, 1.0f, 1.0f, 1.0f}, .position{2.0f, 1.25f, 0.0f}, .intensity{4.0f}, .direction{MyTools::Normalize({ -1.0f, -1.0f, 0.0f })}, .distance{7.0f}, .decay{1.0f}, .cosAngle{std::cosf(std::numbers::pi_v<float> / 3.0f)} };
+		object->SetSpotLight(spotLight);
 		objects_.push_back(object);
 	}
 	//objects_[1]->SetModel(modelFilePath2_.filename);
@@ -120,7 +118,7 @@ void GameScene::Update()
 #ifdef _DEBUG
 //	// 開発用UIの処理。実際に開発用のUIを出す場合はここをゲーム固有の処理に置き換える
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_Once);		// ウィンドウの座標(プログラム起動時のみ読み込み)
-	ImGui::SetNextWindowSize(ImVec2(350, 300), ImGuiCond_Once);		// ウィンドウのサイズ(プログラム起動時のみ読み込み)
+	ImGui::SetNextWindowSize(ImVec2(350, 150), ImGuiCond_Once);		// ウィンドウのサイズ(プログラム起動時のみ読み込み)
 
 	ImGui::Begin("Game");
 
@@ -255,7 +253,7 @@ void GameScene::Update()
 	if (ImGui::CollapsingHeader("3dObject"))
 	{
 		// ブレンドモード
-		if (ImGui::CollapsingHeader("BlendMode3dObject")) {
+		/*if (ImGui::CollapsingHeader("BlendMode3dObject")) {
 			static ImGuiComboFlags spriteFlags = 0;
 			const char* blendModeIndex[] = { "kBlendModeNone", "kBlendModeNormal", "kBlendModeAdd", "kBlendModeSubtract", "kBlendModeMultiply", "kBlendModeScreen" };
 			static int selectID = 1;
@@ -278,7 +276,7 @@ void GameScene::Update()
 				}
 				ImGui::EndCombo();
 			}
-		}
+		}*/
 
 		for (Object3d* object : objects_)
 		{
@@ -296,175 +294,77 @@ void GameScene::Update()
 				// 拡縮
 				ImGui::SliderFloat3("Scale", &transform.scale.x, 0.0f, 3.0f);
 				object->SetScale(transform.scale);
-
-				if (ImGui::CollapsingHeader("Material"))
-				{
-					// 平行光源フラグ
-					bool isEnableLighting = true;
-					//isEnableLighting = object->GetEnableLighting();
-
-					if (isEnableLighting)
-					{
-						ImGui::PushID("DirectionalLight");
-						if (ImGui::CollapsingHeader("DirectionalLight"))
-						{
-							// 平行光源
-							MyBase::DirectionalLight directionalLight{};
-							directionalLight = object->GetDirectionalLight();
-							// 色
-							//directionalLight.color = object->GetDirectionalLightColor();
-							ImGui::ColorEdit4("Color", &directionalLight.color.x);
-							//object->SetDirectionalLightColor(directionalLight.color);
-							// 方向
-							//directionalLight.direction = object->GetDirectionalLightDirection();
-							ImGui::SliderFloat3("Direction", &directionalLight.direction.x, -1, 1);
-							//object->SetDirectionalLightDirection(MyTools::Normalize(directionalLight.direction));
-							// 輝度
-							//directionalLight.intensity = object->GetDirectionalLightIntensity();
-							ImGui::DragFloat("Intensity", &directionalLight.intensity, 0.01f);
-							//object->SetDirectionalLightIntensity(directionalLight.intensity);
-							object->SetDirectionalLight(directionalLight);
-						}
-						ImGui::PopID();
-						ImGui::PushID("PointLight");
-						if (ImGui::CollapsingHeader("PointLight"))
-						{
-							// 点光源
-							MyBase::PointLight pointLight{};
-							pointLight = object->GetPointLight();
-							// 色
-							//pointLight.color = object->GetPointLightColor();
-							ImGui::ColorEdit4("Color", &pointLight.color.x);
-							//object->SetPointLightColor(pointLight.color);
-							// 位置
-							//pointLight.position = object->GetPointLightPosition();
-							ImGui::DragFloat3("Position", &pointLight.position.x, 0.01f);
-							//->SetPointLightPosition(pointLight.position);
-							// 輝度
-							//pointLight.intensity = object->GetPointLightIntensity();
-							ImGui::DragFloat("Intensity", &pointLight.intensity, 0.01f);
-							//object->SetPointLightIntensity(pointLight.intensity);
-							// ライトの届く最大距離
-							//pointLight.radius = object->GetPointLightRadius();
-							ImGui::DragFloat("Radius", &pointLight.radius, 0.01f, 0.0f);
-							//object->SetPointLightRadius(pointLight.radius);
-							// 減衰率
-							//pointLight.decay = object->GetPointLightDecay();
-							ImGui::DragFloat("Decay", &pointLight.decay, 0.01f, 0.0f);
-							//object->SetPointLightDecay(pointLight.decay);
-							object->SetPointLight(pointLight);
-						}
-						ImGui::PopID();
-						ImGui::PushID("SpotLight");
-						if (ImGui::CollapsingHeader("SpotLight"))
-						{
-							// スポットライト
-							MyBase::SpotLight spotLight{};
-							spotLight = object->GetSpotLight();
-							// 色
-							//spotLight.color = object->GetSpotLightColor();
-							ImGui::ColorEdit4("Color", &spotLight.color.x);
-							//object->SetSpotLightColor(spotLight.color);
-							// 位置
-							//spotLight.position = object->GetSpotLightPosition();
-							ImGui::DragFloat3("Position", &spotLight.position.x, 0.01f);
-							//object->SetSpotLightPosition(spotLight.position);
-							// 輝度
-							//spotLight.intensity = object->GetSpotLightIntensity();
-							ImGui::DragFloat("Intensity", &spotLight.intensity, 0.01f);
-							//object->SetSpotLightIntensity(spotLight.intensity);
-							// 方向
-							//spotLight.direction = object->GetSpotLightDirection();
-							ImGui::DragFloat3("Direction", &spotLight.direction.x, 0.01f);
-							//object->SetSpotLightDirection(spotLight.direction);
-							// ライトの届く最大距離
-							//spotLight.distance = object->GetSpotLightDistance();
-							ImGui::DragFloat("Distance", &spotLight.distance, 0.01f, 0.0f);
-							//object->SetSpotLightDistance(spotLight.distance);
-							// 減衰率
-							//spotLight.decay = object->GetSpotLightDecay();
-							ImGui::DragFloat("Decay", &spotLight.decay, 0.01f, 0.0f);
-							//object->SetSpotLightDecay(spotLight.decay);
-							// 余弦
-							//spotLight.cosAngle = object->GetSpotLightCosAngle();
-							ImGui::SliderAngle("CosAngle", &spotLight.cosAngle);
-							//object->SetSpotLightCosAngle(spotLight.cosAngle);
-							object->SetSpotLight(spotLight);
-						}
-						ImGui::PopID();
-					}
-				}
 			}
 			ImGui::PopID();
 		}
 
 		ImGui::Text("\n");
 	}
-	if (ImGui::CollapsingHeader("particle")) {
-		static ImGuiComboFlags particleFlags = 0;
-		const char* blendModeIndex[] = { "kBlendModeNone", "kBlendModeNormal", "kBlendModeAdd", "kBlendModeSubtract", "kBlendModeMultiply", "kBlendModeScreen" };
-		static int selectID = 2;
+	//if (ImGui::CollapsingHeader("particle")) {
+	//	static ImGuiComboFlags particleFlags = 0;
+	//	const char* blendModeIndex[] = { "kBlendModeNone", "kBlendModeNormal", "kBlendModeAdd", "kBlendModeSubtract", "kBlendModeMultiply", "kBlendModeScreen" };
+	//	static int selectID = 2;
 
-		const char* previewValue = blendModeIndex[selectID];
+	//	const char* previewValue = blendModeIndex[selectID];
 
-		if (ImGui::BeginCombo("Now Blend", previewValue, particleFlags))
-		{
-			for (int n = 0; n < IM_ARRAYSIZE(blendModeIndex); n++)
-			{
-				const bool isSelected = (selectID == n);
-				if (ImGui::Selectable(blendModeIndex[n], isSelected)) {
-					selectID = n;
-					ParticleManager::GetInstance()->ChangeBlendMode(static_cast<ParticleBase::BlendMode>(n));
-				}
-				if (isSelected) {
-					ImGui::SetItemDefaultFocus();
-				}
-			}
-			ImGui::EndCombo();
-		}
+	//	if (ImGui::BeginCombo("Now Blend", previewValue, particleFlags))
+	//	{
+	//		for (int n = 0; n < IM_ARRAYSIZE(blendModeIndex); n++)
+	//		{
+	//			const bool isSelected = (selectID == n);
+	//			if (ImGui::Selectable(blendModeIndex[n], isSelected)) {
+	//				selectID = n;
+	//				ParticleManager::GetInstance()->ChangeBlendMode(static_cast<ParticleBase::BlendMode>(n));
+	//			}
+	//			if (isSelected) {
+	//				ImGui::SetItemDefaultFocus();
+	//			}
+	//		}
+	//		ImGui::EndCombo();
+	//	}
 
-		/*size_t spriteCount = 0;
-		for (ParticleEmitter* particle : sprites) {*/
-		MyBase::Vector3 position = particleEmitter_->GetPosition();
-		ImGui::DragFloat2("particleEmitter_.Translate", &position.x, 0.1f);
-		/*if (position.y > 640.0f) {
-			position.y = 640.0f;
-		}*/
-		particleEmitter_->SetPosition(position);
+	//	/*size_t spriteCount = 0;
+	//	for (ParticleEmitter* particle : sprites) {*/
+	//	MyBase::Vector3 position = particleEmitter_->GetPosition();
+	//	ImGui::DragFloat2("particleEmitter_.Translate", &position.x, 0.1f);
+	//	/*if (position.y > 640.0f) {
+	//		position.y = 640.0f;
+	//	}*/
+	//	particleEmitter_->SetPosition(position);
 
-		/*Vector3 rotation = particleEmitter_->GetRotation();
-		ImGui::SliderAngle("particleEmitter_.Rotate", &rotation.x);
-		particleEmitter_->SetRotation(rotation);
+	//	/*Vector3 rotation = particleEmitter_->GetRotation();
+	//	ImGui::SliderAngle("particleEmitter_.Rotate", &rotation.x);
+	//	particleEmitter_->SetRotation(rotation);
 
-		Vector3 size = particleEmitter_->GetSize();
-		ImGui::DragFloat2("particleEmitter_.Scale", &size.x, 0.1f);
-		if (size.y > 360.0f) {
-			size.y = 360.0f;
-		}
-		particleEmitter_->SetSize(size);*/
+	//	Vector3 size = particleEmitter_->GetSize();
+	//	ImGui::DragFloat2("particleEmitter_.Scale", &size.x, 0.1f);
+	//	if (size.y > 360.0f) {
+	//		size.y = 360.0f;
+	//	}
+	//	particleEmitter_->SetSize(size);*/
 
-		int count = particleEmitter_->GetCount();
-		ImGui::DragInt("particleEmitter_.count", &count, 1, 0, 1000);
-		particleEmitter_->SetCount(count);
+	//	int count = particleEmitter_->GetCount();
+	//	ImGui::DragInt("particleEmitter_.count", &count, 1, 0, 1000);
+	//	particleEmitter_->SetCount(count);
 
-		float frequency = particleEmitter_->GetFrequency();
-		ImGui::DragFloat("particleEmitter_.frequency", &frequency, 0.1f);
-		particleEmitter_->SetFrequency(frequency);
+	//	float frequency = particleEmitter_->GetFrequency();
+	//	ImGui::DragFloat("particleEmitter_.frequency", &frequency, 0.1f);
+	//	particleEmitter_->SetFrequency(frequency);
 
-		if (ImGui::Button("ParticleEmit", { 100,50 })) {
-			particleEmitter_->Emit();
-		}
+	//	if (ImGui::Button("ParticleEmit", { 100,50 })) {
+	//		particleEmitter_->Emit();
+	//	}
 
-		bool isEmitUpdate = particleEmitter_->GetIsEmitUpdate();
-		ImGui::Checkbox("IsEmitUpdate", &isEmitUpdate);
-		particleEmitter_->SetIsEmitUpdate(isEmitUpdate);
+	//	bool isEmitUpdate = particleEmitter_->GetIsEmitUpdate();
+	//	ImGui::Checkbox("IsEmitUpdate", &isEmitUpdate);
+	//	particleEmitter_->SetIsEmitUpdate(isEmitUpdate);
 
-		ImGui::Checkbox("IsAccelerationField", &isAccelerationField_);
-	}
+	//	ImGui::Checkbox("IsAccelerationField", &isAccelerationField_);
+	//}
 
-	ImGui::Text("\n");
+	//ImGui::Text("\n");
 
-	ImGui::Text("ParticleActive On / Off : SPACE");
+	//ImGui::Text("ParticleActive On / Off : SPACE");
 
 //	}
 //
@@ -477,6 +377,114 @@ void GameScene::Update()
 //	//ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);*/
 //
 	ImGui::End();
+
+	ImGui::SetNextWindowPos(ImVec2(900, 20), ImGuiCond_Once);		// ウィンドウの座標(プログラム起動時のみ読み込み)
+	ImGui::SetNextWindowSize(ImVec2(350, 150), ImGuiCond_Once);		// ウィンドウのサイズ(プログラム起動時のみ読み込み)
+
+	ImGui::Begin("LIghting");
+
+	for (Object3d* object : objects_)
+	{
+		if (ImGui::CollapsingHeader("Material"))
+		{
+			// 平行光源フラグ
+			bool isEnableLighting = true;
+			//isEnableLighting = object->GetEnableLighting();
+
+			if (isEnableLighting)
+			{
+				ImGui::PushID("DirectionalLight");
+				if (ImGui::CollapsingHeader("DirectionalLight"))
+				{
+					// 平行光源
+					MyBase::DirectionalLight directionalLight{};
+					directionalLight = object->GetDirectionalLight();
+					// 色
+					//directionalLight.color = object->GetDirectionalLightColor();
+					ImGui::ColorEdit4("Color", &directionalLight.color.x);
+					//object->SetDirectionalLightColor(directionalLight.color);
+					// 方向
+					//directionalLight.direction = object->GetDirectionalLightDirection();
+					ImGui::SliderFloat3("Direction", &directionalLight.direction.x, -1, 1);
+					//object->SetDirectionalLightDirection(MyTools::Normalize(directionalLight.direction));
+					// 輝度
+					//directionalLight.intensity = object->GetDirectionalLightIntensity();
+					ImGui::DragFloat("Intensity", &directionalLight.intensity, 0.01f);
+					//object->SetDirectionalLightIntensity(directionalLight.intensity);
+					object->SetDirectionalLight(directionalLight);
+				}
+				ImGui::PopID();
+				ImGui::PushID("PointLight");
+				if (ImGui::CollapsingHeader("PointLight"))
+				{
+					// 点光源
+					MyBase::PointLight pointLight{};
+					pointLight = object->GetPointLight();
+					// 色
+					//pointLight.color = object->GetPointLightColor();
+					ImGui::ColorEdit4("Color", &pointLight.color.x);
+					//object->SetPointLightColor(pointLight.color);
+					// 位置
+					//pointLight.position = object->GetPointLightPosition();
+					ImGui::DragFloat3("Position", &pointLight.position.x, 0.01f);
+					//->SetPointLightPosition(pointLight.position);
+					// 輝度
+					//pointLight.intensity = object->GetPointLightIntensity();
+					ImGui::DragFloat("Intensity", &pointLight.intensity, 0.01f);
+					//object->SetPointLightIntensity(pointLight.intensity);
+					// ライトの届く最大距離
+					//pointLight.radius = object->GetPointLightRadius();
+					ImGui::DragFloat("Radius", &pointLight.radius, 0.01f, 0.0f);
+					//object->SetPointLightRadius(pointLight.radius);
+					// 減衰率
+					//pointLight.decay = object->GetPointLightDecay();
+					ImGui::DragFloat("Decay", &pointLight.decay, 0.01f, 0.0f);
+					//object->SetPointLightDecay(pointLight.decay);
+					object->SetPointLight(pointLight);
+				}
+				ImGui::PopID();
+				ImGui::PushID("SpotLight");
+				if (ImGui::CollapsingHeader("SpotLight"))
+				{
+					// スポットライト
+					MyBase::SpotLight spotLight{};
+					spotLight = object->GetSpotLight();
+					// 色
+					//spotLight.color = object->GetSpotLightColor();
+					ImGui::ColorEdit4("Color", &spotLight.color.x);
+					//object->SetSpotLightColor(spotLight.color);
+					// 位置
+					//spotLight.position = object->GetSpotLightPosition();
+					ImGui::DragFloat3("Position", &spotLight.position.x, 0.01f);
+					//object->SetSpotLightPosition(spotLight.position);
+					// 輝度
+					//spotLight.intensity = object->GetSpotLightIntensity();
+					ImGui::DragFloat("Intensity", &spotLight.intensity, 0.01f);
+					//object->SetSpotLightIntensity(spotLight.intensity);
+					// 方向
+					//spotLight.direction = object->GetSpotLightDirection();
+					ImGui::DragFloat3("Direction", &spotLight.direction.x, 0.01f);
+					//object->SetSpotLightDirection(spotLight.direction);
+					// ライトの届く最大距離
+					//spotLight.distance = object->GetSpotLightDistance();
+					ImGui::DragFloat("Distance", &spotLight.distance, 0.01f, 0.0f);
+					//object->SetSpotLightDistance(spotLight.distance);
+					// 減衰率
+					//spotLight.decay = object->GetSpotLightDecay();
+					ImGui::DragFloat("Decay", &spotLight.decay, 0.01f, 0.0f);
+					//object->SetSpotLightDecay(spotLight.decay);
+					// 余弦
+					//spotLight.cosAngle = object->GetSpotLightCosAngle();
+					ImGui::SliderAngle("CosAngle", &spotLight.cosAngle);
+					//object->SetSpotLightCosAngle(spotLight.cosAngle);
+					object->SetSpotLight(spotLight);
+				}
+				ImGui::PopID();
+			}
+		}
+	}
+	ImGui::End();
+
 #endif // _DEBUG
 
 	// SPACEキーを押したら

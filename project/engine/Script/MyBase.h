@@ -282,6 +282,9 @@ public:
 		float padding[2];
 	};
 
+	/// <summary>
+	/// スポットライト
+	/// </summary>
 	struct SpotLight {
 		Vector4 color;			//!< ライトの色
 		Vector3 position;		//!< ライトの位置
