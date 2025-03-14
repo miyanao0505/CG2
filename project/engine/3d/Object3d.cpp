@@ -24,6 +24,9 @@ void Object3d::Initislize()
 	// 点光源データの作成
 	CreatePointLightData();
 
+	// スポットライトデータの作成
+	CreateSpotLightData();
+
 	// Transform変数を作る
 	transform_ = { { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
 }
@@ -57,6 +60,8 @@ void Object3d::Draw()
 	object3dBase_->GetDxBase()->GetCommandList()->SetGraphicsRootConstantBufferView(4, cameraResource_.Get()->GetGPUVirtualAddress());
 	// 点光源用のCBufferの場所を設定
 	object3dBase_->GetDxBase()->GetCommandList()->SetGraphicsRootConstantBufferView(5, pointLightResource_.Get()->GetGPUVirtualAddress());
+	// スポットライト用のCBufferの場所を設定
+	object3dBase_->GetDxBase()->GetCommandList()->SetGraphicsRootConstantBufferView(6, spotLightResource_.Get()->GetGPUVirtualAddress());
 
 	// 3Dモデルが割り当てられていれば描画する
 	if (model_) {
@@ -122,4 +127,20 @@ void Object3d::CreatePointLightData()
 	pointLightData_->intensity = 1.0f;
 	pointLightData_->radius = 1.0f;
 	pointLightData_->decay = 1.0f;
+}
+
+// スポットライトデータ作成
+void Object3d::CreateSpotLightData()
+{
+	// スポットライトデータ用のリソースを作る
+	spotLightResource_ = object3dBase_->GetDxBase()->CreateBufferResource(sizeof(MyBase::SpotLight));
+	// 書き込むためのアドレス取得
+	spotLightResource_.Get()->Map(0, nullptr, reinterpret_cast<void**>(&spotLightData_));
+	spotLightData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	spotLightData_->position = { 0.0f, 0.0f, 0.0f };
+	spotLightData_->intensity = 1.0f;
+	spotLightData_->direction = { 0.0f, -1.0f, 0.0f };
+	spotLightData_->distance = 1.0f;
+	spotLightData_->decay = 1.0f;
+	spotLightData_->cosAngle = 0.125f;
 }
