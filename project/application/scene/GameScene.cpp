@@ -63,7 +63,7 @@ void GameScene::Initialize()
 		object->SetPointLight(pointLight);
 		MyBase::SpotLight spotLight{ .color{1.0f, 1.0f, 1.0f, 1.0f}, .position{2.0f, 1.25f, 0.0f}, .intensity{4.0f}, .direction{MyTools::Normalize({ -1.0f, -1.0f, 0.0f })}, .distance{7.0f}, .decay{1.0f}, .cosAngle{std::cosf(std::numbers::pi_v<float> / 3.0f)} };
 		object->SetSpotLight(spotLight);
-		objects_.push_back(object);
+		objects_.push_back(std::move(object));
 	}
 	//objects_[1]->SetModel(modelFilePath2_.filename);
 	//objects_[2]->SetModel(modelFilePath3_.filename);
@@ -381,7 +381,7 @@ void GameScene::Update()
 
 	ImGui::Begin("LIghting");
 
-	for (Object3d* object : objects_)
+	for (std::unique_ptr<Object3d>& object : objects_)
 	{
 		if (ImGui::CollapsingHeader("Material"))
 		{
@@ -398,17 +398,11 @@ void GameScene::Update()
 					MyBase::DirectionalLight directionalLight{};
 					directionalLight = object->GetDirectionalLight();
 					// 色
-					//directionalLight.color = object->GetDirectionalLightColor();
 					ImGui::ColorEdit4("Color", &directionalLight.color.x);
-					//object->SetDirectionalLightColor(directionalLight.color);
 					// 方向
-					//directionalLight.direction = object->GetDirectionalLightDirection();
 					ImGui::SliderFloat3("Direction", &directionalLight.direction.x, -1, 1);
-					//object->SetDirectionalLightDirection(MyTools::Normalize(directionalLight.direction));
 					// 輝度
-					//directionalLight.intensity = object->GetDirectionalLightIntensity();
 					ImGui::DragFloat("Intensity", &directionalLight.intensity, 0.01f);
-					//object->SetDirectionalLightIntensity(directionalLight.intensity);
 					object->SetDirectionalLight(directionalLight);
 				}
 				ImGui::PopID();
@@ -419,25 +413,15 @@ void GameScene::Update()
 					MyBase::PointLight pointLight{};
 					pointLight = object->GetPointLight();
 					// 色
-					//pointLight.color = object->GetPointLightColor();
 					ImGui::ColorEdit4("Color", &pointLight.color.x);
-					//object->SetPointLightColor(pointLight.color);
 					// 位置
-					//pointLight.position = object->GetPointLightPosition();
 					ImGui::DragFloat3("Position", &pointLight.position.x, 0.01f);
-					//->SetPointLightPosition(pointLight.position);
 					// 輝度
-					//pointLight.intensity = object->GetPointLightIntensity();
 					ImGui::DragFloat("Intensity", &pointLight.intensity, 0.01f);
-					//object->SetPointLightIntensity(pointLight.intensity);
 					// ライトの届く最大距離
-					//pointLight.radius = object->GetPointLightRadius();
 					ImGui::DragFloat("Radius", &pointLight.radius, 0.01f, 0.0f);
-					//object->SetPointLightRadius(pointLight.radius);
 					// 減衰率
-					//pointLight.decay = object->GetPointLightDecay();
 					ImGui::DragFloat("Decay", &pointLight.decay, 0.01f, 0.0f);
-					//object->SetPointLightDecay(pointLight.decay);
 					object->SetPointLight(pointLight);
 				}
 				ImGui::PopID();
@@ -448,33 +432,19 @@ void GameScene::Update()
 					MyBase::SpotLight spotLight{};
 					spotLight = object->GetSpotLight();
 					// 色
-					//spotLight.color = object->GetSpotLightColor();
 					ImGui::ColorEdit4("Color", &spotLight.color.x);
-					//object->SetSpotLightColor(spotLight.color);
 					// 位置
-					//spotLight.position = object->GetSpotLightPosition();
 					ImGui::DragFloat3("Position", &spotLight.position.x, 0.01f);
-					//object->SetSpotLightPosition(spotLight.position);
 					// 輝度
-					//spotLight.intensity = object->GetSpotLightIntensity();
 					ImGui::DragFloat("Intensity", &spotLight.intensity, 0.01f);
-					//object->SetSpotLightIntensity(spotLight.intensity);
 					// 方向
-					//spotLight.direction = object->GetSpotLightDirection();
 					ImGui::DragFloat3("Direction", &spotLight.direction.x, 0.01f);
-					//object->SetSpotLightDirection(spotLight.direction);
 					// ライトの届く最大距離
-					//spotLight.distance = object->GetSpotLightDistance();
 					ImGui::DragFloat("Distance", &spotLight.distance, 0.01f, 0.0f);
-					//object->SetSpotLightDistance(spotLight.distance);
 					// 減衰率
-					//spotLight.decay = object->GetSpotLightDecay();
 					ImGui::DragFloat("Decay", &spotLight.decay, 0.01f, 0.0f);
-					//object->SetSpotLightDecay(spotLight.decay);
 					// 余弦
-					//spotLight.cosAngle = object->GetSpotLightCosAngle();
 					ImGui::SliderAngle("CosAngle", &spotLight.cosAngle);
-					//object->SetSpotLightCosAngle(spotLight.cosAngle);
 					object->SetSpotLight(spotLight);
 				}
 				ImGui::PopID();
