@@ -2,15 +2,13 @@
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-
+	// リークチェック
+	D3DResourceLeakChecker leakCheck;
 	// 宣言
-	MNFramework* game = new MyGame;
+	std::unique_ptr<MNFramework> game(new MyGame);
 
 	// ゲームループ
 	game->Run();
-
-	// 解放
-	delete game;
 
 	return 0;
 }

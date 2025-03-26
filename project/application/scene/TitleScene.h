@@ -32,7 +32,7 @@ private:	// メンバ変数
 	//std::string filePath4_ = { "resources/circle.png" };
 
 	// スプライト
-	std::vector<Sprite*> sprites_;
+	std::vector<std::unique_ptr<Sprite>> sprites_;
 
 	// モデルファイルパス
 	MyBase::ModelFilePath modelFilePath1_ = { {"resources/plane"}, {"plane.obj"} };
@@ -40,10 +40,10 @@ private:	// メンバ変数
 	MyBase::ModelFilePath modelFilePath3_ = { {"resources/fence"}, {"fence.obj"} };
 
 	// 3Dオブジェクト
-	std::vector<Object3d*> objects_;
+	std::vector<std::unique_ptr<Object3d>> objects_;
 
 	// パーティクル
-	ParticleEmitter* particleEmitter_ = nullptr;
+	std::unique_ptr<ParticleEmitter> particleEmitter_ = nullptr;
 #pragma endregion シーン初期化
 
 	bool isParticleActive_;
