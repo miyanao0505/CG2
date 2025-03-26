@@ -380,7 +380,7 @@ void TitleScene::Update()
 #endif // _DEBUG
 
 	// ENTERキーを押したら
-	if (input_->TriggerKey(DIK_RETURN)) {
+	if (input_->TriggerKey(DIK_SPACE)) {
 		// シーン切り替え依頼
 		SceneManager::GetInstance()->ChangeScene("GAME");
 	}
